@@ -10,10 +10,12 @@ function StatisticCard({
   iconColor = "text-green-600",
 }) {
   return (
-    <div className={`rounded-xl border ${bg} shadow-sm p-6 ${className}`}>
+    <div
+      className={`rounded-xl border ${bg} shadow-sm p-4 sm:p-5 ${className}`}
+    >
       <div className="flex flex-col items-center text-center gap-3">
         <div
-          className={`flex h-14 w-14 items-center justify-center rounded-lg ${iconBg} ${iconColor} text-2xl`}
+          className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-lg ${iconBg} ${iconColor} text-xl sm:text-2xl`}
         >
           {icon ? (
             icon
