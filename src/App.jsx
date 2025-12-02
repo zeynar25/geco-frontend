@@ -67,7 +67,10 @@ export default function App() {
     <>
       <Header />
 
-      <div className="relative h-screen bg-[url('/images/homepage.png')] bg-cover bg-center bg-no-repeat">
+      <div
+        id="home"
+        className="relative h-screen bg-[url('/images/homepage.png')] bg-cover bg-center bg-no-repeat"
+      >
         <div className="absolute inset-0 bg-linear-to-b from-black/50 to-black/40" />
         <div className="relative mx-auto flex h-full max-w-7xl items-center justify-center px-4 sm:px-6 lg:px-8 text-center">
           <div>
@@ -106,7 +109,7 @@ export default function App() {
         </div>
       </div>
 
-      <section className="relative z-10 py-12 rounded-xl bg-green-50">
+      <section className="relative z-10 py-12 bg-green-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Cards grid */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -147,6 +150,18 @@ export default function App() {
               className="border-0 shadow-sm"
             />
           </div>
+        </div>
+      </section>
+
+      <section id="map" className="relative z-10">
+        <div className="bg-[#a9e2a3] flex flex-col gap-5 justify-center text-center py-15">
+          <h1 className="font-semibold text-4xl">
+            Explore our Park Interactive Map
+          </h1>
+          <p>
+            Click on any colored marker to zoom in and discover detailed
+            information about each attraction.
+          </p>
         </div>
       </section>
       <Footer />
