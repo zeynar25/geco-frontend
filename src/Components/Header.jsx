@@ -137,7 +137,7 @@ function Header() {
         className={`md:hidden ${open ? "block" : "hidden"} border-t bg-white`}
       >
         <nav aria-label="Primary mobile" className="px-4 py-3">
-          <ul className="space-y-2">
+          <ul className="space-y-2 items-center justify-center flex flex-col">
             <li>
               <a
                 href="#home"
@@ -188,7 +188,7 @@ function Header() {
             <li className="pt-2">
               <a
                 href="/signin"
-                className="flex items-center gap-3 rounded-md bg-green-600 px-4 py-3 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
+                className="inline-flex w-fit items-center gap-3 rounded-md bg-green-600 px-4 py-3 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
                 onClick={() => setOpen(false)}
               >
                 <div className="leading-tight text-left">
