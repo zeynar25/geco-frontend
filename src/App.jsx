@@ -1,4 +1,6 @@
 // import React, { useEffect, useState } from "react";
+import { useState } from "react";
+
 import Header from "./Components/Header.jsx";
 import Footer from "./Components/Footer.jsx";
 import StatisticCard from "./Components/StatisticCard.jsx";
@@ -12,9 +14,14 @@ import {
   faBoxOpen,
   faPeopleGroup,
   faStar,
+  faMagnifyingGlassLocation,
+  faMessage,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function App() {
+  const [mapMode, setMapMode] = useState("2D");
+
   // const [numberOfAttractions, setNumberOfAttractions] = useState(null);
   // const [monthlyVisitors, setMonthlyVisitors] = useState(null);
   // const [avgRating, setAvgRating] = useState(null);
@@ -74,7 +81,7 @@ export default function App() {
         <div className="absolute inset-0 bg-linear-to-b from-black/50 to-black/40" />
         <div className="relative mx-auto flex h-full max-w-7xl items-center justify-center px-4 sm:px-6 lg:px-8 text-center">
           <div>
-            <span className="inline-block rounded-full bg-white/10 px-3 py-1 text-xs font-medium tracking-wide text-white ring-1 ring-white/20">
+            <span className="inline-block rounded-full bg-white/30 px-3 py-1 text-xs font-medium tracking-wide text-white ring-1 ring-white/20">
               Cavite State University
             </span>
 
@@ -112,7 +119,7 @@ export default function App() {
       <section className="relative z-10 py-12 bg-green-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Cards grid */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid place-items-center sm:place-items-stretch grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatisticCard
               label="Attractions"
               value="10"
@@ -154,14 +161,129 @@ export default function App() {
       </section>
 
       <section id="map" className="relative z-10">
-        <div className="bg-[#a9e2a3] flex flex-col gap-5 justify-center text-center py-15">
-          <h1 className="font-semibold text-4xl">
+        <div className="bg-[#a9e2a3] flex flex-col gap-5 justify-center text-center py-15 px-10">
+          <h1 className="font-semibold text-2xl md:text-4xl">
             Explore our Park Interactive Map
           </h1>
           <p>
             Click on any colored marker to zoom in and discover detailed
             information about each attraction.
           </p>
+        </div>
+
+        <div className="px-5 py-5 bg-green-50 grid grid-cols-1 lg:grid-cols-5 gap-3">
+          {/* park map */}
+          <div className="rounded-xl overflow-hidden shadow-2xl grid lg:col-span-3">
+            <div className="px-5 py-5 h-fit bg-[#227B05]">
+              <div className="flex flex-col justify-between sm:flex-row  gap-3">
+                <h1 className="text-white font-semibold text-lg sm:text-2xl">
+                  <FontAwesomeIcon
+                    icon={faMagnifyingGlassLocation}
+                    className="text-white mr-1  "
+                  />
+                  CvSU Agri-Eco Tourism Park Map
+                </h1>
+
+                <div className="w-fit rounded-lg bg-white/70 p-1 ring-1 ring-black/5 backdrop-blur">
+                  <button
+                    type="button"
+                    aria-pressed={mapMode === "2D"}
+                    onClick={() => setMapMode("2D")}
+                    className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                      mapMode === "2D"
+                        ? "bg-white text-gray-900 shadow"
+                        : "text-gray-700 hover:text-gray-900"
+                    }`}
+                  >
+                    2D
+                  </button>
+
+                  <button
+                    type="button"
+                    aria-pressed={mapMode === "3D"}
+                    onClick={() => setMapMode("3D")}
+                    className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                      mapMode === "3D"
+                        ? "bg-white text-gray-900 shadow"
+                        : "text-gray-700 hover:text-gray-900"
+                    }`}
+                  >
+                    3D
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              {mapMode === "2D" ? (
+                <img src="/images/park-map-2d.jpg" alt="2D-park-map" />
+              ) : (
+                <img
+                  src="/images/park-map-2d.jpg"
+                  alt="3D-park-map"
+                  className="cover"
+                />
+              )}
+            </div>
+          </div>
+
+          {/* side options */}
+          <div className="lg:col-span-2 flex flex-col gap-3">
+            {/* Park attractions */}
+            <div className="rounded-xl overflow-hidden shadow-2xl bg-white">
+              <div className="bg-[#a9e2a3] p-3">
+                <h3 className="font-semibold">Park Attractions</h3>
+                <span>Click to view on map</span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 text-center gap-1.5 px-3 py-1">
+                <div>Attraction 1</div>
+                <div>Attraction 2</div>
+                <div>Attraction 3</div>
+                <div>Attraction 4</div>
+                <div>Attraction 5</div>
+                <div>Attraction 6</div>
+                <div>Attraction 7</div>
+                <div>Attraction 8</div>
+                <div>Attraction 9</div>
+                <div>Attraction 10</div>
+                <div>Attraction 11</div>
+                <div>Attraction 12</div>
+              </div>
+            </div>
+
+            {/* Plan your visit */}
+            <div className="bg-[#227B05] text-white rounded-xl overflow-hidden shadow-2xl px-5 py-2">
+              <h3 className="font-semibold py-2">Plan your visit</h3>
+              <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-2 px-5 py-2">
+                <button className="bg-white text-green-600 font-semibold rounded-lg py-1.5">
+                  <FontAwesomeIcon
+                    icon={faCalendarDays}
+                    className="text-black mr-2"
+                  />
+                  Book your visit
+                </button>
+                <button className="border-white bg-[#a9e2a3] text-black font-semibold rounded-lg py-1.5">
+                  <FontAwesomeIcon
+                    icon={faMessage}
+                    className="text-black mr-2"
+                  />
+                  Share feedback
+                </button>
+              </div>
+            </div>
+
+            {/* Know more */}
+            <div className="relative min-h-40 max-h-40 bg-[url('/images/homepage.png')] bg-cover bg-bottom bg-no-repeat rounded-xl flex items-center justify-center shadow-2xl overflow-hidden">
+              <div className="z-10 bg-white/80 font-bold p-2 px-10 rounded-xl flex items-center justify-center">
+                <span className="text-[#227B05]">Know more</span>
+                <FontAwesomeIcon
+                  icon={faArrowRight}
+                  className="bg-[#227B05] text-white ml-3 p-2 rounded-full"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
       <Footer />
