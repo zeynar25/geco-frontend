@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faEnvelope, faClock } from "@fortawesome/free-regular-svg-icons";
 import { faFacebook } from "@fortawesome/free-brands-svg-icons";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -93,13 +94,13 @@ function Footer() {
           <div>
             <h3 className="mb-3 text-base font-semibold">Connect with us</h3>
             <div className="flex flex-col gap-2 mb-5">
-              <a href="#" className="text-sm">
+              <Link to="/about" className="text-sm">
                 <FontAwesomeIcon
                   icon={faCalendarDays}
                   className="text-white mr-2"
                 />
                 About the park
-              </a>
+              </Link>
               <a href="#" className="text-sm">
                 <FontAwesomeIcon icon={faBoxOpen} className="text-white mr-2" />
                 Eco-park Service packages
