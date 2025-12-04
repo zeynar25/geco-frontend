@@ -17,7 +17,7 @@ function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <img
               src="/images/agri-eco-logo.png"
               alt="Geco-logo"
@@ -31,23 +31,23 @@ function Header() {
                 Agri‑Eco Tourism Park
               </span>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop nav */}
           <nav id="main-nav" aria-label="Primary" className="hidden lg:block">
             <ul className="flex items-center gap-5">
               <li>
-                <a
-                  href="#home"
+                <Link
+                  to="/"
                   className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon icon={faTree} className="text-green-600" />
                   <span>Home</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#map"
+                <Link
+                  to="/#map"
                   className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold  text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon
@@ -55,7 +55,7 @@ function Header() {
                     className="text-green-600"
                   />
                   <span>Park Map</span>
-                </a>
+                </Link>
               </li>
               <li>
                 <Link
@@ -140,14 +140,14 @@ function Header() {
         <nav aria-label="Primary mobile" className="px-4 py-3">
           <ul className="space-y-2 items-center justify-center flex flex-col">
             <li>
-              <a
-                href="#home"
+              <Link
+                to="/"
                 className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 onClick={() => setOpen(false)}
               >
                 <FontAwesomeIcon icon={faTree} className="text-green-600" />
                 <span>Home</span>
-              </a>
+              </Link>
             </li>
             <li>
               <a
