@@ -1,10 +1,10 @@
 // import React, { useEffect, useState } from "react";
 import { useState } from "react";
 
-import Header from "./Components/Header.jsx";
-import Footer from "./Components/Footer.jsx";
-import StatisticCard from "./Components/StatisticCard.jsx";
-import "./index.css";
+import Header from "../Components/Header.jsx";
+import Footer from "../Components/Footer.jsx";
+import StatisticCard from "../Components/StatisticCard.jsx";
+import "../index.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
