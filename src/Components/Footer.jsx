@@ -105,13 +105,13 @@ function Footer() {
                 <FontAwesomeIcon icon={faBoxOpen} className="text-white mr-2" />
                 Eco-park Service packages
               </a>
-              <a href="#" className="text-sm">
+              <Link to="/#map" className="text-sm">
                 <FontAwesomeIcon
                   icon={faMapLocationDot}
                   className="text-white mr-2"
                 />
                 Explore our Attractions
-              </a>
+              </Link>
               <a href="#" className="text-sm">
                 <FontAwesomeIcon icon={faBook} className="text-white mr-2" />
                 Solo or Group bookings
