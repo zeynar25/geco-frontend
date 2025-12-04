@@ -11,7 +11,7 @@ function StatisticCard({
 }) {
   return (
     <div
-      className={`rounded-xl border ${bg} shadow-sm p-4 sm:p-5 ${className}`}
+      className={`w-80 sm:w-auto rounded-xl border ${bg} shadow-sm p-4 sm:p-5 ${className}`}
     >
       <div className="flex flex-col items-center text-center gap-3">
         <div
