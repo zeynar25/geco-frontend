@@ -3,7 +3,13 @@ import Header from "../Components/Header";
 import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeftLong,
+  faBook,
+  faBuilding,
+  faEye,
+} from "@fortawesome/free-solid-svg-icons";
+import AboutCard from "../Components/AboutCard";
 
 export default function About() {
   return (
@@ -32,6 +38,38 @@ export default function About() {
           <p className="relative drop-shadow-lg">
             Discover our mission, vision, and values.
           </p>
+        </div>
+
+        <div className="grid grid-cols-2">
+          <AboutCard
+            headerBg="bg-green-50"
+            headerColor="text-[#227B05]"
+            icon={<FontAwesomeIcon icon={faBuilding} />}
+            title="CvSU Mission"
+            description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            className="col-span-2 md:col-span-1"
+          />
+
+          <AboutCard
+            headerBg="bg-blue-50"
+            headerColor="text-blue-600"
+            icon={<FontAwesomeIcon icon={faEye} />}
+            title="CvSU Vision"
+            description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            className="col-span-2 md:col-span-1"
+          />
+
+          <div></div>
+
+          <AboutCard
+            headerBg="bg-green-50"
+            icon={<FontAwesomeIcon icon={faBook} />}
+            iconColor="text-[#227B05]"
+            title="History"
+            titleColor="text-[#227B05]"
+            description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            className="col-span-2"
+          />
         </div>
       </div>
 
