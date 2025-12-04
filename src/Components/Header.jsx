@@ -7,6 +7,7 @@ import {
   faArrowRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Header() {
   const [open, setOpen] = useState(false);
@@ -57,13 +58,13 @@ function Header() {
                 </a>
               </li>
               <li>
-                <a
-                  href="#about"
+                <Link
+                  to="/about"
                   className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold  text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon icon={faBook} className="text-green-600" />
                   <span>About Us</span>
-                </a>
+                </Link>
               </li>
               <li>
                 <a
@@ -162,14 +163,14 @@ function Header() {
               </a>
             </li>
             <li>
-              <a
-                href="#about"
+              <Link
+                to="/about"
                 className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 onClick={() => setOpen(false)}
               >
                 <FontAwesomeIcon icon={faBook} className="text-green-600" />
                 <span>About Us</span>
-              </a>
+              </Link>
             </li>
             <li>
               <a
