@@ -4,7 +4,7 @@ import {
   faCalendarDays,
   faTree,
   faBook,
-  faArrowRightFromBracket,
+  faArrowRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
@@ -33,12 +33,12 @@ function Header() {
           </a>
 
           {/* Desktop nav */}
-          <nav id="main-nav" aria-label="Primary" className="hidden md:block">
+          <nav id="main-nav" aria-label="Primary" className="hidden lg:block">
             <ul className="flex items-center gap-5">
               <li>
                 <a
                   href="#home"
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon icon={faTree} className="text-green-600" />
                   <span>Home</span>
@@ -47,7 +47,7 @@ function Header() {
               <li>
                 <a
                   href="#map"
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold  text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon
                     icon={faMapLocationDot}
@@ -59,7 +59,7 @@ function Header() {
               <li>
                 <a
                   href="#about"
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold  text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon icon={faBook} className="text-green-600" />
                   <span>About Us</span>
@@ -68,7 +68,7 @@ function Header() {
               <li>
                 <a
                   href="#book"
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 font-semibold text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon
                     icon={faCalendarDays}
@@ -85,24 +85,24 @@ function Header() {
             {/* Desktop CTA */}
             <a
               href="/signin"
-              className="hidden md:flex items-center gap-1 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
+              className="hidden lg:flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
             >
-              <div className="leading-tight text-left">
-                <span className="block font-bold">Sign Up</span>
+              <div className="leading-tight text-left flex flex-col gap-1">
+                <span className="block font-bold">Sign In / Sign Up</span>
                 <span className="block text-[11px] font-normal text-green-100">
                   Explore our Park
                 </span>
               </div>
               <FontAwesomeIcon
-                icon={faArrowRightFromBracket}
-                className="text-white"
+                icon={faArrowRightToBracket}
+                className="text-white text-xl"
               />
             </a>
 
             {/* Mobile menu toggle */}
             <button
               type="button"
-              className="md:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100"
+              className="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100"
               aria-label="Toggle navigation"
               aria-controls="mobile-menu"
               aria-expanded={open}
@@ -134,7 +134,7 @@ function Header() {
       {/* Mobile menu */}
       <div
         id="mobile-menu"
-        className={`md:hidden ${open ? "block" : "hidden"} border-t bg-white`}
+        className={`lg:hidden ${open ? "block" : "hidden"} border-t bg-white`}
       >
         <nav aria-label="Primary mobile" className="px-4 py-3">
           <ul className="space-y-2 items-center justify-center flex flex-col">
@@ -197,7 +197,10 @@ function Header() {
                     Explore our Tourism Park
                   </span>
                 </div>
-                <FontAwesomeIcon icon={faArrowRightFromBracket} />
+                <FontAwesomeIcon
+                  icon={faArrowRightToBracket}
+                  className="text-xl"
+                />
               </a>
             </li>
           </ul>
