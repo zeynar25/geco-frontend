@@ -7,7 +7,7 @@ function Footer() {
   return (
     <footer className="border-t bg-[#227B05] text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-4">
           {/* Brand + blurb */}
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -21,7 +21,7 @@ function Footer() {
                 <p className="text-xs text-green-100">Tourism Park</p>
               </div>
             </div>
-            <p className="text-sm leading-6 text-green-100">
+            <p className="text-xs leading-6 text-green-100">
               Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente
               quas error accusamus, sunt similique ducimus. Laboriosam dicta eos
               sint eligendi explicabo architecto, blanditiis possimus facilis
