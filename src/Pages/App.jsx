@@ -1,5 +1,5 @@
-// import React, { useEffect, useState } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer.jsx";
@@ -21,7 +21,18 @@ import {
 import { Link } from "react-router-dom";
 
 export default function App() {
+  const location = useLocation();
   const [mapMode, setMapMode] = useState("2D");
+
+  useEffect(() => {
+    // Scroll to the element with the ID matching the hash
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
 
   // const [numberOfAttractions, setNumberOfAttractions] = useState(null);
   // const [monthlyVisitors, setMonthlyVisitors] = useState(null);
