@@ -18,6 +18,7 @@ import {
   faMessage,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 export default function App() {
   const [mapMode, setMapMode] = useState("2D");
@@ -255,7 +256,7 @@ export default function App() {
             {/* Plan your visit */}
             <div className="bg-[#227B05] text-white rounded-xl overflow-hidden shadow-2xl px-5 py-2">
               <h3 className="font-semibold py-2">Plan your visit</h3>
-              <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-2 px-5 py-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 px-5 py-2">
                 <button className="bg-white text-green-600 font-semibold rounded-lg py-1.5">
                   <FontAwesomeIcon
                     icon={faCalendarDays}
@@ -275,13 +276,16 @@ export default function App() {
 
             {/* Know more */}
             <div className="relative min-h-40 max-h-40 bg-[url('/images/homepage.png')] bg-cover bg-bottom bg-no-repeat rounded-xl flex items-center justify-center shadow-2xl overflow-hidden">
-              <div className="z-10 bg-white/80 font-bold p-2 px-10 rounded-xl flex items-center justify-center">
+              <Link
+                to="/about"
+                className="z-10 bg-white/80 font-bold p-2 px-10 rounded-xl flex items-center justify-center"
+              >
                 <span className="text-[#227B05]">Know more</span>
                 <FontAwesomeIcon
                   icon={faArrowRight}
                   className="bg-[#227B05] text-white ml-3 p-2 rounded-full"
                 />
-              </div>
+              </Link>
             </div>
           </div>
         </div>
