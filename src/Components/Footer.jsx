@@ -1,5 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationDot, faPhone } from "@fortawesome/free-solid-svg-icons";
+import {
+  faLocationDot,
+  faPhone,
+  faBook,
+  faBoxOpen,
+  faMapLocationDot,
+  faCalendarDays,
+} from "@fortawesome/free-solid-svg-icons";
 import { faEnvelope, faClock } from "@fortawesome/free-regular-svg-icons";
 import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 
@@ -10,16 +17,9 @@ function Footer() {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-4">
           {/* Brand + blurb */}
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <FontAwesomeIcon
-                icon={faLocationDot}
-                className="text-white"
-                aria-hidden="true"
-              />
-              <div>
-                <h2 className="text-lg font-semibold">CvSU Agri‑Eco Park</h2>
-                <p className="text-xs text-green-100">Tourism Park</p>
-              </div>
+            <div className="flex flex-col">
+              <h2 className="text-lg font-semibold">CvSU Agri‑Eco Park</h2>
+              <p className="text-xs text-green-100">Tourism Park</p>
             </div>
             <p className="text-xs leading-6 text-green-100">
               Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente
@@ -80,7 +80,6 @@ function Footer() {
               <FontAwesomeIcon
                 icon={faClock}
                 className="mt-1 text-white"
-                fixedWidth
                 aria-hidden="true"
               />
               <div className="text-sm text-green-100">
@@ -92,7 +91,31 @@ function Footer() {
 
           {/* Social */}
           <div>
-            <h3 className="mb-4 text-base font-semibold">Connect with us</h3>
+            <h3 className="mb-3 text-base font-semibold">Connect with us</h3>
+            <div className="flex flex-col gap-2 mb-5">
+              <a href="#" className="text-sm">
+                <FontAwesomeIcon
+                  icon={faCalendarDays}
+                  className="text-white mr-2"
+                />
+                About the park
+              </a>
+              <a href="#" className="text-sm">
+                <FontAwesomeIcon icon={faBoxOpen} className="text-white mr-2" />
+                Eco-park Service packages
+              </a>
+              <a href="#" className="text-sm">
+                <FontAwesomeIcon
+                  icon={faMapLocationDot}
+                  className="text-white mr-2"
+                />
+                Explore our Attractions
+              </a>
+              <a href="#" className="text-sm">
+                <FontAwesomeIcon icon={faBook} className="text-white mr-2" />
+                Solo or Group bookings
+              </a>
+            </div>
             <div className="flex items-center gap-4">
               <a
                 href="https://facebook.com/cvsuargriecopark"
