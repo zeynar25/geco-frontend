@@ -1,17 +1,18 @@
 function StatisticCard({
   value,
   label,
+  label2,
   icon,
   src,
   img_alt,
-  className = "",
+  className,
   bg = "bg-white",
-  iconBg = "bg-green-50",
-  iconColor = "text-green-600",
+  iconBg,
+  iconColor,
 }) {
   return (
     <div
-      className={`w-80 sm:w-auto rounded-xl border ${bg} shadow-sm p-4 sm:p-5 ${className}`}
+      className={`rounded-xl border ${bg} shadow-sm p-4 sm:p-5 ${className}`}
     >
       <div className="flex flex-col items-center text-center gap-3">
         <div
@@ -31,7 +32,10 @@ function StatisticCard({
           <div className="text-2xl font-extrabold leading-tight text-gray-900">
             {value}
           </div>
-          <div className="text-sm text-gray-500">{label}</div>
+          <div className="text-sm text-gray-500">
+            <div>{label}</div>
+            <div>{label2}</div>
+          </div>
         </div>
       </div>
     </div>

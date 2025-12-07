@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 
 import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer.jsx";
-import StatisticCard from "../Components/StatisticCard.jsx";
+import ValueCard from "../Components/ValueCard.jsx";
 import "../index.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -132,7 +132,7 @@ export default function App() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Cards grid */}
           <div className="grid place-items-center sm:place-items-stretch grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatisticCard
+            <ValueCard
               label="Attractions"
               value="10"
               icon={
@@ -140,17 +140,17 @@ export default function App() {
               }
               iconBg="bg-blue-900"
               iconColor="text-white"
-              className="border-0 shadow-sm"
+              className="w-80 sm:w-auto border-0 shadow-sm"
             />
-            <StatisticCard
+            <ValueCard
               label="Tour Packages"
               value="8"
               icon={<FontAwesomeIcon icon={faBoxOpen} className="text-2xl" />}
               iconBg="bg-green-500"
               iconColor="text-gray-900"
-              className="border-0 shadow-sm"
+              className="w-80 sm:w-auto border-0 shadow-sm"
             />
-            <StatisticCard
+            <ValueCard
               label="Monthly Visitors"
               value="100"
               icon={
@@ -158,15 +158,15 @@ export default function App() {
               }
               iconBg="bg-purple-900"
               iconColor="text-white"
-              className="border-0 shadow-sm"
+              className="w-80 sm:w-auto border-0 shadow-sm"
             />
-            <StatisticCard
+            <ValueCard
               label="Average Rating"
               value="4.8"
               icon={<FontAwesomeIcon icon={faStar} className="text-2xl" />}
               iconBg="bg-yellow-400"
               iconColor="text-gray-900"
-              className="border-0 shadow-sm"
+              className="w-80 sm:w-auto border-0 shadow-sm"
             />
           </div>
         </div>
