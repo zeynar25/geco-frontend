@@ -67,8 +67,8 @@ function Header() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="#book"
+                <Link
+                  to="/book"
                   className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 font-semibold text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon
@@ -76,7 +76,7 @@ function Header() {
                     className="text-green-600"
                   />
                   <span>Book Visit</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -173,8 +173,8 @@ function Header() {
               </Link>
             </li>
             <li>
-              <a
-                href="#book"
+              <Link
+                to="/book"
                 className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
                 onClick={() => setOpen(false)}
               >
@@ -183,7 +183,7 @@ function Header() {
                   className="text-green-600"
                 />
                 <span>Book Visit</span>
-              </a>
+              </Link>
             </li>
             {/* Mobile CTA */}
             <li className="pt-2">
