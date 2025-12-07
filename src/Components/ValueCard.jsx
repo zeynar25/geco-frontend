@@ -1,16 +1,15 @@
 function StatisticCard({
   title,
-  titleColor,
+  titleClasses,
   description,
   description2,
-  descriptionColor,
+  descriptionClasses,
   icon,
   src,
   img_alt,
   className,
   bg = "bg-white",
-  iconBg,
-  iconColor,
+  iconClasses,
 }) {
   return (
     <div
@@ -18,7 +17,7 @@ function StatisticCard({
     >
       <div className="flex flex-col items-center text-center gap-3">
         <div
-          className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-lg ${iconBg} ${iconColor} text-xl sm:text-2xl`}
+          className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-lg text-xl sm:text- ${iconClasses}`}
         >
           {icon ? (
             icon
@@ -32,11 +31,11 @@ function StatisticCard({
         </div>
         <div>
           <div
-            className={`text-2xl font-extrabold leading-tight ${titleColor}`}
+            className={`text-2xl font-extrabold leading-tight ${titleClasses}`}
           >
             {title}
           </div>
-          <div className={`text-sm ${descriptionColor}`}>
+          <div className={`text-sm ${descriptionClasses}`}>
             <div>{description}</div>
             <div>{description2}</div>
           </div>

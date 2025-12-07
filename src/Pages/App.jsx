@@ -134,46 +134,42 @@ export default function App() {
           <div className="grid place-items-center sm:place-items-stretch grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <ValueCard
               title="10"
-              titleColor="text-gray-900"
+              titleClasses="text-gray-900"
               description="Attractions"
-              descriptionColor="text-gray-500"
+              descriptionClasses="text-gray-500"
               icon={
                 <FontAwesomeIcon icon={faLocationDot} className="text-2xl" />
               }
-              iconBg="bg-blue-900"
-              iconColor="text-white"
+              iconClasses="bg-blue-900 text-white"
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
             <ValueCard
               title="8"
-              titleColor="text-gray-900"
+              titleClasses="text-gray-900"
               description="Tour Packages"
-              descriptionColor="text-gray-500"
+              descriptionClasses="text-gray-500"
               icon={<FontAwesomeIcon icon={faBoxOpen} className="text-2xl" />}
-              iconBg="bg-green-500"
-              iconColor="text-gray-900"
+              iconClasses="bg-green-500 text-gray-900"
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
             <ValueCard
               title="100"
-              titleColor="text-gray-900"
+              titleClasses="text-gray-900"
               description="Monthly Visitors"
-              descriptionColor="text-gray-500"
+              descriptionClasses="text-gray-500"
               icon={
                 <FontAwesomeIcon icon={faPeopleGroup} className="text-2xl" />
               }
-              iconBg="bg-purple-900"
-              iconColor="text-white"
+              iconClasses="bg-purple-900 text-white"
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
             <ValueCard
               title="4.8"
-              titleColor="text-gray-900"
+              titleClasses="text-gray-900"
               description="Average Rating"
-              descriptionColor="text-gray-500"
+              descriptionClasses="text-gray-500"
               icon={<FontAwesomeIcon icon={faStar} className="text-2xl" />}
-              iconBg="bg-yellow-400"
-              iconColor="text-gray-900"
+              iconClasses="bg-yellow-400 text-gray-900"
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
           </div>
