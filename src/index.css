@@ -7,3 +7,7 @@ bg-green-600
 bg-green-50
 bg-[#a9e2a3]
 */
+
+@theme {
+  --breakpoint-xs: 30rem;
+}
