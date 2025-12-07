@@ -20,7 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
-export default function App() {
+export default function Home() {
   const location = useLocation();
   const [mapMode, setMapMode] = useState("2D");
 
