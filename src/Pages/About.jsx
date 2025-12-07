@@ -1,5 +1,6 @@
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
+import ValueCard from "../Components/ValueCard.jsx";
 import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,12 +12,15 @@ import {
   faEye,
   faHandsHolding,
   faLeaf,
+  faLocationDot,
+  faPhone,
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
+import { faCircleQuestion, faClock } from "@fortawesome/free-regular-svg-icons";
 
 import AboutCard from "../Components/AboutCard";
+import Faq from "../Components/Faq";
 
 export default function About() {
   return (
@@ -124,7 +128,7 @@ export default function About() {
             className="col-span-2"
           />
 
-          <div className="col-span-2 rounded-xl border-0 shadow-sm overflow-hidden m-5">
+          <div className="col-span-2 rounded-xl border-0 shadow-sm overflow-hidden m-5 bg-white">
             <header className="flex flex-col px-10 py-5 bg-[#227B05] text-white">
               <div className="flex gap-2">
                 <span className="text-xl">
@@ -140,7 +144,56 @@ export default function About() {
                 Park
               </p>
             </header>
-            <div></div>
+
+            {/* FAQ Items */}
+            <div className="flex flex-col gap-5 p-5">
+              <Faq
+                number={1}
+                question="What is Agri-Eco Tourism Park?"
+                answer="Agri-Eco Tourism Park is a sustainable tourism destination that combines agriculture and ecological conservation."
+              />
+              <Faq
+                number={2}
+                question="What is Agri-Eco Tourism Park?"
+                answer="Agri-Eco Tourism Park is a sustainable tourism destination that combines agriculture and ecological conservation."
+              />
+              <Faq
+                number={3}
+                question="What is Agri-Eco Tourism Park?"
+                answer="Agri-Eco Tourism Park is a sustainable tourism destination that combines agriculture and ecological conservation."
+              />
+            </div>
+          </div>
+
+          <div className="col-span-2 grid grid-cols-3 gap-5 m-5">
+            <ValueCard
+              label="Monday-Thursday"
+              label2="8:00 AM - 5:00 PM"
+              value="Operating Hours"
+              icon={<FontAwesomeIcon icon={faClock} className="text-xl" />}
+              iconColor="text-gray-900"
+              className="col-span-3 md:col-span-1 border-0 shadow-2xl"
+            />
+            <ValueCard
+              label="Monday-Thursday"
+              label2="8:00 AM - 5:00 PM"
+              value="Location"
+              icon={
+                <FontAwesomeIcon icon={faLocationDot} className="text-xl" />
+              }
+              iconBg="bg-yellow-400"
+              iconColor="text-gray-900"
+              className="col-span-3 md:col-span-1 border-0 shadow-2xl"
+            />
+            <ValueCard
+              label="Monday-Thursday"
+              label2="8:00 AM - 5:00 PM"
+              value="Contact"
+              icon={<FontAwesomeIcon icon={faPhone} className="text-xl" />}
+              iconBg="bg-yellow-400"
+              iconColor="text-gray-900"
+              className="col-span-3 md:col-span-1 border-0 shadow-2xl"
+            />
           </div>
         </div>
       </div>
