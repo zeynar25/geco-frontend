@@ -1,7 +1,9 @@
 function StatisticCard({
-  value,
-  label,
-  label2,
+  title,
+  titleColor,
+  description,
+  description2,
+  descriptionColor,
   icon,
   src,
   img_alt,
@@ -29,12 +31,14 @@ function StatisticCard({
           ) : null}
         </div>
         <div>
-          <div className="text-2xl font-extrabold leading-tight text-gray-900">
-            {value}
+          <div
+            className={`text-2xl font-extrabold leading-tight ${titleColor}`}
+          >
+            {title}
           </div>
-          <div className="text-sm text-gray-500">
-            <div>{label}</div>
-            <div>{label2}</div>
+          <div className={`text-sm ${descriptionColor}`}>
+            <div>{description}</div>
+            <div>{description2}</div>
           </div>
         </div>
       </div>

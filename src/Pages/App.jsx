@@ -133,8 +133,10 @@ export default function App() {
           {/* Cards grid */}
           <div className="grid place-items-center sm:place-items-stretch grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <ValueCard
-              label="Attractions"
-              value="10"
+              title="10"
+              titleColor="text-gray-900"
+              description="Attractions"
+              descriptionColor="text-gray-500"
               icon={
                 <FontAwesomeIcon icon={faLocationDot} className="text-2xl" />
               }
@@ -143,16 +145,20 @@ export default function App() {
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
             <ValueCard
-              label="Tour Packages"
-              value="8"
+              title="8"
+              titleColor="text-gray-900"
+              description="Tour Packages"
+              descriptionColor="text-gray-500"
               icon={<FontAwesomeIcon icon={faBoxOpen} className="text-2xl" />}
               iconBg="bg-green-500"
               iconColor="text-gray-900"
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
             <ValueCard
-              label="Monthly Visitors"
-              value="100"
+              title="100"
+              titleColor="text-gray-900"
+              description="Monthly Visitors"
+              descriptionColor="text-gray-500"
               icon={
                 <FontAwesomeIcon icon={faPeopleGroup} className="text-2xl" />
               }
@@ -161,8 +167,10 @@ export default function App() {
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
             <ValueCard
-              label="Average Rating"
-              value="4.8"
+              title="4.8"
+              titleColor="text-gray-900"
+              description="Average Rating"
+              descriptionColor="text-gray-500"
               icon={<FontAwesomeIcon icon={faStar} className="text-2xl" />}
               iconBg="bg-yellow-400"
               iconColor="text-gray-900"
