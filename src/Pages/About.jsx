@@ -32,7 +32,7 @@ export default function About() {
           <Link to="/">
             <FontAwesomeIcon
               icon={faArrowLeftLong}
-              className="text-black border rounded-sm p-2"
+              className="text-black border rounded-sm p-2 hover:text-green-600"
             />
           </Link>
           <div className="flex flex-col">
@@ -167,31 +167,34 @@ export default function About() {
 
           <div className="col-span-2 grid grid-cols-3 gap-5 m-5">
             <ValueCard
-              label="Monday-Thursday"
-              label2="8:00 AM - 5:00 PM"
-              value="Operating Hours"
-              icon={<FontAwesomeIcon icon={faClock} className="text-xl" />}
-              iconColor="text-gray-900"
+              title="Operating Hours"
+              titleClasses="text-[#227B05] text-xl mb-3"
+              description="Monday-Thursday"
+              description2="8:00 AM - 5:00 PM"
+              icon={<FontAwesomeIcon icon={faClock} className="text-4xl" />}
+              iconClasses="text-[#227B05]"
               className="col-span-3 md:col-span-1 border-0 shadow-2xl"
             />
+
             <ValueCard
-              label="Monday-Thursday"
-              label2="8:00 AM - 5:00 PM"
-              value="Location"
+              title="Location"
+              titleClasses="text-[#227B05] text-xl mb-3"
+              description="Cavite State University"
+              description2="Indang, Cavite"
               icon={
-                <FontAwesomeIcon icon={faLocationDot} className="text-xl" />
+                <FontAwesomeIcon icon={faLocationDot} className="text-4xl" />
               }
-              iconBg="bg-yellow-400"
-              iconColor="text-gray-900"
+              iconClasses="text-blue-900"
               className="col-span-3 md:col-span-1 border-0 shadow-2xl"
             />
+
             <ValueCard
-              label="Monday-Thursday"
-              label2="8:00 AM - 5:00 PM"
-              value="Contact"
-              icon={<FontAwesomeIcon icon={faPhone} className="text-xl" />}
-              iconBg="bg-yellow-400"
-              iconColor="text-gray-900"
+              title="Contact"
+              titleClasses="text-[#227B05] text-xl mb-3"
+              description="(012) 345-6789"
+              description2="agri-ecopark@cvsu.edu.ph"
+              icon={<FontAwesomeIcon icon={faPhone} className="text-4xl" />}
+              iconClasses="text-[#7942C2]"
               className="col-span-3 md:col-span-1 border-0 shadow-2xl"
             />
           </div>
