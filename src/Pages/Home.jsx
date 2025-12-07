@@ -272,14 +272,14 @@ export default function Home() {
             <div className="bg-[#227B05] text-white rounded-xl overflow-hidden shadow-2xl px-5 py-2">
               <h3 className="font-semibold py-2">Plan your visit</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 px-5 py-2">
-                <button className="bg-white text-green-600 font-semibold rounded-lg py-1.5">
+                <button className="bg-white/90 hover:bg-white text-green-600 font-semibold rounded-lg py-1.5 cursor-pointer">
                   <FontAwesomeIcon
                     icon={faCalendarDays}
                     className="text-black mr-2"
                   />
                   Book your visit
                 </button>
-                <button className="border-white bg-[#a9e2a3] text-black font-semibold rounded-lg py-1.5">
+                <button className="border-white bg-[#a9e2a3]/90 hover:bg-[#a9e2a3] text-black font-semibold rounded-lg py-1.5 cursor-pointer">
                   <FontAwesomeIcon
                     icon={faMessage}
                     className="text-black mr-2"
@@ -293,7 +293,7 @@ export default function Home() {
             <div className="relative min-h-40 max-h-40 bg-[url('/images/homepage.png')] bg-cover bg-bottom bg-no-repeat rounded-xl flex items-center justify-center shadow-2xl overflow-hidden">
               <Link
                 to="/about"
-                className="z-10 bg-white/80 font-bold p-2 px-10 rounded-xl flex items-center justify-center"
+                className="z-10 bg-white/80 hover:bg-white font-bold p-2 px-10 rounded-xl flex items-center justify-center"
               >
                 <span className="text-[#227B05]">Know more</span>
                 <FontAwesomeIcon
