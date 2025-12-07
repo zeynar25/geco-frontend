@@ -36,7 +36,7 @@ export default function About() {
             />
           </Link>
           <div className="flex flex-col">
-            <h1 className="font-bold text-xl">
+            <h1 className="font-bold text-xl text-[#227B05]">
               About CvSU Agri-Eco Tourism Park
             </h1>
             <p>Discover our mission, vision, and values.</p>
