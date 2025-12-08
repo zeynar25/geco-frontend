@@ -1,6 +1,9 @@
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import ValueCard from "../Components/ValueCard.jsx";
+import AboutCard from "../Components/HeaderCard.jsx";
+import Faq from "../Components/Faq";
+
 import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,9 +21,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { faCircleQuestion, faClock } from "@fortawesome/free-regular-svg-icons";
-
-import AboutCard from "../Components/AboutCard";
-import Faq from "../Components/Faq";
 
 export default function About() {
   return (
