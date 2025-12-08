@@ -5,10 +5,11 @@ import {
   faTree,
   faBook,
   faArrowRightToBracket,
+  faArrowRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 async function logoutAccount() {
   const token = localStorage.getItem("token");
@@ -21,7 +22,7 @@ async function logoutAccount() {
 
   if (!res.ok) {
     const error = await res.text();
-    throw new Error(error?.error || "Token has expired");
+    throw new Error(error?.error || "Token has expired.");
   }
   return res.text();
 }
@@ -32,6 +33,19 @@ function Header() {
     () => !!localStorage.getItem("token")
   );
   const navigate = useNavigate();
+
+  const { data, isPending } = useQuery({
+    queryKey: ["account-details"],
+    enabled: isLoggedIn,
+    queryFn: async () => {
+      const details = await fetch("http://localhost:8080/account/my-account");
+      if (!details.ok) {
+        const error = await details.json();
+        throw new Error(error?.error || "Getting account details failed");
+      }
+      return await details.json();
+    },
+  });
 
   const logoutMutation = useMutation({
     mutationFn: logoutAccount,
@@ -134,11 +148,24 @@ function Header() {
                 onClick={handleLogout}
                 className="hidden lg:flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
               >
-                Logout
+                <div className="leading-tight text-left flex flex-col gap-1">
+                  <span className="block font-bold">Logout</span>
+                  <span className="block text-[11px] font-normal text-green-100">
+                    {isPending
+                      ? "Loading..."
+                      : `${data?.detail.firstName || ""} ${
+                          data?.detail.surname || ""
+                        }`}
+                  </span>
+                </div>
+                <FontAwesomeIcon
+                  icon={faArrowRightFromBracket}
+                  className="text-white text-xl"
+                />
               </button>
             ) : (
-              <a
-                href="/signin"
+              <Link
+                to="/signin"
                 className="hidden lg:flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
               >
                 <div className="leading-tight text-left flex flex-col gap-1">
@@ -151,7 +178,7 @@ function Header() {
                   icon={faArrowRightToBracket}
                   className="text-white text-xl"
                 />
-              </a>
+              </Link>
             )}
 
             {/* Mobile menu toggle */}
@@ -241,22 +268,44 @@ function Header() {
             </li>
             {/* Mobile CTA */}
             <li className="pt-2">
-              <a
-                href="/signin"
-                className="inline-flex w-fit items-center gap-3 rounded-md bg-green-600 px-4 py-3 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
-                onClick={() => setOpen(false)}
-              >
-                <div className="leading-tight text-left">
-                  <span className="block font-bold">Sign In / Sign Up</span>
-                  <span className="block text-[11px] font-normal text-green-100">
-                    Explore our Tourism Park
-                  </span>
-                </div>
-                <FontAwesomeIcon
-                  icon={faArrowRightToBracket}
-                  className="text-xl"
-                />
-              </a>
+              {isLoggedIn ? (
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex w-fit items-center gap-3 rounded-md bg-red-600 px-4 py-3 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
+                >
+                  <div className="leading-tight text-left flex flex-col gap-1">
+                    <span className="block font-bold">Logout</span>
+                    <span className="block text-[11px] font-normal text-green-100">
+                      {isPending
+                        ? "Loading..."
+                        : `${data?.detail.firstName || ""} ${
+                            data?.detail.surname || ""
+                          }`}
+                    </span>
+                  </div>
+                  <FontAwesomeIcon
+                    icon={faArrowRightFromBracket}
+                    className="text-white text-xl"
+                  />
+                </button>
+              ) : (
+                <Link
+                  to="/signin"
+                  className="inline-flex w-fit items-center gap-3 rounded-md bg-green-600 px-4 py-3 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
+                  onClick={() => setOpen(false)}
+                >
+                  <div className="leading-tight text-left">
+                    <span className="block font-bold">Sign In / Sign Up</span>
+                    <span className="block text-[11px] font-normal text-green-100">
+                      Explore our Tourism Park
+                    </span>
+                  </div>
+                  <FontAwesomeIcon
+                    icon={faArrowRightToBracket}
+                    className="text-xl"
+                  />
+                </Link>
+              )}
             </li>
           </ul>
         </nav>
