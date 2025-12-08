@@ -61,15 +61,17 @@ function Book() {
           </div>
         </div>
         <div className="col-span-2 grid grid-cols-3 gap-5 m-5">
-          <ValueCard
-            title="Operating Hours"
-            titleClasses="text-[#227B05] text-xl mb-3"
-            description="Monday-Thursday"
-            description2="8:00 AM - 5:00 PM"
-            icon={<FontAwesomeIcon icon={faClock} className="text-4xl" />}
-            iconClasses="text-[#227B05]"
-            className="col-span-3 md:col-span-1 border-0 shadow-2xl"
-          />
+          <Link to="/operating-hours">
+            <ValueCard
+              title="Operating Hours"
+              titleClasses="text-[#227B05] text-xl mb-3"
+              description="Monday-Thursday"
+              description2="8:00 AM - 5:00 PM"
+              icon={<FontAwesomeIcon icon={faClock} className="text-4xl" />}
+              iconClasses="text-[#227B05]"
+              className="col-span-3 md:col-span-1 border-0 shadow-2xl"
+            />
+          </Link>
 
           <ValueCard
             title="Packages & Promos"
