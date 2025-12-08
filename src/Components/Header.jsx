@@ -11,7 +11,28 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
+import { jwtDecode } from "jwt-decode";
+
+function isLoggedIn() {
+  const token = localStorage.getItem("token");
+  if (!token) return false;
+
+  try {
+    const decoded = jwtDecode(token);
+    if (decoded.exp && Date.now() < decoded.exp * 1000) {
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 async function logoutAccount() {
+  if (isLoggedIn() === false) {
+    throw new Error("Token has expired, please log in again");
+  }
+
   const token = localStorage.getItem("token");
   const res = await fetch("http://localhost:8080/account/logout", {
     method: "POST",
@@ -22,23 +43,26 @@ async function logoutAccount() {
 
   if (!res.ok) {
     const error = await res.text();
-    throw new Error(error?.error || "Token has expired.");
+    throw new Error(error?.error || "Something went wrong during logout");
   }
   return res.text();
 }
 
 function Header() {
   const [open, setOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    () => !!localStorage.getItem("token")
-  );
+  const [loggedIn, setLoggedIn] = useState(isLoggedIn());
   const navigate = useNavigate();
 
   const { data, isPending } = useQuery({
     queryKey: ["account-details"],
-    enabled: isLoggedIn,
+    enabled: loggedIn,
     queryFn: async () => {
-      const details = await fetch("http://localhost:8080/account/my-account");
+      const token = localStorage.getItem("token");
+      const details = await fetch("http://localhost:8080/account/my-account", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!details.ok) {
         const error = await details.json();
         throw new Error(error?.error || "Getting account details failed");
@@ -51,7 +75,7 @@ function Header() {
     mutationFn: logoutAccount,
     onSuccess: () => {
       localStorage.removeItem("token");
-      setIsLoggedIn(false);
+      setLoggedIn(false);
 
       alert("You have been logged out.");
       navigate("/");
@@ -65,7 +89,7 @@ function Header() {
     logoutMutation.mutate(undefined, {
       onSettled: () => {
         localStorage.removeItem("token");
-        setIsLoggedIn(false);
+        setLoggedIn(false);
         navigate("/");
       },
     });
@@ -143,7 +167,7 @@ function Header() {
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
             {/* Desktop CTA */}
-            {isLoggedIn ? (
+            {loggedIn ? (
               <button
                 onClick={handleLogout}
                 className="hidden lg:flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
@@ -268,7 +292,7 @@ function Header() {
             </li>
             {/* Mobile CTA */}
             <li className="pt-2">
-              {isLoggedIn ? (
+              {loggedIn ? (
                 <button
                   onClick={handleLogout}
                   className="inline-flex w-fit items-center gap-3 rounded-md bg-red-600 px-4 py-3 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
