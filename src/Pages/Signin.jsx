@@ -1,7 +1,9 @@
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
+
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
@@ -37,6 +39,7 @@ async function loginAccount({ email, password }) {
 function Signin() {
   const [formMode, setFormMode] = useState("register");
   const [show, setShow] = useState(true);
+  const navigate = useNavigate();
 
   function handleSwitch(mode) {
     setShow(false);
@@ -62,6 +65,7 @@ function Signin() {
       localStorage.setItem("token", token);
 
       alert("Login successful!");
+      navigate("/");
     },
     onError: (error) => {
       alert(error.message);
