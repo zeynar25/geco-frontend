@@ -60,8 +60,11 @@ function Book() {
             <p>Reserve your spot at CvSU Agri-Eco Tourism Park</p>
           </div>
         </div>
-        <div className="col-span-2 grid grid-cols-3 gap-5 m-5">
-          <Link to="/operating-hours">
+        <div className="col-span-2 grid grid-cols-3 gap-5 m-5 items-stretch">
+          <Link
+            to="/operating-hours"
+            className="col-span-3 md:col-span-1 h-full"
+          >
             <ValueCard
               title="Operating Hours"
               titleClasses="text-[#227B05] text-xl mb-3"
@@ -69,28 +72,36 @@ function Book() {
               description2="8:00 AM - 5:00 PM"
               icon={<FontAwesomeIcon icon={faClock} className="text-4xl" />}
               iconClasses="text-[#227B05]"
-              className="col-span-3 md:col-span-1 border-0 shadow-2xl"
+              className="h-full border-0 shadow-2xl"
             />
           </Link>
 
-          <ValueCard
-            title="Packages & Promos"
-            titleClasses="text-[#227B05] text-xl mb-3"
-            description="Various packages available"
-            description2="Starting from P100"
-            icon={<FontAwesomeIcon icon={faBoxOpen} className="text-4xl" />}
-            iconClasses="text-blue-900"
-            className="col-span-3 md:col-span-1 border-0 shadow-2xl"
-          />
+          <Link
+            to="/packages-promos"
+            className="col-span-3 md:col-span-1 h-full"
+          >
+            <ValueCard
+              title="Packages & Promos"
+              titleClasses="text-[#227B05] text-xl mb-3"
+              description="Various packages available"
+              description2="Starting from P100"
+              icon={<FontAwesomeIcon icon={faBoxOpen} className="text-4xl" />}
+              iconClasses="text-blue-900"
+              className="h-full border-0 shadow-2xl"
+            />
+          </Link>
 
-          <ValueCard
-            title="Park Calendar"
-            titleClasses="text-[#227B05] text-xl mb-3"
-            description="Check availability"
-            icon={<FontAwesomeIcon icon={faCalendar} className="text-4xl" />}
-            iconClasses="text-[#7942C2]"
-            className="col-span-3 md:col-span-1 border-0 shadow-2xl"
-          />
+          <Link to="/park-calendar" className="col-span-3 md:col-span-1 h-full">
+            <ValueCard
+              title="Park Calendar"
+              titleClasses="text-[#227B05] text-xl mb-3"
+              description="Check availability"
+              description2="Plan your visit"
+              icon={<FontAwesomeIcon icon={faCalendar} className="text-4xl" />}
+              iconClasses="text-[#7942C2]"
+              className="h-full border-0 shadow-2xl"
+            />
+          </Link>
         </div>
       </div>
 
