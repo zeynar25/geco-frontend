@@ -37,7 +37,7 @@ async function loginAccount({ email, password }) {
 }
 
 function Signin() {
-  const [formMode, setFormMode] = useState("register");
+  const [formMode, setFormMode] = useState("login");
   const [show, setShow] = useState(true);
   const navigate = useNavigate();
 
