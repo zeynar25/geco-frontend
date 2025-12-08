@@ -37,17 +37,22 @@ export default function Home() {
     }
   }, [location]);
 
-  const { data, isPending } = useQuery({
+  const { data, isPending, error } = useQuery({
     queryKey: ["home-stats"],
-    // runs whenever we run the query with this key
+    // runs whenever we run the query with this key.
     queryFn: async () => {
       const homestats = await fetch("http://localhost:8080/home");
       if (!homestats.ok) {
-        throw new Error("Network response was not ok");
+        const error = await homestats.json();
+        throw new Error(error?.error || "Getting home statistics failed");
       }
       return await homestats.json();
     },
   });
+
+  if (error) {
+    alert("something went wrong in retrieving home statistics");
+  }
 
   return (
     <>
