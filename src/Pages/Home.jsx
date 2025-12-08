@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
+import { ClipLoader } from "react-spinners";
+
 import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer.jsx";
 import ValueCard from "../Components/ValueCard.jsx";
@@ -19,6 +21,7 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
   const location = useLocation();
@@ -34,53 +37,17 @@ export default function Home() {
     }
   }, [location]);
 
-  // const [numberOfAttractions, setNumberOfAttractions] = useState(null);
-  // const [monthlyVisitors, setMonthlyVisitors] = useState(null);
-  // const [avgRating, setAvgRating] = useState(null);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
-
-  // useEffect(() => {
-  //   async function loadHomeStats() {
-  //     try {
-  //       // replace with your backend URL for debugging:
-  //       const res = await fetch("http://localhost:8080/home");
-
-  //       if (!res.ok) {
-  //         const text = await res.text();
-  //         throw new Error(`HTTP ${res.status}: ${text}`);
-  //       }
-
-  //       const ct = res.headers.get("content-type") || "";
-  //       if (!ct.includes("application/json")) {
-  //         const text = await res.text();
-  //         throw new Error(
-  //           "Expected JSON but got HTML/text: " + text.slice(0, 200)
-  //         );
-  //       }
-
-  //       const data = await res.json();
-
-  //       // backend DTO fields: attractionNumber, averageVisitor, averageRating
-  //       setNumberOfAttractions(data.attractionNumber ?? 0);
-  //       setMonthlyVisitors(data.averageVisitor ?? 0);
-  //       setAvgRating(data.averageRating ?? 0);
-  //     } catch (err) {
-  //       setError(err.message || "Failed to load home stats");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  //   loadHomeStats();
-  // }, []);
-
-  // if (loading) {
-  //   return <div>Loading home stats…</div>;
-  // }
-
-  // if (error) {
-  //   return <div>Error: {error}</div>;
-  // }
+  const { data, isPending } = useQuery({
+    queryKey: ["home-stats"],
+    // runs whenever we run the query with this key
+    queryFn: async () => {
+      const homestats = await fetch("http://localhost:8080/home");
+      if (!homestats.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return await homestats.json();
+    },
+  });
 
   return (
     <>
@@ -133,7 +100,7 @@ export default function Home() {
           {/* Cards grid */}
           <div className="grid place-items-center sm:place-items-stretch grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <ValueCard
-              title="10"
+              title={isPending ? "..." : data?.attractionNumber}
               titleClasses="text-gray-900"
               description="Attractions"
               descriptionClasses="text-gray-500"
@@ -144,7 +111,7 @@ export default function Home() {
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
             <ValueCard
-              title="8"
+              title={isPending ? "..." : data?.tourPackageNumber}
               titleClasses="text-gray-900"
               description="Tour Packages"
               descriptionClasses="text-gray-500"
@@ -153,7 +120,7 @@ export default function Home() {
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
             <ValueCard
-              title="100"
+              title={isPending ? "..." : data?.averageVisitor}
               titleClasses="text-gray-900"
               description="Monthly Visitors"
               descriptionClasses="text-gray-500"
@@ -164,7 +131,7 @@ export default function Home() {
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
             <ValueCard
-              title="4.8"
+              title={isPending ? "..." : data?.averageRating}
               titleClasses="text-gray-900"
               description="Average Rating"
               descriptionClasses="text-gray-500"
