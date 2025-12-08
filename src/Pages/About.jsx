@@ -1,7 +1,7 @@
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import ValueCard from "../Components/ValueCard.jsx";
-import AboutCard from "../Components/HeaderCard.jsx";
+import HeaderCard from "../Components/HeaderCard.jsx";
 import Faq from "../Components/Faq";
 
 import { Link } from "react-router-dom";
@@ -52,7 +52,7 @@ export default function About() {
         </div>
 
         <div className="grid grid-cols-2">
-          <AboutCard
+          <HeaderCard
             headerBg="bg-[#a9e2a3]"
             headerColor="text-[#227B05]"
             icon={<FontAwesomeIcon icon={faBuilding} />}
@@ -61,7 +61,7 @@ export default function About() {
             className="col-span-2 md:col-span-1"
           />
 
-          <AboutCard
+          <HeaderCard
             headerBg="bg-blue-50"
             headerColor="text-blue-900"
             icon={<FontAwesomeIcon icon={faEye} />}
@@ -119,7 +119,7 @@ export default function About() {
             </div>
           </div>
 
-          <AboutCard
+          <HeaderCard
             headerBg="bg-[#F5F3C9]"
             headerColor="text-[#ADA128]"
             icon={<FontAwesomeIcon icon={faBook} />}
