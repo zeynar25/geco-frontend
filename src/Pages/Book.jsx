@@ -1,7 +1,11 @@
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import ValueCard from "../Components/ValueCard.jsx";
-import { Link } from "react-router-dom";
+
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { jwtDecode } from "jwt-decode";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,7 +15,32 @@ import {
   faClock,
 } from "@fortawesome/free-solid-svg-icons";
 
+function isLoggedIn() {
+  const token = localStorage.getItem("token");
+  if (!token) return false;
+
+  try {
+    const decoded = jwtDecode(token);
+    if (decoded.exp && Date.now() < decoded.exp * 1000) {
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 function Book() {
+  const [loggedIn, setLoggedIn] = useState(isLoggedIn());
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loggedIn) {
+      alert("Please log in to book a visit.");
+      navigate("/signin");
+    }
+  }, [loggedIn, navigate]);
+
   return (
     <>
       <Header />
