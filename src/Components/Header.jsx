@@ -7,10 +7,55 @@ import {
   faArrowRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+
+async function logoutAccount() {
+  const token = localStorage.getItem("token");
+  const res = await fetch("http://localhost:8080/account/logout", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error?.error || "Token has expired");
+  }
+  return res.text();
+}
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => !!localStorage.getItem("token")
+  );
+  const navigate = useNavigate();
+
+  const logoutMutation = useMutation({
+    mutationFn: logoutAccount,
+    onSuccess: () => {
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+
+      alert("You have been logged out.");
+      navigate("/");
+    },
+    onError: (error) => {
+      alert(error.message);
+    },
+  });
+
+  function handleLogout() {
+    logoutMutation.mutate(undefined, {
+      onSettled: () => {
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        navigate("/");
+      },
+    });
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur border-b">
@@ -84,21 +129,30 @@ function Header() {
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
             {/* Desktop CTA */}
-            <a
-              href="/signin"
-              className="hidden lg:flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
-            >
-              <div className="leading-tight text-left flex flex-col gap-1">
-                <span className="block font-bold">Sign In / Sign Up</span>
-                <span className="block text-[11px] font-normal text-green-100">
-                  Explore our Park
-                </span>
-              </div>
-              <FontAwesomeIcon
-                icon={faArrowRightToBracket}
-                className="text-white text-xl"
-              />
-            </a>
+            {isLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="hidden lg:flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
+              >
+                Logout
+              </button>
+            ) : (
+              <a
+                href="/signin"
+                className="hidden lg:flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
+              >
+                <div className="leading-tight text-left flex flex-col gap-1">
+                  <span className="block font-bold">Sign In / Sign Up</span>
+                  <span className="block text-[11px] font-normal text-green-100">
+                    Explore our Park
+                  </span>
+                </div>
+                <FontAwesomeIcon
+                  icon={faArrowRightToBracket}
+                  className="text-white text-xl"
+                />
+              </a>
+            )}
 
             {/* Mobile menu toggle */}
             <button
