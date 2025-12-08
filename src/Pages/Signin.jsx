@@ -6,7 +6,6 @@ import { useMutation } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 
-// Registration function
 async function registerAccount({ email, password, confirmPassword, role }) {
   const res = await fetch("http://localhost:8080/account", {
     method: "POST",
@@ -21,19 +20,23 @@ async function registerAccount({ email, password, confirmPassword, role }) {
   return res.json();
 }
 
+async function loginAccount({ email, password }) {
+  const res = await fetch("http://localhost:8080/account/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error?.error || "Login failed");
+  }
+  return res.text(); // returns just a token string.
+}
+
 function Signin() {
   const [formMode, setFormMode] = useState("register");
   const [show, setShow] = useState(true);
-
-  const mutation = useMutation({
-    mutationFn: registerAccount,
-    onSuccess: () => {
-      alert("Account registered!");
-    },
-    onError: (error) => {
-      alert(error.message);
-    },
-  });
 
   function handleSwitch(mode) {
     setShow(false);
@@ -43,7 +46,28 @@ function Signin() {
     }, 400);
   }
 
-  // Example submit handler for register form
+  const registerMutation = useMutation({
+    mutationFn: registerAccount,
+    onSuccess: () => {
+      alert("Account registered!");
+    },
+    onError: (error) => {
+      alert(error.message);
+    },
+  });
+
+  const loginMutation = useMutation({
+    mutationFn: loginAccount,
+    onSuccess: (token) => {
+      localStorage.setItem("token", token);
+
+      alert("Login successful!");
+    },
+    onError: (error) => {
+      alert(error.message);
+    },
+  });
+
   function handleRegister(e) {
     e.preventDefault();
     const form = e.target;
@@ -55,11 +79,20 @@ function Signin() {
       return;
     }
 
-    mutation.mutate({
+    registerMutation.mutate({
       email: form.email.value,
       password,
       confirmPassword,
       role: "USER",
+    });
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const form = e.target;
+    loginMutation.mutate({
+      email: form.email.value,
+      password: form.password.value,
     });
   }
 
@@ -153,13 +186,18 @@ function Signin() {
                     <button
                       type="submit"
                       className="w-full bg-[#227B05] text-white py-3 rounded-lg"
-                      disabled={mutation.isPending}
+                      disabled={registerMutation.isPending}
                     >
-                      {mutation.isPending ? "Registering..." : "Sign Up"}
+                      {registerMutation.isPending
+                        ? "Registering..."
+                        : "Sign Up"}
                     </button>
                   </form>
                 ) : (
-                  <form className="min-h-55 w-full flex flex-col gap-5">
+                  <form
+                    className="min-h-55 w-full flex flex-col gap-5"
+                    onSubmit={handleLogin}
+                  >
                     <div className="w-full relative">
                       <FontAwesomeIcon
                         icon={faEnvelope}
@@ -191,8 +229,9 @@ function Signin() {
                     <button
                       type="submit"
                       className="w-full bg-[#227B05] text-white py-3 rounded-lg"
+                      disabled={loginMutation.isPending}
                     >
-                      Sign In
+                      {loginMutation.isPending ? "Logging in..." : "Sign In"}
                     </button>
                   </form>
                 )}
