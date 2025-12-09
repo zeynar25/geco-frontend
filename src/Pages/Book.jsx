@@ -9,11 +9,11 @@ import { jwtDecode } from "jwt-decode";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowLeftLong,
   faBoxOpen,
   faCalendar,
   faClock,
 } from "@fortawesome/free-solid-svg-icons";
+import BackButton from "../Components/BackButton.jsx";
 
 function isLoggedIn() {
   const token = localStorage.getItem("token");
@@ -46,20 +46,12 @@ function Book() {
       <Header />
 
       <div className="bg-green-50 px-20 py-10">
-        <div className="flex items-center gap-3 mb-10">
-          <Link to="/">
-            <FontAwesomeIcon
-              icon={faArrowLeftLong}
-              className="text-black border rounded-sm p-2 hover:text-green-600"
-            />
-          </Link>
-          <div className="flex flex-col">
-            <h1 className="font-bold text-xl text-[#227B05]">
-              Book Your Visit
-            </h1>
-            <p>Reserve your spot at CvSU Agri-Eco Tourism Park</p>
-          </div>
-        </div>
+        <BackButton
+          to="/"
+          title="Book Your Visit"
+          description="Reserve your spot at CvSU Agri-Eco Tourism Park"
+        />
+
         <div className="col-span-2 grid grid-cols-3 gap-5 m-5 items-stretch">
           <Link
             to="/operating-hours"
