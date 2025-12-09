@@ -96,7 +96,7 @@ function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur border-b">
+    <header className="sticky top-0 z-50 bg-white backdrop-blur border-b">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -110,7 +110,7 @@ function Header() {
               <span className="block text-lg font-bold tracking-tight">
                 GECO
               </span>
-              <span className="block text-xs text-gray-500">
+              <span className="block text-xs text-[#227B05]">
                 Agri‑Eco Tourism Park
               </span>
             </div>
@@ -122,20 +122,23 @@ function Header() {
               <li>
                 <Link
                   to="/"
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                  className="group inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 >
-                  <FontAwesomeIcon icon={faTree} className="text-green-600" />
+                  <FontAwesomeIcon
+                    icon={faTree}
+                    className="text-[#227B05] group-hover:text-black"
+                  />
                   <span>Home</span>
                 </Link>
               </li>
               <li>
                 <Link
                   to="/#map"
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold  text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                  className="group inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon
                     icon={faMapLocationDot}
-                    className="text-green-600"
+                    className="text-[#227B05] group-hover:text-black"
                   />
                   <span>Park Map</span>
                 </Link>
@@ -143,20 +146,23 @@ function Header() {
               <li>
                 <Link
                   to="/about"
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold  text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                  className="group inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 >
-                  <FontAwesomeIcon icon={faBook} className="text-green-600" />
+                  <FontAwesomeIcon
+                    icon={faBook}
+                    className="text-[#227B05] group-hover:text-black"
+                  />
                   <span>About Us</span>
                 </Link>
               </li>
               <li>
                 <Link
                   to="/book"
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-2.5 font-semibold text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                  className="group inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon
                     icon={faCalendarDays}
-                    className="text-green-600"
+                    className="text-[#227B05] group-hover:text-black"
                   />
                   <span>Book Visit</span>
                 </Link>
@@ -170,7 +176,7 @@ function Header() {
             {loggedIn ? (
               <button
                 onClick={handleLogout}
-                className="hidden lg:flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
+                className="hidden lg:flex items-center gap-2 rounded-md bg-[#E32726]/90 px-4 py-2 text-sm font-semibold text-white hover:bg-[#E32726] transition-colors"
               >
                 <div className="leading-tight text-left flex flex-col gap-1">
                   <span className="block font-bold">Logout</span>
@@ -190,7 +196,7 @@ function Header() {
             ) : (
               <Link
                 to="/signin"
-                className="hidden lg:flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
+                className="hidden lg:flex items-center gap-2 rounded-md bg-[#0A7A28]/90 px-4 py-2 text-sm font-semibold text-white hover:bg-[#0A7A28] transition-colors"
               >
                 <div className="leading-tight text-left flex flex-col gap-1">
                   <span className="block font-bold">Sign In / Sign Up</span>
@@ -247,22 +253,25 @@ function Header() {
             <li>
               <Link
                 to="/"
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                className="group flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 onClick={() => setOpen(false)}
               >
-                <FontAwesomeIcon icon={faTree} className="text-green-600" />
+                <FontAwesomeIcon
+                  icon={faTree}
+                  className="text-[#227B05] group-hover:text-black"
+                />
                 <span>Home</span>
               </Link>
             </li>
             <li>
               <a
                 href="#map"
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                className="group flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 onClick={() => setOpen(false)}
               >
                 <FontAwesomeIcon
                   icon={faMapLocationDot}
-                  className="text-green-600"
+                  className="text-[#227B05] group-hover:text-black"
                 />
                 <span>Park Map</span>
               </a>
@@ -270,22 +279,25 @@ function Header() {
             <li>
               <Link
                 to="/about"
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                className="group flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 onClick={() => setOpen(false)}
               >
-                <FontAwesomeIcon icon={faBook} className="text-green-600" />
+                <FontAwesomeIcon
+                  icon={faBook}
+                  className="text-[#227B05] group-hover:text-black"
+                />
                 <span>About Us</span>
               </Link>
             </li>
             <li>
               <Link
                 to="/book"
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-black transition-colors"
+                className="group flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 onClick={() => setOpen(false)}
               >
                 <FontAwesomeIcon
                   icon={faCalendarDays}
-                  className="text-green-600"
+                  className="text-[#227B05] group-hover:text-black"
                 />
                 <span>Book Visit</span>
               </Link>
@@ -295,7 +307,7 @@ function Header() {
               {loggedIn ? (
                 <button
                   onClick={handleLogout}
-                  className="inline-flex w-fit items-center gap-3 rounded-md bg-red-600 px-4 py-3 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
+                  className="inline-flex w-fit items-center gap-3 rounded-md bg-[#E32726]/90 px-4 py-3 text-sm font-semibold text-white hover:bg-[#E32726] transition-colors"
                 >
                   <div className="leading-tight text-left flex flex-col gap-1">
                     <span className="block font-bold">Logout</span>
@@ -315,7 +327,7 @@ function Header() {
               ) : (
                 <Link
                   to="/signin"
-                  className="inline-flex w-fit items-center gap-3 rounded-md bg-green-600 px-4 py-3 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
+                  className="inline-flex w-fit items-center gap-3 rounded-md bg-[#0A7A28]/90 px-4 py-3 text-sm font-semibold text-white hover:bg-[#0A7A28] transition-colors"
                   onClick={() => setOpen(false)}
                 >
                   <div className="leading-tight text-left">
