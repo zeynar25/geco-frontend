@@ -78,7 +78,7 @@ function Book() {
               description="Various packages available"
               description2="Starting from P100"
               icon={<FontAwesomeIcon icon={faBoxOpen} className="text-4xl" />}
-              iconClasses="text-blue-900"
+              iconClasses="text-[#222EDA]"
               className="h-full border-0 shadow-2xl"
             />
           </Link>
