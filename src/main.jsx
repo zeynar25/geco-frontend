@@ -5,6 +5,7 @@ import About from "./Pages/About.jsx";
 import Signin from "./Pages/Signin.jsx";
 import Book from "./Pages/Book.jsx";
 import OperatingHours from "./Pages/OperatingHours.jsx";
+import PackagesPromos from "./Pages/PackagesPromos.jsx";
 
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
   { path: "/signin", element: <Signin /> },
   { path: "/book", element: <Book /> },
   { path: "/operating-hours", element: <OperatingHours /> },
+  { path: "/packages-promos", element: <PackagesPromos /> },
 ]);
 
 const queryClient = new QueryClient();
