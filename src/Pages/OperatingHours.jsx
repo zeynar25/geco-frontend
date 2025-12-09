@@ -5,7 +5,7 @@ import HeaderCard from "../Components/HeaderCard.jsx";
 import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBuilding } from "@fortawesome/free-solid-svg-icons";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
 import BackButton from "../Components/BackButton.jsx";
 
 function OperatingHours() {
@@ -21,29 +21,63 @@ function OperatingHours() {
 
         <div className="grid grid-cols-3">
           <HeaderCard
-            headerBg="bg-[#a9e2a3]"
-            headerColor="text-[#227B05]"
-            icon={<FontAwesomeIcon icon={faBuilding} />}
+            headerClass="bg-[#0A7A28] text-white"
+            icon={
+              <FontAwesomeIcon
+                icon={faClock}
+                className="bg-white/50 p-2 rounded-lg"
+              />
+            }
             title="Regular Hours"
-            description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            descriptionContent={
+              <ul className="list-disc pl-5 space-y-1 marker:text-[#48BF56]">
+                <li>Monday - Friday: 8 AM - 5 PM</li>
+                <li>Last entry: 4 PM</li>
+                <li>Gates close promptly at 5 PM</li>
+              </ul>
+            }
             className="col-span-3 md:col-span-1"
           />
           <HeaderCard
-            headerBg="bg-[#a9e2a3]"
-            headerColor="text-[#227B05]"
-            icon={<FontAwesomeIcon icon={faBuilding} />}
+            headerClass="bg-[#E05A21] text-white"
+            icon={
+              <FontAwesomeIcon
+                icon={faClock}
+                className="bg-white/50 p-2 rounded-lg"
+              />
+            }
             title="Peak Hours"
-            description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            descriptionContent={
+              <ul className="list-disc pl-5 space-y-1 marker:text-[#48BF56]">
+                <li>Busiest Time: 10 AM - 2 PM</li>
+                <li>Ideal for group activities</li>
+                <li>All facilities are fully operational</li>
+              </ul>
+            }
             className="col-span-3 md:col-span-1"
           />
           <HeaderCard
-            headerBg="bg-[#a9e2a3]"
-            headerColor="text-[#227B05]"
-            icon={<FontAwesomeIcon icon={faBuilding} />}
+            headerClass="bg-[#222EDA] text-white"
+            icon={
+              <FontAwesomeIcon
+                icon={faClock}
+                className="bg-white/50 p-2 rounded-lg"
+              />
+            }
             title="Quiet Hours"
-            description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            descriptionContent={
+              <ul className="list-disc pl-5 space-y-1 marker:text-[#48BF56]">
+                <li>Early Morning: 8 AM - 10 AM</li>
+                <li>Late Afternoon: 3 PM - 5 PM</li>
+                <li>Perfect for peaceful operations</li>
+              </ul>
+            }
             className="col-span-3 md:col-span-1"
           />
+        </div>
+
+        <div>
+          <HeaderCard headerClass="bg-[#FDDB3C]" />
         </div>
       </div>
       <Footer />
