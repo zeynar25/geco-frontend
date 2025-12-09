@@ -2,6 +2,7 @@ function AboutCard({
   headerClass = "bg-white text-black",
   icon,
   title,
+  descriptionClass,
   description,
   descriptionContent,
   className,
@@ -15,7 +16,7 @@ function AboutCard({
         <h1 className="font-bold text-lg lg:text-xl">{title}</h1>
       </header>
 
-      <div className="px-10 py-5 flex items-center bg-white">
+      <div className={`px-10 py-5 flex items-center ${descriptionClass}`}>
         {descriptionContent ? descriptionContent : description}
       </div>
     </div>
