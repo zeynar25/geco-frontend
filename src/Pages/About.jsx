@@ -42,8 +42,7 @@ export default function About() {
 
         <div className="grid grid-cols-2">
           <HeaderCard
-            headerBg="bg-[#a9e2a3]"
-            headerColor="text-[#227B05]"
+            headerClass="bg-[#a9e2a3] text-[#227B05]"
             icon={<FontAwesomeIcon icon={faBuilding} />}
             title="CvSU Mission"
             description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
@@ -51,8 +50,7 @@ export default function About() {
           />
 
           <HeaderCard
-            headerBg="bg-blue-50"
-            headerColor="text-blue-900"
+            headerClass="bg-blue-50 text-blue-900"
             icon={<FontAwesomeIcon icon={faEye} />}
             title="CvSU Vision"
             description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
@@ -109,8 +107,7 @@ export default function About() {
           </div>
 
           <HeaderCard
-            headerBg="bg-[#F5F3C9]"
-            headerColor="text-[#ADA128]"
+            headerClass="bg-[#F5F3C9] text-[#ADA128]"
             icon={<FontAwesomeIcon icon={faBook} />}
             title="History"
             description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
