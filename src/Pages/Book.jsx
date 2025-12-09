@@ -4,7 +4,7 @@ import ValueCard from "../Components/ValueCard.jsx";
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -71,7 +71,7 @@ function Book() {
               description="Monday-Thursday"
               description2="8:00 AM - 5:00 PM"
               icon={<FontAwesomeIcon icon={faClock} className="text-4xl" />}
-              iconClasses="text-[#227B05]"
+              iconClasses="text-[#48BF56]"
               className="h-full border-0 shadow-2xl"
             />
           </Link>
@@ -98,7 +98,7 @@ function Book() {
               description="Check availability"
               description2="Plan your visit"
               icon={<FontAwesomeIcon icon={faCalendar} className="text-4xl" />}
-              iconClasses="text-[#7942C2]"
+              iconClasses="text-[#A86CCB]"
               className="h-full border-0 shadow-2xl"
             />
           </Link>
