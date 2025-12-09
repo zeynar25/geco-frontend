@@ -6,6 +6,9 @@ import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
+
+import { faNoteSticky } from "@fortawesome/free-regular-svg-icons";
+
 import BackButton from "../Components/BackButton.jsx";
 
 function OperatingHours() {
@@ -77,7 +80,46 @@ function OperatingHours() {
         </div>
 
         <div>
-          <HeaderCard headerClass="bg-[#FDDB3C]" />
+          <HeaderCard
+            headerClass="bg-[#FDDB3C]/10 text-[#97750B]"
+            icon={
+              <FontAwesomeIcon icon={faNoteSticky} className="text-[#E32726]" />
+            }
+            title="Important Reminders"
+            descriptionClass="bg-[#FDDB3C]/10"
+            descriptionContent={
+              <div className="grid grid-cols-2 gap-2 md:gap-5">
+                <ul className="list-disc pl-5 space-y-1 col-span-2 md:col-span-1 grid gap-2">
+                  <li>
+                    Advance booking is highly recommended, especially for groups
+                  </li>
+                  <li>
+                    Last entry is at 4:00 PM to ensure you have enough time to
+                    explore
+                  </li>
+                  <li>
+                    During peak hours (10 AM - 2 PM), expect larger crowds
+                  </li>
+                  <li>Special events may affect regular operating hours</li>
+                  <li>Weather conditions may impact outdoor activities</li>
+                </ul>
+                <ul className="list-disc pl-5 space-y-1 col-span-2 md:col-span-1 grid gap-2">
+                  <li>
+                    Advance booking is highly recommended, especially for groups
+                  </li>
+                  <li>
+                    Last entry is at 4:00 PM to ensure you have enough time to
+                    explore
+                  </li>
+                  <li>
+                    During peak hours (10 AM - 2 PM), expect larger crowds
+                  </li>
+                  <li>Special events may affect regular operating hours</li>
+                  <li>Weather conditions may impact outdoor activities</li>
+                </ul>
+              </div>
+            }
+          />
         </div>
       </div>
       <Footer />
