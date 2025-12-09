@@ -105,7 +105,7 @@ function Signin() {
       <Header />
       <div>
         <div className="relative min-h-fit h-[90vh] bg-[url('/images/homepage.png')] bg-cover bg-center bg-no-repeat flex">
-          <div className="absolute inset-0 z-0 bg-linear-to-r from-[#227B05]/10 to-[#227B05]/50" />
+          <div className="absolute inset-0 z-0 bg-linear-to-r from-[#17EB88]/50 to-[#0A7A28]/50" />
 
           <div className="relative w-auto grid grid-cols-2 gap-20 m-auto">
             <div className="z-1 hidden md:flex flex-col items-center justify-center">
@@ -116,7 +116,7 @@ function Signin() {
               />
               <div className="flex flex-col items-center gap-3">
                 <h1 className="text-white font-bold text-4xl">Agri-Eco</h1>
-                <h1 className="text-green-600 font-bold text-4xl">
+                <h1 className="text-[#17EB88] font-bold text-4xl">
                   Tourism Park
                 </h1>
                 <span className="inline-block rounded-full bg-white/30 px-3 py-1 text-xs font-medium tracking-wide text-white ring-1 ring-white/20">
