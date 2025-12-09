@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
 /* 
-bg-[#227B05]
-bg-green-600
-
-bg-green-50
-bg-[#a9e2a3]
+dark to lightest
+#227B05 (very dark green)
+#0A7A28 (dark green)
+#007B53 (dark-medium green)
+#48BF56 (medium green, appears twice)
+#599452 (medium-light green)
+#17EB88 (lightest green)
 */
 
 @theme {
