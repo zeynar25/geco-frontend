@@ -105,7 +105,7 @@ function Signin() {
       <Header />
       <div>
         <div className="relative min-h-fit h-[90vh] bg-[url('/images/homepage.png')] bg-cover bg-center bg-no-repeat flex">
-          <div className="absolute inset-0 z-0 bg-linear-to-r from-[#17EB88]/50 to-[#0A7A28]/50" />
+          <div className="absolute inset-0 z-0 bg-linear-to-r from-[#0A7A28]/80 to-[#020D00]/80" />
 
           <div className="relative w-auto grid grid-cols-2 gap-20 m-auto">
             <div className="z-1 hidden md:flex flex-col items-center justify-center">
