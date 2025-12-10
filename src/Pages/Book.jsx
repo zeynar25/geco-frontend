@@ -34,6 +34,7 @@ function Book() {
   const [loggedIn, setLoggedIn] = useState(isLoggedIn());
 
   const location = useLocation();
+  const backTo = location.state?.from || "/";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,7 +50,7 @@ function Book() {
 
       <div className="bg-green-50 px-20 py-10">
         <BackButton
-          to="/"
+          to={backTo}
           title="Book Your Visit"
           description="Reserve your spot at CvSU Agri-Eco Tourism Park"
         />
