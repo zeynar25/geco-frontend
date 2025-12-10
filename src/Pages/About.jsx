@@ -44,7 +44,7 @@ export default function About() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 gap-10 my-10">
           <HeaderCard
             headerClass="bg-[#a9e2a3] text-[#227B05]"
             icon={<FontAwesomeIcon icon={faBuilding} />}
@@ -61,7 +61,7 @@ export default function About() {
             className="col-span-2 md:col-span-1"
           />
 
-          <div className="col-span-2 rounded-xl border-0 shadow-sm overflow-hidden m-5">
+          <div className="col-span-2 rounded-xl border-0 shadow-sm overflow-hidden">
             <header className="flex items-center px-10 py-5 gap-3 bg-[#CEB8F2] text-[#7942C2]">
               <span className="text-xl">
                 <FontAwesomeIcon icon={faLeaf} />
@@ -118,7 +118,7 @@ export default function About() {
             className="col-span-2"
           />
 
-          <div className="col-span-2 rounded-xl border-0 shadow-sm overflow-hidden m-5 bg-white">
+          <div className="col-span-2 rounded-xl border-0 shadow-sm overflow-hidden bg-white">
             <header className="flex flex-col px-10 py-5 bg-[#227B05] text-white">
               <div className="flex gap-2">
                 <span className="text-xl">
@@ -155,7 +155,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="col-span-2 grid grid-cols-3 gap-5 m-5">
+          <div className="col-span-2 grid grid-cols-3 gap-5">
             <Link
               to="/operating-hours"
               state={{ from: location.pathname }}
