@@ -73,6 +73,7 @@ function Book() {
 
           <Link
             to="/packages-promos"
+            state={{ from: location.pathname }}
             className="col-span-3 md:col-span-1 h-full"
           >
             <ValueCard
@@ -86,7 +87,11 @@ function Book() {
             />
           </Link>
 
-          <Link to="/park-calendar" className="col-span-3 md:col-span-1 h-full">
+          <Link
+            to="/park-calendar"
+            state={{ from: location.pathname }}
+            className="col-span-3 md:col-span-1 h-full"
+          >
             <ValueCard
               title="Park Calendar"
               titleClasses="text-[#227B05] text-xl mb-3"

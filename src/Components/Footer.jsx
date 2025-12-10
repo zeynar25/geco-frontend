@@ -101,10 +101,14 @@ function Footer() {
                 />
                 About the park
               </Link>
-              <a href="#" className="text-sm">
+              <Link
+                to="/packages-promos"
+                state={{ from: location.pathname }}
+                className="text-sm"
+              >
                 <FontAwesomeIcon icon={faBoxOpen} className="text-white mr-2" />
                 Eco-park Service packages
-              </a>
+              </Link>
               <Link to="/#map" className="text-sm">
                 <FontAwesomeIcon
                   icon={faMapLocationDot}

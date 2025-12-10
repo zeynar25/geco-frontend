@@ -115,15 +115,17 @@ export default function Home() {
               iconClasses="bg-blue-900 text-white"
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
-            <ValueCard
-              title={isPending ? "..." : data?.tourPackageNumber}
-              titleClasses="text-gray-900"
-              description="Tour Packages"
-              descriptionClasses="text-gray-500"
-              icon={<FontAwesomeIcon icon={faBoxOpen} className="text-2xl" />}
-              iconClasses="bg-green-500 text-gray-900"
-              className="w-80 sm:w-auto border-0 shadow-sm"
-            />
+            <Link to="/packages-promos" state={{ from: location.pathname }}>
+              <ValueCard
+                title={isPending ? "..." : data?.tourPackageNumber}
+                titleClasses="text-gray-900"
+                description="Tour Packages"
+                descriptionClasses="text-gray-500"
+                icon={<FontAwesomeIcon icon={faBoxOpen} className="text-2xl" />}
+                iconClasses="bg-green-500 text-gray-900"
+                className="w-80 sm:w-auto border-0 shadow-sm"
+              />
+            </Link>
             <ValueCard
               title={isPending ? "..." : data?.averageVisitor}
               titleClasses="text-gray-900"
