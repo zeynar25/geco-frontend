@@ -10,7 +10,7 @@ function AboutCard({
 }) {
   return (
     <div
-      className={`bg-white rounded-xl border-0 shadow-sm overflow-hidden m-5 ${className}`}
+      className={`bg-white rounded-xl border-0 shadow-sm overflow-hidden m-5 flex flex-col h-full ${className}`}
     >
       <header className={`flex px-10 py-5 gap-3 ${headerClass} `}>
         <span className="text-lg lg:text-xl my-auto">{icon}</span>
@@ -20,7 +20,7 @@ function AboutCard({
         </div>
       </header>
 
-      <div className={`px-10 py-5 flex items-center ${descriptionClass}`}>
+      <div className={`px-10 py-5 ${descriptionClass}`}>
         {descriptionContent ? descriptionContent : description}
       </div>
     </div>
