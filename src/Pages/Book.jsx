@@ -3,7 +3,7 @@ import Header from "../Components/Header";
 import ValueCard from "../Components/ValueCard.jsx";
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 // import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
 
@@ -32,6 +32,8 @@ function isLoggedIn() {
 
 function Book() {
   const [loggedIn, setLoggedIn] = useState(isLoggedIn());
+
+  const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,6 +57,7 @@ function Book() {
         <div className="col-span-2 grid grid-cols-3 gap-5 m-5 items-stretch">
           <Link
             to="/operating-hours"
+            state={{ from: location.pathname }}
             className="col-span-3 md:col-span-1 h-full"
           >
             <ValueCard

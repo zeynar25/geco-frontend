@@ -19,15 +19,19 @@ import {
 
 import { faCircleQuestion, faClock } from "@fortawesome/free-regular-svg-icons";
 import BackButton from "../Components/BackButton.jsx";
+import { useLocation, Link } from "react-router-dom";
 
 export default function About() {
+  const location = useLocation();
+  const backTo = location.state?.from || "/";
+
   return (
     <>
       <Header />
 
       <div className="bg-green-50 px-20 py-10">
         <BackButton
-          to="/"
+          to={backTo}
           title="About CvSU Agri-Eco Tourism Park"
           description="Discover our mission, vision, and values."
         />
@@ -152,15 +156,21 @@ export default function About() {
           </div>
 
           <div className="col-span-2 grid grid-cols-3 gap-5 m-5">
-            <ValueCard
-              title="Operating Hours"
-              titleClasses="text-[#227B05] text-xl mb-3"
-              description="Monday-Thursday"
-              description2="8:00 AM - 5:00 PM"
-              icon={<FontAwesomeIcon icon={faClock} className="text-4xl" />}
-              iconClasses="text-[#227B05]"
-              className="col-span-3 md:col-span-1 border-0 shadow-2xl"
-            />
+            <Link
+              to="/operating-hours"
+              state={{ from: location.pathname }}
+              className="col-span-3 md:col-span-1"
+            >
+              <ValueCard
+                title="Operating Hours"
+                titleClasses="text-[#227B05] text-xl mb-3"
+                description="Monday-Thursday"
+                description2="8:00 AM - 5:00 PM"
+                icon={<FontAwesomeIcon icon={faClock} className="text-4xl" />}
+                iconClasses="text-[#227B05]"
+                className="col-span-3 md:col-span-1 border-0 shadow-2xl"
+              />
+            </Link>
 
             <ValueCard
               title="Location"

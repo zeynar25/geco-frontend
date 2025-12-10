@@ -2,7 +2,7 @@ import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import HeaderCard from "../Components/HeaderCard.jsx";
 
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
@@ -12,12 +12,15 @@ import { faNoteSticky } from "@fortawesome/free-regular-svg-icons";
 import BackButton from "../Components/BackButton.jsx";
 
 function OperatingHours() {
+  const location = useLocation();
+  const backTo = location.state?.from || "/";
+
   return (
     <>
       <Header />
       <div className="bg-green-50 px-20 py-10">
         <BackButton
-          to="/book"
+          to={backTo}
           title="Operating Hours and Schedule"
           description="Plan your visit with our detailed schedule information"
         />
