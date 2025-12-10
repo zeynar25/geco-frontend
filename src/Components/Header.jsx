@@ -8,7 +8,7 @@ import {
   faArrowRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { jwtDecode } from "jwt-decode";
@@ -51,6 +51,8 @@ async function logoutAccount() {
 function Header() {
   const [open, setOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(isLoggedIn());
+
+  const location = useLocation();
   const navigate = useNavigate();
 
   const { data, isPending } = useQuery({
@@ -100,7 +102,11 @@ function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
+          <Link
+            to="/"
+            state={{ from: location.pathname }}
+            className="flex items-center gap-3"
+          >
             <img
               src="/images/agri-eco-logo.png"
               alt="Geco-logo"
@@ -122,6 +128,7 @@ function Header() {
               <li>
                 <Link
                   to="/"
+                  state={{ from: location.pathname }}
                   className="group inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon
@@ -134,6 +141,7 @@ function Header() {
               <li>
                 <Link
                   to="/#map"
+                  state={{ from: location.pathname }}
                   className="group inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon
@@ -146,6 +154,7 @@ function Header() {
               <li>
                 <Link
                   to="/about"
+                  state={{ from: location.pathname }}
                   className="group inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon
@@ -158,6 +167,7 @@ function Header() {
               <li>
                 <Link
                   to="/book"
+                  state={{ from: location.pathname }}
                   className="group inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 >
                   <FontAwesomeIcon
@@ -196,6 +206,7 @@ function Header() {
             ) : (
               <Link
                 to="/signin"
+                state={{ from: location.pathname }}
                 className="hidden lg:flex items-center gap-2 rounded-md bg-[#0A7A28]/90 px-4 py-2 text-sm font-semibold text-white hover:bg-[#0A7A28] transition-colors"
               >
                 <div className="leading-tight text-left flex flex-col gap-1">
@@ -253,6 +264,7 @@ function Header() {
             <li>
               <Link
                 to="/"
+                state={{ from: location.pathname }}
                 className="group flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 onClick={() => setOpen(false)}
               >
@@ -279,6 +291,7 @@ function Header() {
             <li>
               <Link
                 to="/about"
+                state={{ from: location.pathname }}
                 className="group flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 onClick={() => setOpen(false)}
               >
@@ -292,6 +305,7 @@ function Header() {
             <li>
               <Link
                 to="/book"
+                state={{ from: location.pathname }}
                 className="group flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
                 onClick={() => setOpen(false)}
               >
@@ -327,6 +341,7 @@ function Header() {
               ) : (
                 <Link
                   to="/signin"
+                  state={{ from: location.pathname }}
                   className="inline-flex w-fit items-center gap-3 rounded-md bg-[#0A7A28]/90 px-4 py-3 text-sm font-semibold text-white hover:bg-[#0A7A28] transition-colors"
                   onClick={() => setOpen(false)}
                 >
