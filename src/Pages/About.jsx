@@ -29,7 +29,7 @@ export default function About() {
     <>
       <Header />
 
-      <div className="bg-green-50 px-5 md:px-10 lg:px-20 py-10">
+      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10">
         <BackButton
           to={backTo}
           title="About CvSU Agri-Eco Tourism Park"

@@ -48,14 +48,14 @@ function Book() {
     <>
       <Header />
 
-      <div className="bg-green-50 px-20 py-10">
+      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10">
         <BackButton
           to={backTo}
           title="Book Your Visit"
           description="Reserve your spot at CvSU Agri-Eco Tourism Park"
         />
 
-        <div className="col-span-2 grid grid-cols-3 gap-5 m-5 items-stretch">
+        <div className="col-span-2 grid grid-cols-3 gap-5 items-stretch">
           <Link
             to="/operating-hours"
             state={{ from: location.pathname }}
