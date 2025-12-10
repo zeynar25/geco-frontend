@@ -6,7 +6,7 @@ import HeaderCard from "../Components/HeaderCard";
 import { useLocation, Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 
 import { ClipLoader } from "react-spinners";
@@ -40,21 +40,49 @@ function PackagesPromos() {
     alert("something went wrong in retrieving tour packages");
   }
 
+  const {
+    data: inclusionData,
+    error: inclusionError,
+    isPending: inclusionPending,
+  } = useQuery({
+    queryKey: ["package-inclusions"],
+    queryFn: async () => {
+      // Simulate network delay
+      // await new Promise((resolve) => setTimeout(resolve, 10000));
+
+      const packageInclusions = await fetch(
+        "http://localhost:8080/package-inclusion/active"
+      );
+      if (!packageInclusions.ok) {
+        const error = await packageInclusions.json();
+        throw new Error(
+          error?.error || "Getting tour package inclusions failed"
+        );
+      }
+      return await packageInclusions.json();
+    },
+  });
+
+  if (inclusionError) {
+    alert("something went wrong in retrieving tour package inclusions");
+  }
+
   return (
     <>
       <Header />
-      <div className="bg-green-50 px-20 py-10 min-h-fit">
+      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10">
         <BackButton
           to={backTo}
           title="Operating Hours and Schedule"
           description="Plan your visit with our detailed schedule information"
         />
-        <div className="grid grid-cols-2 gap-5 px-20 m-5">
+
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 my-5">
           {packagePending ? (
             <div className="flex justify-center items-center col-span-2 py-10">
               <ClipLoader color="#17EB88" size={40} />
-              <span className="ml-3 text-[#17EB88] font-semibold">
-                Loading packages...
+              <span className="ml-3 font-semibold">
+                Loading Tour packages...
               </span>
             </div>
           ) : (
@@ -89,19 +117,60 @@ function PackagesPromos() {
                         ))}
                       </ul>
                     </div>
-                    <button className="group bg-[#17EB88]/80 text-white border-2 border-black rounded-lg py-2 px-3 hover:bg-[#17EB88] hover:text-black hover:cursor-pointer mt-auto">
+                    <Link
+                      to="/book"
+                      state={{ from: location.pathname }}
+                      className="group bg-[#17EB88]/80 text-white border-2 border-black rounded-lg py-2 px-3 hover:bg-[#17EB88] hover:text-black hover:cursor-pointer mt-auto flex items-center justify-center"
+                    >
                       <FontAwesomeIcon
                         icon={faCalendarCheck}
                         className="text-white mr-2 group-hover:text-black"
                       />
                       <span>Book your visit now</span>
-                    </button>
+                    </Link>
                   </>
                 }
               />
             ))
           )}
         </div>
+
+        <HeaderCard
+          className="my-5"
+          headerClass="bg-[#222EDA] text-white"
+          icon={<FontAwesomeIcon icon={faPlus} className="text-2xl" />}
+          title="Available Package Inclusions"
+          subtitle="Enhance your experience with these optional extras"
+          descriptionClass="grid grid-cols-2 lg:grid-cols-3 gap-10"
+          descriptionContent={
+            inclusionPending ? (
+              <div className="flex justify-center items-center col-span-3 py-10">
+                <ClipLoader color="#17EB88" size={40} />
+                <span className="ml-3 font-semibold">
+                  Loading Tour package inclusions...
+                </span>
+              </div>
+            ) : (
+              inclusionData?.map((inclusion) => (
+                <HeaderCard
+                  key={inclusion.inclusionId}
+                  className="col-span-2 md:col-span-1 border-2"
+                  headerContent={
+                    <div className="flex flex-col xl:flex-row justify-between gap-2 px-10 pt-5">
+                      <span className="font-bold w-fit mx-auto xl:mx-0">
+                        {inclusion.inclusionName}
+                      </span>
+                      <span className="bg-[#222EDA]/30 px-3 rounded-md w-fit mx-auto xl:mx-0">
+                        + P{inclusion.inclusionPricePerPerson}
+                      </span>
+                    </div>
+                  }
+                  description={inclusion.inclusionDescription}
+                />
+              ))
+            )
+          }
+        />
       </div>
       <Footer />
     </>
