@@ -108,9 +108,9 @@ function Header() {
             className="flex items-center gap-3"
           >
             <img
-              src="/images/agri-eco-logo.png"
-              alt="Geco-logo"
-              className="h-9 w-9 rounded bg-gray-200 object-cover"
+              src="/images/geco-logo.png"
+              alt="geco-logo"
+              className="h-9 w-9 object-cover border shadow-gray-400 rounded-lg"
             />
             <div className="leading-tight">
               <span className="block text-lg font-bold tracking-tight">

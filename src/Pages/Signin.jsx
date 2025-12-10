@@ -110,8 +110,8 @@ function Signin() {
           <div className="relative w-auto grid grid-cols-2 gap-20 m-auto">
             <div className="z-1 hidden md:flex flex-col items-center justify-center">
               <img
-                src="/images/agri-eco-logo.png"
-                alt="agri-eco-logo"
+                src="/images/geco-logo.png"
+                alt="geco-logo"
                 className="h-64"
               />
               <div className="flex flex-col items-center gap-3">
