@@ -29,14 +29,14 @@ export default function About() {
     <>
       <Header />
 
-      <div className="bg-green-50 px-20 py-10">
+      <div className="bg-green-50 px-5 md:px-10 lg:px-20 py-10">
         <BackButton
           to={backTo}
           title="About CvSU Agri-Eco Tourism Park"
           description="Discover our mission, vision, and values."
         />
 
-        <div className="relative h-50 bg-[url('/images/homepage.png')] bg-cover bg-bottom bg-no-repeat rounded-xl flex flex-col items-center justify-center gap-3 shadow-2xl overflow-hidden text-white">
+        <div className="relative h-50 bg-[url('/images/homepage.png')] bg-cover bg-bottom bg-no-repeat rounded-xl flex flex-col items-center justify-center text-center gap-3 shadow-2xl overflow-hidden text-white">
           <div className="absolute inset-0 bg-white/20" />
           <h1 className="font-bold text-5xl relative">Agri-Eco Tourism Park</h1>
           <p className="relative drop-shadow-lg">
