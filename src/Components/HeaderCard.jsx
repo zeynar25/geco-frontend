@@ -8,10 +8,12 @@ function AboutCard({
   description,
   descriptionContent,
   className = "bg-white",
+  onClick,
 }) {
   return (
     <div
       className={`rounded-xl border-0 shadow-sm overflow-hidden flex flex-col h-full ${className}`}
+      {...(onClick ? (onClick = { onClick }) : null)}
     >
       {headerContent ? (
         headerContent
