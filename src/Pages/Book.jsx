@@ -17,6 +17,7 @@ import {
   faEarthAsia,
   faMoneyBill,
   faPesoSign,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import BackButton from "../Components/BackButton.jsx";
 import { ClipLoader } from "react-spinners";
@@ -41,6 +42,7 @@ function Book() {
   const [loggedIn] = useState(isLoggedIn());
   const [paymentMethod, setPaymentMethod] = useState("");
   const [selectedPackageId, setSelectedPackageId] = useState(null);
+  const [selectedInclusions, setSelectedInclusions] = useState([]);
 
   const location = useLocation();
   const backTo = location.state?.from || "/";
@@ -52,6 +54,14 @@ function Book() {
       navigate("/signin");
     }
   }, [loggedIn, navigate]);
+
+  function handleInclusionToggle(inclusionId) {
+    setSelectedInclusions((prev) =>
+      prev.includes(inclusionId)
+        ? prev.filter((id) => id !== inclusionId)
+        : [...prev, inclusionId]
+    );
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -65,7 +75,11 @@ function Book() {
       return;
     }
 
-    alert(`Selected: ${paymentMethod}, Package ID: ${selectedPackageId}`);
+    alert(
+      `Selected: ${paymentMethod}, Package ID: ${selectedPackageId}, Inclusions: ${selectedInclusions.join(
+        ", "
+      )}`
+    );
   }
 
   const token = localStorage.getItem("token");
@@ -116,6 +130,31 @@ function Book() {
 
   if (packageError) {
     alert("something went wrong in retrieving tour packages");
+  }
+
+  const {
+    data: inclusionData,
+    error: inclusionError,
+    isPending: inclusionPending,
+  } = useQuery({
+    queryKey: ["package-inclusions", selectedPackageId],
+    queryFn: async () => {
+      const packageInclusions = await fetch(
+        `http://localhost:8080/package/${selectedPackageId}/inclusions/available`
+      );
+      if (!packageInclusions.ok) {
+        const error = await packageInclusions.json();
+        throw new Error(
+          error?.error || "Getting tour package inclusions failed"
+        );
+      }
+      return await packageInclusions.json();
+    },
+    enabled: !!selectedPackageId,
+  });
+
+  if (inclusionError) {
+    alert("something went wrong in retrieving tour package inclusions");
   }
 
   return (
@@ -379,6 +418,16 @@ function Book() {
                   )}
                 </div>
 
+                {/* Visit Schedule */}
+                <div className="flex flex-col gap-3">
+                  <header className="flex flex-col gap-2">
+                    <span className="font-bold text-xl text-[#48BF56]">
+                      Visit Schedule
+                    </span>
+                  </header>
+                </div>
+
+                {/* Tour packages */}
                 <div className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
                     <span className="font-bold text-xl text-[#48BF56]">
@@ -445,13 +494,71 @@ function Book() {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-3">
-                  <header className="flex flex-col gap-2">
-                    <span className="font-bold text-xl text-[#48BF56]">
-                      Enhance your Experience (Optional)
-                    </span>
-                  </header>
-                </div>
+                {/* Tour package inclusions */}
+                {selectedPackageId && (
+                  <div className="flex flex-col gap-3">
+                    <header className="flex flex-col gap-2">
+                      <span className="font-bold text-xl text-[#48BF56]">
+                        Enhance your Experience (Optional)
+                      </span>
+                    </header>
+                    <HeaderCard
+                      className="bg-white"
+                      headerClass="bg-[#222EDA] text-white"
+                      icon={
+                        <FontAwesomeIcon icon={faPlus} className="text-2xl" />
+                      }
+                      title="Available Package Inclusions"
+                      subtitle="Enhance your experience with these optional extras"
+                      descriptionContent={
+                        inclusionPending ? (
+                          <div className="flex justify-center items-center col-span-3 py-10">
+                            <ClipLoader color="#17EB88" size={40} />
+                            <span className="ml-3 font-semibold">
+                              Loading Tour package inclusions...
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 lg:grid-cols-3 gap-10 my-5 mx-10">
+                            {inclusionData?.map((inclusion) => {
+                              const isSelected = selectedInclusions.includes(
+                                inclusion.inclusionId
+                              );
+                              return (
+                                <div
+                                  key={inclusion.inclusionId}
+                                  onClick={() =>
+                                    handleInclusionToggle(inclusion.inclusionId)
+                                  }
+                                  className={`cursor-pointer col-span-2 sm:col-span-1 border-2 rounded-xl transition-all ${
+                                    isSelected
+                                      ? "border-[#222EDA] ring-2 ring-[#222EDA] bg-[#f5f7ff]"
+                                      : "border-gray-200 bg-white"
+                                  }`}
+                                >
+                                  <HeaderCard
+                                    className="bg-transparent shadow-none"
+                                    headerContent={
+                                      <div className="flex flex-col xl:flex-row justify-between gap-2 px-10 pt-5">
+                                        <span className="font-bold w-fit mx-auto xl:mx-0">
+                                          {inclusion.inclusionName}
+                                        </span>
+                                        <span className="bg-[#222EDA]/30 px-3 rounded-md w-fit mx-auto xl:mx-0">
+                                          + P{inclusion.inclusionPricePerPerson}
+                                        </span>
+                                      </div>
+                                    }
+                                    description={inclusion.inclusionDescription}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )
+                      }
+                    />
+                  </div>
+                )}
 
                 <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
                   <div className="flex flex-col">
