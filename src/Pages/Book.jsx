@@ -33,6 +33,7 @@ function isLoggedIn() {
 
 function Book() {
   const [loggedIn, setLoggedIn] = useState(isLoggedIn());
+  const [paymentMethod, setPaymentMethod] = useState("");
 
   const location = useLocation();
   const backTo = location.state?.from || "/";
@@ -44,6 +45,15 @@ function Book() {
       navigate("/signin");
     }
   }, [loggedIn, navigate]);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!paymentMethod) {
+      alert("Please select a payment method.");
+      return;
+    }
+    alert(`Selected: ${paymentMethod}`);
+  }
 
   return (
     <>
@@ -106,7 +116,90 @@ function Book() {
           </Link>
         </div>
 
-        <HeaderCard title="Reservation Details" />
+        <HeaderCard
+          headerClass="bg-[#48BF56] text-white text-xl"
+          title="Reservation Details"
+          descriptionContent={
+            <div className="m-5">
+              <form onSubmit={handleSubmit}>
+                <div>
+                  <header className="flex flex-col gap-2 mb-4">
+                    <span className="font-bold text-xl text-[#48BF56]">
+                      Payment Method
+                    </span>
+                    <span>Choose how you'd like to pay for your visit</span>
+                  </header>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {/* Online Down Payment Card */}
+                    <div
+                      onClick={() => setPaymentMethod("online")}
+                      className={`cursor-pointer rounded-xl border-2 p-5 shadow transition-all ${
+                        paymentMethod === "online"
+                          ? "border-[#222EDA] ring-2 ring-[#222EDA]"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <img
+                          src="/images/payment-online.png"
+                          alt="Online Down Payment"
+                          className="h-10 w-10"
+                        />
+                        <span className="font-bold text-lg">
+                          Online Down Payment
+                        </span>
+                      </div>
+                      <span className="block mb-2 text-gray-700">
+                        Pay 50% down payment via GCash after admin approval
+                      </span>
+                      <ul className="list-disc pl-5 text-[#222EDA] space-y-1">
+                        <li>
+                          Submit proof of down payment after booking confirmed
+                        </li>
+                        <li>Once proof is verified, your booking is all set</li>
+                        <li>Balance payable at the park</li>
+                      </ul>
+                    </div>
+                    {/* Pay at Park Card */}
+                    <div
+                      onClick={() => setPaymentMethod("park")}
+                      className={`cursor-pointer rounded-xl border-2 p-5 shadow transition-all ${
+                        paymentMethod === "park"
+                          ? "border-[#222EDA] ring-2 ring-[#222EDA]"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <img
+                          src="/images/payment-cash.png"
+                          alt="Pay at Park"
+                          className="h-10 w-10"
+                        />
+                        <span className="font-bold text-lg">Pay at Park</span>
+                      </div>
+                      <span className="block mb-2 text-gray-700">
+                        Pay full amount in cash on your visit day
+                      </span>
+                      <ul className="list-disc pl-5 text-[#FDDB3C] space-y-1">
+                        <li>No online payment needed</li>
+                        <li>Faster booking process</li>
+                        <li>Full amount due on arrival</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center mt-6">
+                  <button
+                    type="submit"
+                    className="text-center bg-[#48BF56] text-white px-4 py-2 rounded"
+                  >
+                    Confirm Reservation
+                  </button>
+                </div>
+              </form>
+            </div>
+          }
+        />
       </div>
 
       <Footer />
