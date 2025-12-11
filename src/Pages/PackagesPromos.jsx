@@ -79,7 +79,7 @@ function PackagesPromos() {
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 my-5">
           {packagePending ? (
-            <div className="flex justify-center items-center col-span-2 py-10">
+            <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
               <ClipLoader color="#17EB88" size={40} />
               <span className="ml-3 font-semibold">
                 Loading Tour packages...
