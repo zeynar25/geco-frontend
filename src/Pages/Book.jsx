@@ -12,7 +12,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBoxOpen,
   faCalendar,
+  faCheck,
   faClock,
+  faEarthAsia,
+  faMoneyBill,
 } from "@fortawesome/free-solid-svg-icons";
 import BackButton from "../Components/BackButton.jsx";
 
@@ -131,61 +134,97 @@ function Book() {
                   </header>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* Online Down Payment Card */}
-                    <div
+                    <HeaderCard
                       onClick={() => setPaymentMethod("online")}
                       className={`cursor-pointer rounded-xl border-2 p-5 shadow transition-all ${
                         paymentMethod === "online"
                           ? "border-[#222EDA] ring-2 ring-[#222EDA]"
                           : "border-gray-300"
                       }`}
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <img
-                          src="/images/payment-online.png"
-                          alt="Online Down Payment"
-                          className="h-10 w-10"
+                      headerClass="pt-0 pl-0 pr-0"
+                      icon={
+                        <FontAwesomeIcon
+                          icon={faEarthAsia}
+                          className="text-[#222EDA] text-2xl"
                         />
-                        <span className="font-bold text-lg">
-                          Online Down Payment
-                        </span>
-                      </div>
-                      <span className="block mb-2 text-gray-700">
-                        Pay 50% down payment via GCash after admin approval
-                      </span>
-                      <ul className="list-disc pl-5 text-[#222EDA] space-y-1">
-                        <li>
-                          Submit proof of down payment after booking confirmed
-                        </li>
-                        <li>Once proof is verified, your booking is all set</li>
-                        <li>Balance payable at the park</li>
-                      </ul>
-                    </div>
+                      }
+                      title="Online Down Payment"
+                      subtitle="Pay 50% down payment via GCash after admin approval"
+                      descriptionContent={
+                        <ul className="space-y-1">
+                          <li>
+                            <FontAwesomeIcon
+                              icon={faCheck}
+                              className="text-[#222EDA] mr-2"
+                            />
+                            <span>
+                              Submit proof of down payment after booking
+                              confirmed
+                            </span>
+                          </li>
+                          <li>
+                            <FontAwesomeIcon
+                              icon={faCheck}
+                              className="text-[#222EDA] mr-2"
+                            />
+                            <span>
+                              Once proof is verified, your booking is all set
+                            </span>
+                          </li>
+                          <li>
+                            <FontAwesomeIcon
+                              icon={faCheck}
+                              className="text-[#222EDA] mr-2"
+                            />
+                            <span>Balance payable at the park</span>
+                          </li>
+                        </ul>
+                      }
+                    />
+
                     {/* Pay at Park Card */}
-                    <div
+                    <HeaderCard
                       onClick={() => setPaymentMethod("park")}
                       className={`cursor-pointer rounded-xl border-2 p-5 shadow transition-all ${
                         paymentMethod === "park"
-                          ? "border-[#222EDA] ring-2 ring-[#222EDA]"
+                          ? "border-[#FDDB3C] ring-2 ring-[#FDDB3C]"
                           : "border-gray-300"
                       }`}
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <img
-                          src="/images/payment-cash.png"
-                          alt="Pay at Park"
-                          className="h-10 w-10"
+                      headerClass="pt-0 pl-0 pr-0"
+                      icon={
+                        <FontAwesomeIcon
+                          icon={faMoneyBill}
+                          className="text-[#FDDB3C] text-2xl"
                         />
-                        <span className="font-bold text-lg">Pay at Park</span>
-                      </div>
-                      <span className="block mb-2 text-gray-700">
-                        Pay full amount in cash on your visit day
-                      </span>
-                      <ul className="list-disc pl-5 text-[#FDDB3C] space-y-1">
-                        <li>No online payment needed</li>
-                        <li>Faster booking process</li>
-                        <li>Full amount due on arrival</li>
-                      </ul>
-                    </div>
+                      }
+                      title="Pay at Park"
+                      subtitle="Pay full amount in cash on your visit day"
+                      descriptionContent={
+                        <ul className="space-y-1">
+                          <li>
+                            <FontAwesomeIcon
+                              icon={faCheck}
+                              className="text-[#FDDB3C] mr-2"
+                            />
+                            <span>No online payment needed</span>
+                          </li>
+                          <li>
+                            <FontAwesomeIcon
+                              icon={faCheck}
+                              className="text-[#FDDB3C] mr-2"
+                            />
+                            <span>Faster booking process</span>
+                          </li>
+                          <li>
+                            <FontAwesomeIcon
+                              icon={faCheck}
+                              className="text-[#FDDB3C] mr-2"
+                            />
+                            <span>Full amount due on arrival</span>
+                          </li>
+                        </ul>
+                      }
+                    />
                   </div>
                 </div>
                 <div className="flex items-center justify-center mt-6">
