@@ -5,7 +5,7 @@ import HeaderCard from "../Components/HeaderCard";
 
 import { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-// import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,8 +16,10 @@ import {
   faClock,
   faEarthAsia,
   faMoneyBill,
+  faPesoSign,
 } from "@fortawesome/free-solid-svg-icons";
 import BackButton from "../Components/BackButton.jsx";
+import { ClipLoader } from "react-spinners";
 
 function isLoggedIn() {
   const token = localStorage.getItem("token");
@@ -35,7 +37,7 @@ function isLoggedIn() {
 }
 
 function Book() {
-  const [loggedIn, setLoggedIn] = useState(isLoggedIn());
+  const [loggedIn] = useState(isLoggedIn());
   const [paymentMethod, setPaymentMethod] = useState("");
 
   const location = useLocation();
@@ -56,6 +58,36 @@ function Book() {
       return;
     }
     alert(`Selected: ${paymentMethod}`);
+  }
+
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+
+  const {
+    data: accountData,
+    error: accountError,
+    isPending: accountPending,
+  } = useQuery({
+    queryKey: ["account"],
+    queryFn: async () => {
+      const account = await fetch(
+        `http://localhost:8080/account/${decoded.sub}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!account.ok) {
+        const error = await account.json();
+        throw new Error(error?.error || "Getting account failed");
+      }
+      return await account.json();
+    },
+  });
+
+  if (accountError) {
+    alert("something went wrong in retrieving account");
   }
 
   return (
@@ -124,7 +156,7 @@ function Book() {
           title="Reservation Details"
           descriptionContent={
             <div className="m-5">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                 <div className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
                     <span className="font-bold text-xl text-[#48BF56]">
@@ -245,15 +277,124 @@ function Book() {
                 <div className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
                     <span className="font-bold text-xl text-[#48BF56]">
-                      Payment Method
+                      Booking information
                     </span>
                   </header>
+                  {accountPending ? (
+                    <div className="flex justify-center items-center py-10">
+                      <ClipLoader color="#17EB88" size={40} />
+                      <span className="ml-3 font-semibold">
+                        Loading account details...
+                      </span>
+                    </div>
+                  ) : accountData?.detail?.surname &&
+                    accountData?.detail?.firstName &&
+                    accountData?.detail?.contactNumber ? (
+                    // Display account details, and get the group size for this booking
+                    <div className="grid grid-cols-2 gap-10">
+                      <div>
+                        <label htmlFor="">Email</label>
+                        <input
+                          className="w-full border px-2 py-3 pl-10"
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={`${accountData?.detail?.email}`}
+                          required
+                          readOnly
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="">Your Name</label>
+                        <input
+                          className="w-full border px-2 py-3 pl-10"
+                          type="text"
+                          id="firstName"
+                          name="firstName"
+                          value={`${accountData?.detail?.firstName} ${accountData?.detail?.surname}`}
+                          required
+                          readOnly
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="">Contact Number</label>
+                        <input
+                          className="w-full border px-2 py-3 pl-10"
+                          type="text"
+                          id="contactNumber"
+                          name="contactNumber"
+                          value={`${accountData?.detail?.contactNumber}`}
+                          required
+                          readOnly
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="">Group size</label>
+                        <input
+                          className="w-full border px-2 py-3 pl-10"
+                          type="number"
+                          id="groupSize"
+                          name="groupSize"
+                          required
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-[#E32726]/20 text-[#E32726] rounded-lg p-4 flex flex-col gap-3 text-center">
+                      <span className="font-bold mr-2">
+                        Please register your details first
+                      </span>
+                      <Link to="/my-account" className="underline">
+                        Register here
+                      </Link>
+                    </div>
+                  )}
+
+                  <div>{accountData?.accountId}</div>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <header className="flex flex-col gap-2">
+                    <span className="font-bold text-xl text-[#48BF56]">
+                      Choose your package
+                    </span>
+                  </header>
+                  <div className="grid grid-cols-2"></div>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <header className="flex flex-col gap-2">
+                    <span className="font-bold text-xl text-[#48BF56]">
+                      Enhance your Experience (Optional)
+                    </span>
+                  </header>
+                </div>
+
+                <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
+                  <div className="flex flex-col">
+                    <span>Booking Summary</span>
+                    <span>1 visitor * P100 (First Package)</span>
+                  </div>
+                  <div className="flex flex-col text-end">
+                    <span className="font-bold text-xl">
+                      <FontAwesomeIcon icon={faPesoSign} />
+                      100
+                    </span>
+                    <span>Estimated Total</span>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-center mt-6">
                   <button
                     type="submit"
-                    className="text-center bg-[#48BF56] text-white px-4 py-2 rounded"
+                    className="text-center bg-[#48BF56] text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    disabled={
+                      !(
+                        accountData?.detail?.surname &&
+                        accountData?.detail?.firstName &&
+                        accountData?.detail?.contactNumber
+                      )
+                    }
                   >
                     Confirm Reservation
                   </button>
