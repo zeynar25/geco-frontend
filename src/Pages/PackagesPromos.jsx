@@ -70,14 +70,14 @@ function PackagesPromos() {
   return (
     <>
       <Header />
-      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10">
+      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10 flex flex-col gap-5">
         <BackButton
           to={backTo}
           title="Operating Hours and Schedule"
           description="Plan your visit with our detailed schedule information"
         />
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 my-10">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-5">
           {packagePending ? (
             <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
               <ClipLoader color="#17EB88" size={40} />
@@ -135,7 +135,7 @@ function PackagesPromos() {
         </div>
 
         <HeaderCard
-          className="bg-white my-10"
+          className="bg-white"
           headerClass="bg-[#222EDA] text-white"
           icon={<FontAwesomeIcon icon={faPlus} className="text-2xl" />}
           title="Available Package Inclusions"

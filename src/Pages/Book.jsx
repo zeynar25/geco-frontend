@@ -1,6 +1,7 @@
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
-import ValueCard from "../Components/ValueCard.jsx";
+import ValueCard from "../Components/ValueCard";
+import HeaderCard from "../Components/HeaderCard";
 
 import { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -48,7 +49,7 @@ function Book() {
     <>
       <Header />
 
-      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10">
+      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10 flex flex-col gap-5">
         <BackButton
           to={backTo}
           title="Book Your Visit"
@@ -104,6 +105,8 @@ function Book() {
             />
           </Link>
         </div>
+
+        <HeaderCard title="Reservation Details" />
       </div>
 
       <Footer />

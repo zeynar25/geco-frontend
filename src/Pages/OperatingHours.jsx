@@ -18,14 +18,14 @@ function OperatingHours() {
   return (
     <>
       <Header />
-      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10">
+      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10 flex flex-col gap-5">
         <BackButton
           to={backTo}
           title="Operating Hours and Schedule"
           description="Plan your visit with our detailed schedule information"
         />
 
-        <div className="grid grid-cols-3 gap-5 mb-10">
+        <div className="grid grid-cols-3 gap-5">
           <HeaderCard
             headerClass="bg-[#0A7A28] text-white"
             icon={

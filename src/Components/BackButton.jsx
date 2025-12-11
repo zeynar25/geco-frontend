@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 function BackButton(props) {
   return (
-    <div className="flex items-center gap-3 mb-10">
+    <div className="flex items-center gap-3 mb-5">
       <Link to={`${props.to}`}>
         <FontAwesomeIcon
           icon={faArrowLeftLong}
