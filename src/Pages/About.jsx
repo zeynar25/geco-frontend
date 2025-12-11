@@ -50,7 +50,7 @@ export default function About() {
             icon={<FontAwesomeIcon icon={faBuilding} />}
             title="CvSU Mission"
             description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-            className="col-span-2 md:col-span-1"
+            className="bg-white col-span-2 md:col-span-1"
           />
 
           <HeaderCard
@@ -58,7 +58,7 @@ export default function About() {
             icon={<FontAwesomeIcon icon={faEye} />}
             title="CvSU Vision"
             description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-            className="col-span-2 md:col-span-1"
+            className="bg-white col-span-2 md:col-span-1"
           />
 
           <div className="col-span-2 rounded-xl border-0 shadow-sm overflow-hidden">
@@ -115,7 +115,7 @@ export default function About() {
             icon={<FontAwesomeIcon icon={faBook} />}
             title="History"
             description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-            className="col-span-2"
+            className="bg-white col-span-2"
           />
 
           <div className="col-span-2 rounded-xl border-0 shadow-sm overflow-hidden bg-white">

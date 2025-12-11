@@ -89,13 +89,12 @@ function PackagesPromos() {
             packageData?.map((pkg) => (
               <HeaderCard
                 key={pkg.packageId}
-                className="col-span-2 sm:col-span-1"
+                className="bg-white col-span-2 sm:col-span-1"
                 headerClass="bg-[#0A7A28] text-white"
                 title={pkg.name}
                 subtitle={pkg.duration + " minutes"}
-                descriptionClass="flex flex-1 flex-col gap-4"
                 descriptionContent={
-                  <>
+                  <div className="flex flex-1 flex-col gap-4 my-5 mx-10">
                     <div className="flex">
                       <h2 className="font-bold text-xl">P{pkg.basePrice}</h2>
                       <span className="ml-2 my-auto">per person</span>
@@ -128,7 +127,7 @@ function PackagesPromos() {
                       />
                       <span>Book your visit now</span>
                     </Link>
-                  </>
+                  </div>
                 }
               />
             ))
@@ -136,12 +135,11 @@ function PackagesPromos() {
         </div>
 
         <HeaderCard
-          className="my-10"
+          className="bg-white my-10"
           headerClass="bg-[#222EDA] text-white"
           icon={<FontAwesomeIcon icon={faPlus} className="text-2xl" />}
           title="Available Package Inclusions"
           subtitle="Enhance your experience with these optional extras"
-          descriptionClass="grid grid-cols-2 lg:grid-cols-3 gap-10"
           descriptionContent={
             inclusionPending ? (
               <div className="flex justify-center items-center col-span-3 py-10">
@@ -151,23 +149,25 @@ function PackagesPromos() {
                 </span>
               </div>
             ) : (
-              inclusionData?.map((inclusion) => (
-                <HeaderCard
-                  key={inclusion.inclusionId}
-                  className="col-span-2 sm:col-span-1 border-2"
-                  headerContent={
-                    <div className="flex flex-col xl:flex-row justify-between gap-2 px-10 pt-5">
-                      <span className="font-bold w-fit mx-auto xl:mx-0">
-                        {inclusion.inclusionName}
-                      </span>
-                      <span className="bg-[#222EDA]/30 px-3 rounded-md w-fit mx-auto xl:mx-0">
-                        + P{inclusion.inclusionPricePerPerson}
-                      </span>
-                    </div>
-                  }
-                  description={inclusion.inclusionDescription}
-                />
-              ))
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-10 my-5 mx-10">
+                {inclusionData?.map((inclusion) => (
+                  <HeaderCard
+                    key={inclusion.inclusionId}
+                    className="bg-whitecol-span-2 sm:col-span-1 border-2"
+                    headerContent={
+                      <div className="flex flex-col xl:flex-row justify-between gap-2 px-10 pt-5">
+                        <span className="font-bold w-fit mx-auto xl:mx-0">
+                          {inclusion.inclusionName}
+                        </span>
+                        <span className="bg-[#222EDA]/30 px-3 rounded-md w-fit mx-auto xl:mx-0">
+                          + P{inclusion.inclusionPricePerPerson}
+                        </span>
+                      </div>
+                    }
+                    description={inclusion.inclusionDescription}
+                  />
+                ))}
+              </div>
             )
           }
         />

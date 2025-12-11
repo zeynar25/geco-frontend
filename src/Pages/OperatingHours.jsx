@@ -36,13 +36,13 @@ function OperatingHours() {
             }
             title="Regular Hours"
             descriptionContent={
-              <ul className="list-disc pl-5 space-y-1 marker:text-[#48BF56]">
+              <ul className="list-disc pl-5 space-y-1 marker:text-[#48BF56] my-5 mx-10">
                 <li>Monday - Friday: 8 AM - 5 PM</li>
                 <li>Last entry: 4 PM</li>
                 <li>Gates close promptly at 5 PM</li>
               </ul>
             }
-            className="col-span-3 md:col-span-1"
+            className="bg-white col-span-3 md:col-span-1"
           />
           <HeaderCard
             headerClass="bg-[#E05A21] text-white"
@@ -54,13 +54,13 @@ function OperatingHours() {
             }
             title="Peak Hours"
             descriptionContent={
-              <ul className="list-disc pl-5 space-y-1 marker:text-[#48BF56]">
+              <ul className="list-disc pl-5 space-y-1 marker:text-[#48BF56] my-5 mx-10">
                 <li>Busiest Time: 10 AM - 2 PM</li>
                 <li>Ideal for group activities</li>
                 <li>All facilities are fully operational</li>
               </ul>
             }
-            className="col-span-3 md:col-span-1"
+            className="bg-white col-span-3 md:col-span-1"
           />
           <HeaderCard
             headerClass="bg-[#222EDA] text-white"
@@ -72,26 +72,26 @@ function OperatingHours() {
             }
             title="Quiet Hours"
             descriptionContent={
-              <ul className="list-disc pl-5 space-y-1 marker:text-[#48BF56]">
+              <ul className="list-disc pl-5 space-y-1 marker:text-[#48BF56] my-5 mx-10">
                 <li>Early Morning: 8 AM - 10 AM</li>
                 <li>Late Afternoon: 3 PM - 5 PM</li>
                 <li>Perfect for peaceful operations</li>
               </ul>
             }
-            className="col-span-3 md:col-span-1"
+            className="bg-white col-span-3 md:col-span-1"
           />
         </div>
 
         <div>
           <HeaderCard
-            headerClass="bg-[#FDDB3C]/10 text-[#97750B]"
+            className="bg-[#FDDB3C]/10"
+            headerClass="text-[#97750B]"
             icon={
               <FontAwesomeIcon icon={faNoteSticky} className="text-[#E32726]" />
             }
             title="Important Reminders"
-            descriptionClass="bg-[#FDDB3C]/10"
             descriptionContent={
-              <div className="grid grid-cols-2 gap-2 md:gap-5">
+              <div className="grid grid-cols-2 gap-2 md:gap-5 my-5 mx-10">
                 <ul className="list-disc pl-5 space-y-1 col-span-2 md:col-span-1 grid gap-2">
                   <li>
                     Advance booking is highly recommended, especially for groups
