@@ -7,11 +7,11 @@ function AboutCard({
   descriptionClass,
   description,
   descriptionContent,
-  className,
+  className = "bg-white",
 }) {
   return (
     <div
-      className={`bg-white rounded-xl border-0 shadow-sm overflow-hidden flex flex-col h-full ${className}`}
+      className={`rounded-xl border-0 shadow-sm overflow-hidden flex flex-col h-full ${className}`}
     >
       {headerContent ? (
         headerContent
