@@ -25,9 +25,11 @@ function AboutCard({
         </header>
       )}
 
-      <div className={`px-10 py-5 ${descriptionClass}`}>
-        {descriptionContent ? descriptionContent : description}
-      </div>
+      {descriptionContent ? (
+        descriptionContent
+      ) : (
+        <div className={`px-10 py-5 ${descriptionClass}`}>{description}</div>
+      )}
     </div>
   );
 }
