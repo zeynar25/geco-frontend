@@ -77,7 +77,7 @@ function PackagesPromos() {
           description="Plan your visit with our detailed schedule information"
         />
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 my-5">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 my-10">
           {packagePending ? (
             <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
               <ClipLoader color="#17EB88" size={40} />
@@ -89,8 +89,8 @@ function PackagesPromos() {
             packageData?.map((pkg) => (
               <HeaderCard
                 key={pkg.packageId}
-                className="col-span-2 md:col-span-1"
-                headerClass="bg-[#17EB88] text-white"
+                className="col-span-2 sm:col-span-1"
+                headerClass="bg-[#0A7A28] text-white"
                 title={pkg.name}
                 subtitle={pkg.duration + " minutes"}
                 descriptionClass="flex flex-1 flex-col gap-4"
@@ -120,11 +120,11 @@ function PackagesPromos() {
                     <Link
                       to="/book"
                       state={{ from: location.pathname }}
-                      className="group bg-[#17EB88]/80 text-white border-2 border-black rounded-lg py-2 px-3 hover:bg-[#17EB88] hover:text-black hover:cursor-pointer mt-auto flex items-center justify-center"
+                      className="bg-[#0A7A28]/90 text-white border-2 border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] hover:cursor-pointer mt-auto flex items-center justify-center"
                     >
                       <FontAwesomeIcon
                         icon={faCalendarCheck}
-                        className="text-white mr-2 group-hover:text-black"
+                        className="text-white mr-2"
                       />
                       <span>Book your visit now</span>
                     </Link>
@@ -136,7 +136,7 @@ function PackagesPromos() {
         </div>
 
         <HeaderCard
-          className="my-5"
+          className="my-10"
           headerClass="bg-[#222EDA] text-white"
           icon={<FontAwesomeIcon icon={faPlus} className="text-2xl" />}
           title="Available Package Inclusions"
@@ -154,7 +154,7 @@ function PackagesPromos() {
               inclusionData?.map((inclusion) => (
                 <HeaderCard
                   key={inclusion.inclusionId}
-                  className="col-span-2 md:col-span-1 border-2"
+                  className="col-span-2 sm:col-span-1 border-2"
                   headerContent={
                     <div className="flex flex-col xl:flex-row justify-between gap-2 px-10 pt-5">
                       <span className="font-bold w-fit mx-auto xl:mx-0">
