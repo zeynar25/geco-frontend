@@ -125,8 +125,8 @@ function Book() {
           descriptionContent={
             <div className="m-5">
               <form onSubmit={handleSubmit}>
-                <div>
-                  <header className="flex flex-col gap-2 mb-4">
+                <div className="flex flex-col gap-3">
+                  <header className="flex flex-col gap-2">
                     <span className="font-bold text-xl text-[#48BF56]">
                       Payment Method
                     </span>
@@ -226,7 +226,30 @@ function Book() {
                       }
                     />
                   </div>
+                  {paymentMethod === "online" && (
+                    <div className="bg-[#222EDA]/20 text-[#222EDA] rounded-lg p-4 flex flex-col gap-3">
+                      <div>
+                        <span className="font-bold mr-2">Gcash Number:</span>
+                        <span>09xx-xxx-xxxx (CvSU Agri-Eco Park)</span>
+                      </div>
+                      <p className="text-sm text-black">
+                        After submitting this form, you’ll receive payment
+                        instructions and a link to submit your proof of payment
+                        within 24 hours of approval. You may track your booking
+                        status anytime in “My Schedule”
+                      </p>
+                    </div>
+                  )}
                 </div>
+
+                <div className="flex flex-col gap-3">
+                  <header className="flex flex-col gap-2">
+                    <span className="font-bold text-xl text-[#48BF56]">
+                      Payment Method
+                    </span>
+                  </header>
+                </div>
+
                 <div className="flex items-center justify-center mt-6">
                   <button
                     type="submit"
