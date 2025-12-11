@@ -17,7 +17,9 @@ function AboutCard({
         headerContent
       ) : (
         <header className={`flex px-10 py-5 gap-3 ${headerClass} `}>
-          <span className="text-lg lg:text-xl my-auto">{icon}</span>
+          {icon ? (
+            <span className="text-lg lg:text-xl my-auto">{icon}</span>
+          ) : null}
           <div className="my-auto">
             <h1 className="font-bold text-lg lg:text-xl">{title}</h1>
             <h6 className="font-bold text-xs lg:text-sm">{subtitle}</h6>
