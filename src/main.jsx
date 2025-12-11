@@ -6,6 +6,7 @@ import Signin from "./Pages/Signin.jsx";
 import Book from "./Pages/Book.jsx";
 import OperatingHours from "./Pages/OperatingHours.jsx";
 import PackagesPromos from "./Pages/PackagesPromos.jsx";
+import ParkCalendar from "./Pages/ParkCalendar.jsx";
 
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
   { path: "/book", element: <Book /> },
   { path: "/operating-hours", element: <OperatingHours /> },
   { path: "/packages-promos", element: <PackagesPromos /> },
+  { path: "/park-calendar", element: <ParkCalendar /> },
 ]);
 
 const queryClient = new QueryClient();
