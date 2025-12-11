@@ -20,6 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import BackButton from "../Components/BackButton.jsx";
 import { ClipLoader } from "react-spinners";
+import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 
 function isLoggedIn() {
   const token = localStorage.getItem("token");
@@ -39,6 +40,7 @@ function isLoggedIn() {
 function Book() {
   const [loggedIn] = useState(isLoggedIn());
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [selectedPackageId, setSelectedPackageId] = useState(null);
 
   const location = useLocation();
   const backTo = location.state?.from || "/";
@@ -57,7 +59,13 @@ function Book() {
       alert("Please select a payment method.");
       return;
     }
-    alert(`Selected: ${paymentMethod}`);
+
+    if (!selectedPackageId) {
+      alert("Please select a tour package.");
+      return;
+    }
+
+    alert(`Selected: ${paymentMethod}, Package ID: ${selectedPackageId}`);
   }
 
   const token = localStorage.getItem("token");
@@ -88,6 +96,26 @@ function Book() {
 
   if (accountError) {
     alert("something went wrong in retrieving account");
+  }
+
+  const {
+    data: packageData,
+    error: packageError,
+    isPending: packagePending,
+  } = useQuery({
+    queryKey: ["packages"],
+    queryFn: async () => {
+      const tourPackages = await fetch("http://localhost:8080/package/active");
+      if (!tourPackages.ok) {
+        const error = await tourPackages.json();
+        throw new Error(error?.error || "Getting tour packages failed");
+      }
+      return await tourPackages.json();
+    },
+  });
+
+  if (packageError) {
+    alert("something went wrong in retrieving tour packages");
   }
 
   return (
@@ -349,8 +377,6 @@ function Book() {
                       </Link>
                     </div>
                   )}
-
-                  <div>{accountData?.accountId}</div>
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -359,7 +385,64 @@ function Book() {
                       Choose your package
                     </span>
                   </header>
-                  <div className="grid grid-cols-2"></div>
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-10">
+                    {packagePending ? (
+                      <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
+                        <ClipLoader color="#17EB88" size={40} />
+                        <span className="ml-3 font-semibold">
+                          Loading Tour packages...
+                        </span>
+                      </div>
+                    ) : (
+                      packageData?.map((pkg) => (
+                        <div
+                          key={pkg.packageId}
+                          onClick={() => setSelectedPackageId(pkg.packageId)}
+                          className={`cursor-pointer bg-white col-span-2 sm:col-span-1 rounded-xl border-2 shadow transition-all ${
+                            selectedPackageId === pkg.packageId
+                              ? "border-[#020D00]/50 ring-2 ring-[#020D00]/50"
+                              : "border-gray-300"
+                          }`}
+                        >
+                          <HeaderCard
+                            headerClass="bg-[#0A7A28] text-white"
+                            title={pkg.name}
+                            subtitle={pkg.duration + " minutes"}
+                            descriptionContent={
+                              <div className="flex flex-1 flex-col gap-4 my-5 mx-10">
+                                <div className="flex">
+                                  <h2 className="font-bold text-xl">
+                                    <FontAwesomeIcon icon={faPesoSign} />
+                                    {pkg.basePrice}
+                                  </h2>
+                                  <span className="ml-2 my-auto">
+                                    per person
+                                  </span>
+                                </div>
+                                <p>{pkg.description}</p>
+                                <div>
+                                  <h3 className="font-semibold text-lg">
+                                    What's included:{" "}
+                                  </h3>
+                                  <ul>
+                                    {pkg.inclusions?.map((inclusion) => (
+                                      <li key={inclusion.inclusionId}>
+                                        <FontAwesomeIcon
+                                          icon={faCheck}
+                                          className="text-[#17EB88] mr-2"
+                                        />
+                                        {inclusion.inclusionName}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            }
+                          />
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -388,13 +471,13 @@ function Book() {
                   <button
                     type="submit"
                     className="text-center bg-[#48BF56] text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    disabled={
-                      !(
-                        accountData?.detail?.surname &&
-                        accountData?.detail?.firstName &&
-                        accountData?.detail?.contactNumber
-                      )
-                    }
+                    // disabled={
+                    //   !(
+                    //     accountData?.detail?.surname &&
+                    //     accountData?.detail?.firstName &&
+                    //     accountData?.detail?.contactNumber
+                    //   )
+                    // }
                   >
                     Confirm Reservation
                   </button>
