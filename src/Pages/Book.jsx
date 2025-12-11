@@ -398,10 +398,10 @@ function Book() {
                         <div
                           key={pkg.packageId}
                           onClick={() => setSelectedPackageId(pkg.packageId)}
-                          className={`cursor-pointer bg-white col-span-2 sm:col-span-1 rounded-xl border-2 shadow transition-all ${
+                          className={`cursor-pointer bg-white col-span-2 sm:col-span-1 rounded-xl border-2 transition-all ${
                             selectedPackageId === pkg.packageId
-                              ? "border-[#020D00]/50 ring-2 ring-[#020D00]/50"
-                              : "border-gray-300"
+                              ? "border-[#0A7A28] ring-2 ring-[#0A7A28]"
+                              : "border-transparent"
                           }`}
                         >
                           <HeaderCard
