@@ -23,6 +23,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 function ParkCalendar() {
+  function setDay(day) {
+    if (selectedDay === day) {
+      setSelectedDay(null); // Deselect if already selected
+    } else {
+      setSelectedDay(day);
+    }
+  }
   const location = useLocation();
   const backTo = location.state?.from || "/";
 
@@ -200,7 +207,7 @@ function ParkCalendar() {
                               <div
                                 key={dayNum}
                                 className={`p-3 rounded cursor-pointer hover:bg-[#020D00]/50 ${bgColor} ${border}`}
-                                onClick={() => setSelectedDay(dayNum)}
+                                onClick={() => setDay(dayNum)}
                               >
                                 <span className="font-bold">{dayNum}</span>
                               </div>
