@@ -83,7 +83,10 @@ function Book() {
   }
 
   const token = localStorage.getItem("token");
-  const decoded = jwtDecode(token);
+  let decoded = {};
+  if (loggedIn) {
+    decoded = jwtDecode(token);
+  }
 
   const {
     data: accountData,
@@ -172,48 +175,48 @@ function Book() {
           <Link
             to="/operating-hours"
             state={{ from: location.pathname }}
-            className="col-span-3 md:col-span-1 h-full"
+            className="hover:shadow-2xl rounded-2xl overflow-hidden col-span-3 md:col-span-1 h-full"
           >
             <ValueCard
+              className="h-full border-0 shadow"
               title="Operating Hours"
               titleClasses="text-[#227B05] text-xl mb-3"
               description="Monday-Thursday"
               description2="8:00 AM - 5:00 PM"
               icon={<FontAwesomeIcon icon={faClock} className="text-4xl" />}
               iconClasses="text-[#48BF56]"
-              className="h-full border-0 shadow-2xl"
             />
           </Link>
 
           <Link
             to="/packages-promos"
             state={{ from: location.pathname }}
-            className="col-span-3 md:col-span-1 h-full"
+            className="hover:shadow-2xl rounded-2xl overflow-hidden col-span-3 md:col-span-1 h-full"
           >
             <ValueCard
+              className="h-full border-0 shadow"
               title="Packages & Promos"
               titleClasses="text-[#227B05] text-xl mb-3"
               description="Various packages available"
               description2="Starting from P100"
               icon={<FontAwesomeIcon icon={faBoxOpen} className="text-4xl" />}
               iconClasses="text-[#222EDA]"
-              className="h-full border-0 shadow-2xl"
             />
           </Link>
 
           <Link
             to="/park-calendar"
             state={{ from: location.pathname }}
-            className="col-span-3 md:col-span-1 h-full"
+            className="hover:shadow-2xl rounded-2xl overflow-hidden col-span-3 md:col-span-1 h-full"
           >
             <ValueCard
+              className="h-full border-0 shadow"
               title="Park Calendar"
               titleClasses="text-[#227B05] text-xl mb-3"
               description="Check availability"
               description2="Plan your visit"
               icon={<FontAwesomeIcon icon={faCalendar} className="text-4xl" />}
               iconClasses="text-[#A86CCB]"
-              className="h-full border-0 shadow-2xl"
             />
           </Link>
         </div>
@@ -341,6 +344,7 @@ function Book() {
                   )}
                 </div>
 
+                {/* account information */}
                 <div className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
                     <span className="font-bold text-xl text-[#48BF56]">
@@ -424,6 +428,27 @@ function Book() {
                     <span className="font-bold text-xl text-[#48BF56]">
                       Visit Schedule
                     </span>
+                    <div>
+                      <div>
+                        <label htmlFor="">Visit Date</label>
+                        <input
+                          className="w-full border px-2 py-3 pl-10"
+                          type="date"
+                          id="visitDate"
+                          name="visitDate"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="">Visit time</label>
+                        <input
+                          className="w-full border px-2 py-3 pl-10"
+                          type="time"
+                          id="visitTime"
+                          name="visitTime"
+                          required
+                        />
+                      </div>
+                    </div>
                   </header>
                 </div>
 
