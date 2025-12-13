@@ -246,13 +246,16 @@ export default function Home() {
             <div className="bg-[#227B05] text-white rounded-xl overflow-hidden shadow-2xl px-5 py-2">
               <h3 className="font-semibold py-2">Plan your visit</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 px-5 py-2">
-                <button className="bg-white/90 hover:bg-white text-green-600 font-semibold rounded-lg py-1.5 cursor-pointer">
+                <Link
+                  to="/book"
+                  className="bg-white/90 hover:bg-white text-green-600 font-semibold rounded-lg py-1.5 cursor-pointer text-center"
+                >
                   <FontAwesomeIcon
                     icon={faCalendarDays}
                     className="text-black mr-2"
                   />
                   Book your visit
-                </button>
+                </Link>
                 <button className="border-white bg-[#a9e2a3]/90 hover:bg-[#a9e2a3] text-black font-semibold rounded-lg py-1.5 cursor-pointer">
                   <FontAwesomeIcon
                     icon={faMessage}
