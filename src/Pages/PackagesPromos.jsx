@@ -95,9 +95,17 @@ function PackagesPromos() {
                 subtitle={pkg.duration + " minutes"}
                 descriptionContent={
                   <div className="flex flex-1 flex-col gap-4 my-5 mx-10">
-                    <div className="flex">
-                      <h2 className="font-bold text-xl">P{pkg.basePrice}</h2>
-                      <span className="ml-2 my-auto">per person</span>
+                    <div className="flex gap-2 justify-between">
+                      <div className="flex">
+                        <h2 className="font-bold text-xl">P{pkg.basePrice}</h2>
+                        <span className="ml-2 my-auto">Base price</span>
+                      </div>
+                      <div className="flex">
+                        <h2 className="font-bold text-xl">
+                          P{pkg.pricePerPerson}
+                        </h2>
+                        <span className="ml-2 my-auto">per person</span>
+                      </div>
                     </div>
                     <p>{pkg.description}</p>
                     <div>
@@ -117,7 +125,7 @@ function PackagesPromos() {
                       </ul>
                     </div>
                     <Link
-                      to="/book"
+                      to="/book#package-selection"
                       state={{ from: location.pathname }}
                       className="bg-[#0A7A28]/90 text-white border-2 border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] hover:cursor-pointer mt-auto flex items-center justify-center"
                     >

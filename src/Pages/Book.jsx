@@ -55,6 +55,16 @@ function Book() {
     }
   }, [loggedIn, navigate]);
 
+  useEffect(() => {
+    // Scroll to the element with the ID matching the hash
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
+
   // function handleInclusionToggle(inclusionId) {
   //   setSelectedInclusions((prev) =>
   //     prev.includes(inclusionId)
@@ -455,7 +465,7 @@ function Book() {
                 </div>
 
                 {/* Tour packages */}
-                <div className="flex flex-col gap-3">
+                <div id="package-selection" className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
                     <span className="font-bold text-xl text-[#48BF56]">
                       Choose your package
@@ -490,6 +500,15 @@ function Book() {
                                   <h2 className="font-bold text-xl">
                                     <FontAwesomeIcon icon={faPesoSign} />
                                     {pkg.basePrice}
+                                  </h2>
+                                  <span className="ml-2 my-auto">
+                                    Base price
+                                  </span>
+                                </div>
+                                <div className="flex">
+                                  <h2 className="font-bold text-xl">
+                                    <FontAwesomeIcon icon={faPesoSign} />
+                                    {pkg.pricePerPerson}
                                   </h2>
                                   <span className="ml-2 my-auto">
                                     per person
