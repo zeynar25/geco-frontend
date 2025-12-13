@@ -42,7 +42,7 @@ function Book() {
   const [loggedIn] = useState(isLoggedIn());
   const [paymentMethod, setPaymentMethod] = useState("");
   const [selectedPackageId, setSelectedPackageId] = useState(null);
-  const [selectedInclusions, setSelectedInclusions] = useState([]);
+  // const [selectedInclusions, setSelectedInclusions] = useState([]);
 
   const location = useLocation();
   const backTo = location.state?.from || "/";
@@ -55,13 +55,13 @@ function Book() {
     }
   }, [loggedIn, navigate]);
 
-  function handleInclusionToggle(inclusionId) {
-    setSelectedInclusions((prev) =>
-      prev.includes(inclusionId)
-        ? prev.filter((id) => id !== inclusionId)
-        : [...prev, inclusionId]
-    );
-  }
+  // function handleInclusionToggle(inclusionId) {
+  //   setSelectedInclusions((prev) =>
+  //     prev.includes(inclusionId)
+  //       ? prev.filter((id) => id !== inclusionId)
+  //       : [...prev, inclusionId]
+  //   );
+  // }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -75,11 +75,13 @@ function Book() {
       return;
     }
 
-    alert(
-      `Selected: ${paymentMethod}, Package ID: ${selectedPackageId}, Inclusions: ${selectedInclusions.join(
-        ", "
-      )}`
-    );
+    // alert(
+    //   `Selected: ${paymentMethod}, Package ID: ${selectedPackageId}, Inclusions: ${selectedInclusions.join(
+    //     ", "
+    //   )}`
+    // );
+
+    alert(`Selected: ${paymentMethod}, Package ID: ${selectedPackageId}`);
   }
 
   const token = localStorage.getItem("token");
@@ -135,30 +137,30 @@ function Book() {
     alert("something went wrong in retrieving tour packages");
   }
 
-  const {
-    data: inclusionData,
-    error: inclusionError,
-    isPending: inclusionPending,
-  } = useQuery({
-    queryKey: ["package-inclusions", selectedPackageId],
-    queryFn: async () => {
-      const packageInclusions = await fetch(
-        `http://localhost:8080/package/${selectedPackageId}/inclusions/available`
-      );
-      if (!packageInclusions.ok) {
-        const error = await packageInclusions.json();
-        throw new Error(
-          error?.error || "Getting tour package inclusions failed"
-        );
-      }
-      return await packageInclusions.json();
-    },
-    enabled: !!selectedPackageId,
-  });
+  // const {
+  //   data: inclusionData,
+  //   error: inclusionError,
+  //   isPending: inclusionPending,
+  // } = useQuery({
+  //   queryKey: ["package-inclusions", selectedPackageId],
+  //   queryFn: async () => {
+  //     const packageInclusions = await fetch(
+  //       `http://localhost:8080/package/${selectedPackageId}/inclusions/available`
+  //     );
+  //     if (!packageInclusions.ok) {
+  //       const error = await packageInclusions.json();
+  //       throw new Error(
+  //         error?.error || "Getting tour package inclusions failed"
+  //       );
+  //     }
+  //     return await packageInclusions.json();
+  //   },
+  //   enabled: !!selectedPackageId,
+  // });
 
-  if (inclusionError) {
-    alert("something went wrong in retrieving tour package inclusions");
-  }
+  // if (inclusionError) {
+  //   alert("something went wrong in retrieving tour package inclusions");
+  // }
 
   return (
     <>
@@ -520,7 +522,7 @@ function Book() {
                 </div>
 
                 {/* Tour package inclusions */}
-                {selectedPackageId && (
+                {/* {selectedPackageId && (
                   <div className="flex flex-col gap-3">
                     <header className="flex flex-col gap-2">
                       <span className="font-bold text-xl text-[#48BF56]">
@@ -583,7 +585,7 @@ function Book() {
                       }
                     />
                   </div>
-                )}
+                )} */}
 
                 <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
                   <div className="flex flex-col">

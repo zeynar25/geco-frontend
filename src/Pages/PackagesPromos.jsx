@@ -40,32 +40,32 @@ function PackagesPromos() {
     alert("something went wrong in retrieving tour packages");
   }
 
-  const {
-    data: inclusionData,
-    error: inclusionError,
-    isPending: inclusionPending,
-  } = useQuery({
-    queryKey: ["package-inclusions"],
-    queryFn: async () => {
-      // Simulate network delay
-      // await new Promise((resolve) => setTimeout(resolve, 10000));
+  // const {
+  //   data: inclusionData,
+  //   error: inclusionError,
+  //   isPending: inclusionPending,
+  // } = useQuery({
+  //   queryKey: ["package-inclusions"],
+  //   queryFn: async () => {
+  //     // Simulate network delay
+  //     // await new Promise((resolve) => setTimeout(resolve, 10000));
 
-      const packageInclusions = await fetch(
-        "http://localhost:8080/package-inclusion/active"
-      );
-      if (!packageInclusions.ok) {
-        const error = await packageInclusions.json();
-        throw new Error(
-          error?.error || "Getting tour package inclusions failed"
-        );
-      }
-      return await packageInclusions.json();
-    },
-  });
+  //     const packageInclusions = await fetch(
+  //       "http://localhost:8080/package-inclusion/active"
+  //     );
+  //     if (!packageInclusions.ok) {
+  //       const error = await packageInclusions.json();
+  //       throw new Error(
+  //         error?.error || "Getting tour package inclusions failed"
+  //       );
+  //     }
+  //     return await packageInclusions.json();
+  //   },
+  // });
 
-  if (inclusionError) {
-    alert("something went wrong in retrieving tour package inclusions");
-  }
+  // if (inclusionError) {
+  //   alert("something went wrong in retrieving tour package inclusions");
+  // }
 
   return (
     <>
@@ -134,7 +134,7 @@ function PackagesPromos() {
           )}
         </div>
 
-        <HeaderCard
+        {/* <HeaderCard
           className="bg-white"
           headerClass="bg-[#222EDA] text-white"
           icon={<FontAwesomeIcon icon={faPlus} className="text-2xl" />}
@@ -170,7 +170,7 @@ function PackagesPromos() {
               </div>
             )
           }
-        />
+        /> */}
       </div>
       <Footer />
     </>
