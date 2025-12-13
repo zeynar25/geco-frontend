@@ -496,23 +496,30 @@ function Book() {
                             subtitle={pkg.duration + " minutes"}
                             descriptionContent={
                               <div className="flex flex-1 flex-col gap-4 my-5 mx-10">
-                                <div className="flex">
-                                  <h2 className="font-bold text-xl">
-                                    <FontAwesomeIcon icon={faPesoSign} />
-                                    {pkg.basePrice}
-                                  </h2>
-                                  <span className="ml-2 my-auto">
-                                    Base price
-                                  </span>
-                                </div>
-                                <div className="flex">
-                                  <h2 className="font-bold text-xl">
-                                    <FontAwesomeIcon icon={faPesoSign} />
-                                    {pkg.pricePerPerson}
-                                  </h2>
-                                  <span className="ml-2 my-auto">
-                                    per person
-                                  </span>
+                                <div className="flex flex-col gap-2 justify-between text-md">
+                                  {pkg.basePrice > 0 && (
+                                    <div className="flex">
+                                      <h2 className="font-bold text-xl">
+                                        <FontAwesomeIcon icon={faPesoSign} />
+                                        {pkg.basePrice}
+                                      </h2>
+                                      <span className="ml-2 my-auto">
+                                        Base price
+                                      </span>
+                                    </div>
+                                  )}
+
+                                  {pkg.pricePerPerson > 0 && (
+                                    <div className="flex">
+                                      <h2 className="font-bold text-xl">
+                                        <FontAwesomeIcon icon={faPesoSign} />
+                                        {pkg.pricePerPerson}
+                                      </h2>
+                                      <span className="ml-2 my-auto">
+                                        per person
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
                                 <p>{pkg.description}</p>
                                 <div>
