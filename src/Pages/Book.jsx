@@ -5,7 +5,7 @@ import HeaderCard from "../Components/HeaderCard";
 
 import { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -44,6 +44,7 @@ function Book() {
   const [selectedGroupSize, setSelectedGroupSize] = useState(null);
   const [selectedPackageId, setSelectedPackageId] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [groupSizeError, setGroupSizeError] = useState("");
   // const [selectedInclusions, setSelectedInclusions] = useState([]);
 
   const location = useLocation();
@@ -79,9 +80,30 @@ function Book() {
     if (selectedPackageId === pkg.packageId) {
       setSelectedPackageId(null);
       setSelectedPackage(null);
+      setGroupSizeError("");
     } else {
       setSelectedPackageId(pkg.packageId);
       setSelectedPackage(pkg);
+      // Re-validate group size if already set
+      if (selectedGroupSize !== null && selectedGroupSize !== "") {
+        validateGroupSize(selectedGroupSize, pkg);
+      }
+    }
+  }
+
+  function validateGroupSize(value, pkg = selectedPackage) {
+    if (!pkg) {
+      setGroupSizeError("Choose a tour package first");
+      return;
+    }
+    const min = pkg.minPerson || 1;
+    const max = pkg.maxPerson || 1000;
+    if (value < min) {
+      setGroupSizeError(`Group size for this package must be at least ${min}`);
+    } else if (value > max) {
+      setGroupSizeError(`Group size for this package must not exceed ${max}`);
+    } else {
+      setGroupSizeError("");
     }
   }
 
@@ -95,6 +117,7 @@ function Book() {
 
   function handleSubmit(e) {
     e.preventDefault();
+
     if (!paymentMethod) {
       alert("Please select a payment method.");
       return;
@@ -105,13 +128,23 @@ function Book() {
       return;
     }
 
-    // alert(
-    //   `Selected: ${paymentMethod}, Package ID: ${selectedPackageId}, Inclusions: ${selectedInclusions.join(
-    //     ", "
-    //   )}`
-    // );
+    // Validate group size before submit
+    if (groupSizeError) {
+      alert(groupSizeError);
+      return;
+    }
 
-    alert(`Selected: ${paymentMethod}, Package ID: ${selectedPackageId}`);
+    const bookingRequest = {
+      accountId: accountData.accountId,
+      tourPackageId: selectedPackageId,
+      bookingInclusionRequests: [],
+      visitDate: document.getElementById("visitDate").value,
+      visitTime: document.getElementById("visitTime").value,
+      groupSize: selectedGroupSize,
+    };
+
+    console.log(bookingRequest);
+    createBooking(bookingRequest);
   }
 
   const token = localStorage.getItem("token");
@@ -191,6 +224,41 @@ function Book() {
   // if (inclusionError) {
   //   alert("something went wrong in retrieving tour package inclusions");
   // }
+
+  const addBooking = async (bookingRequest) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch("http://localhost:8080/booking", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(bookingRequest),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error?.error || "Booking failed");
+    }
+    return response.json();
+  };
+
+  const {
+    mutate: createBooking,
+    isLoading: isBooking,
+    isError: bookingError,
+    error: bookingErrorObj,
+    isSuccess: bookingSuccess,
+    data: bookingData,
+  } = useMutation({
+    mutationFn: addBooking,
+    onError: (error) => {
+      alert(error.message || "Booking failed");
+    },
+  });
+
+  if (bookingSuccess) {
+    alert("Booking successful!");
+  }
 
   return (
     <>
@@ -375,7 +443,6 @@ function Book() {
                     </div>
                   )}
                 </div>
-
                 {/* Visit Schedule */}
                 <div className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
@@ -405,7 +472,6 @@ function Book() {
                     </div>
                   </div>
                 </div>
-
                 {/* Tour packages */}
                 <div id="package-selection" className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
@@ -492,7 +558,6 @@ function Book() {
                     )}
                   </div>
                 </div>
-
                 {/* Tour package inclusions */}
                 {/* {selectedPackageId && (
                   <div className="flex flex-col gap-3">
@@ -558,7 +623,6 @@ function Book() {
                     />
                   </div>
                 )} */}
-
                 {/* account information */}
                 <div className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
@@ -617,15 +681,30 @@ function Book() {
                       <div>
                         <label htmlFor="">Group size</label>
                         <input
-                          className="w-full border px-2 py-3 pl-10"
+                          className={`w-full border px-2 py-3 pl-10 ${
+                            groupSizeError ? "border-red-500" : ""
+                          }`}
                           type="number"
                           id="groupSize"
                           name="groupSize"
                           required
-                          onChange={(e) =>
-                            setSelectedGroupSize(Number(e.target.value))
-                          }
+                          min={selectedPackage?.minPerson || 1}
+                          max={selectedPackage?.maxPerson || 1000}
+                          value={selectedGroupSize ?? ""}
+                          onChange={(e) => {
+                            const value =
+                              e.target.value === ""
+                                ? ""
+                                : Number(e.target.value);
+                            setSelectedGroupSize(value);
+                            validateGroupSize(value);
+                          }}
                         />
+                        {groupSizeError && (
+                          <div className="text-red-500 text-sm mt-1">
+                            {groupSizeError}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ) : (
@@ -639,7 +718,6 @@ function Book() {
                     </div>
                   )}
                 </div>
-
                 {selectedPackage && selectedGroupSize > 0 && (
                   <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
                     <div className="flex flex-col">
@@ -667,7 +745,6 @@ function Book() {
                     </div>
                   </div>
                 )}
-
                 <div className="flex items-center justify-center mt-6">
                   <button
                     type="submit"
