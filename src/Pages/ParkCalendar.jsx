@@ -24,11 +24,22 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 function ParkCalendar() {
+  const [show, setShow] = useState(true);
+
   function setDay(day) {
+    setShow(false);
+
+    // Deselect if already selected
     if (selectedDay === day) {
-      setSelectedDay(null); // Deselect if already selected
+      setTimeout(() => {
+        setSelectedDay(null);
+        setShow(true);
+      }, 250);
     } else {
-      setSelectedDay(day);
+      setTimeout(() => {
+        setSelectedDay(day);
+        setShow(true);
+      }, 250);
     }
   }
   const location = useLocation();
@@ -268,7 +279,9 @@ function ParkCalendar() {
               }
             />
             <HeaderCard
-              className="bg-white"
+              className={`bg-white transition-opacity duration-300 ${
+                show ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
               headerClass="bg-white text-[#0A7A28] justify-center"
               title={swappableDate}
               descriptionContent={
