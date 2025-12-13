@@ -376,84 +376,6 @@ function Book() {
                   )}
                 </div>
 
-                {/* account information */}
-                <div className="flex flex-col gap-3">
-                  <header className="flex flex-col gap-2">
-                    <span className="font-bold text-xl text-[#48BF56]">
-                      Booking information
-                    </span>
-                  </header>
-                  {accountPending ? (
-                    <div className="flex justify-center items-center py-10">
-                      <ClipLoader color="#17EB88" size={40} />
-                      <span className="ml-3 font-semibold">
-                        Loading account details...
-                      </span>
-                    </div>
-                  ) : accountData?.detail?.surname &&
-                    accountData?.detail?.firstName &&
-                    accountData?.detail?.contactNumber ? (
-                    // Display account details, and get the group size for this booking
-                    <div className="grid grid-cols-2 gap-10">
-                      <div>
-                        <label htmlFor="">Email</label>
-                        <input
-                          className="w-full border px-2 py-3 pl-10"
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={`${accountData?.detail?.email}`}
-                          required
-                          readOnly
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="">Your Name</label>
-                        <input
-                          className="w-full border px-2 py-3 pl-10"
-                          type="text"
-                          id="firstName"
-                          name="firstName"
-                          value={`${accountData?.detail?.firstName} ${accountData?.detail?.surname}`}
-                          required
-                          readOnly
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="">Contact Number</label>
-                        <input
-                          className="w-full border px-2 py-3 pl-10"
-                          type="text"
-                          id="contactNumber"
-                          name="contactNumber"
-                          value={`${accountData?.detail?.contactNumber}`}
-                          required
-                          readOnly
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="">Group size</label>
-                        <input
-                          className="w-full border px-2 py-3 pl-10"
-                          type="number"
-                          id="groupSize"
-                          name="groupSize"
-                          required
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="bg-[#E32726]/20 text-[#E32726] rounded-lg p-4 flex flex-col gap-3 text-center">
-                      <span className="font-bold mr-2">
-                        Please register your details first
-                      </span>
-                      <Link to="/my-account" className="underline">
-                        Register here
-                      </Link>
-                    </div>
-                  )}
-                </div>
-
                 {/* Visit Schedule */}
                 <div className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
@@ -636,6 +558,87 @@ function Book() {
                     />
                   </div>
                 )} */}
+
+                {/* account information */}
+                <div className="flex flex-col gap-3">
+                  <header className="flex flex-col gap-2">
+                    <span className="font-bold text-xl text-[#48BF56]">
+                      Booking information
+                    </span>
+                  </header>
+                  {accountPending ? (
+                    <div className="flex justify-center items-center py-10">
+                      <ClipLoader color="#17EB88" size={40} />
+                      <span className="ml-3 font-semibold">
+                        Loading account details...
+                      </span>
+                    </div>
+                  ) : accountData?.detail?.surname &&
+                    accountData?.detail?.firstName &&
+                    accountData?.detail?.contactNumber ? (
+                    // Display account details, and get the group size for this booking
+                    <div className="grid grid-cols-2 gap-10">
+                      <div>
+                        <label htmlFor="">Email</label>
+                        <input
+                          className="w-full border px-2 py-3 pl-10"
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={`${accountData?.detail?.email}`}
+                          required
+                          readOnly
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="">Your Name</label>
+                        <input
+                          className="w-full border px-2 py-3 pl-10"
+                          type="text"
+                          id="firstName"
+                          name="firstName"
+                          value={`${accountData?.detail?.firstName} ${accountData?.detail?.surname}`}
+                          required
+                          readOnly
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="">Contact Number</label>
+                        <input
+                          className="w-full border px-2 py-3 pl-10"
+                          type="text"
+                          id="contactNumber"
+                          name="contactNumber"
+                          value={`${accountData?.detail?.contactNumber}`}
+                          required
+                          readOnly
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="">Group size</label>
+                        <input
+                          className="w-full border px-2 py-3 pl-10"
+                          type="number"
+                          id="groupSize"
+                          name="groupSize"
+                          required
+                          onChange={(e) =>
+                            setSelectedGroupSize(Number(e.target.value))
+                          }
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-[#E32726]/20 text-[#E32726] rounded-lg p-4 flex flex-col gap-3 text-center">
+                      <span className="font-bold mr-2">
+                        Please register your details first
+                      </span>
+                      <Link to="/my-account" className="underline">
+                        Register here
+                      </Link>
+                    </div>
+                  )}
+                </div>
 
                 {selectedPackage && selectedGroupSize && (
                   <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
