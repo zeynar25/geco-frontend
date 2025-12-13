@@ -41,7 +41,9 @@ function isLoggedIn() {
 function Book() {
   const [loggedIn] = useState(isLoggedIn());
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [selectedGroupSize, setSelectedGroupSize] = useState(null);
   const [selectedPackageId, setSelectedPackageId] = useState(null);
+  const [selectedPackage, setSelectedPackage] = useState(null);
   // const [selectedInclusions, setSelectedInclusions] = useState([]);
 
   const location = useLocation();
@@ -73,11 +75,13 @@ function Book() {
     }
   }
 
-  function handleSelectedPackageIdChange(id) {
-    if (selectedPackageId === id) {
+  function handleSelectedPackageIdChange(pkg) {
+    if (selectedPackageId === pkg.packageId) {
       setSelectedPackageId(null);
+      setSelectedPackage(null);
     } else {
-      setSelectedPackageId(id);
+      setSelectedPackageId(pkg.packageId);
+      setSelectedPackage(pkg);
     }
   }
 
@@ -499,9 +503,7 @@ function Book() {
                       packageData?.map((pkg) => (
                         <div
                           key={pkg.packageId}
-                          onClick={() =>
-                            handleSelectedPackageIdChange(pkg.packageId)
-                          }
+                          onClick={() => handleSelectedPackageIdChange(pkg)}
                           className={`cursor-pointer bg-white col-span-2 sm:col-span-1 rounded-xl border-2 transition-all ${
                             selectedPackageId === pkg.packageId
                               ? "border-[#0A7A28] ring-2 ring-[#0A7A28]"
@@ -635,19 +637,33 @@ function Book() {
                   </div>
                 )} */}
 
-                <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
-                  <div className="flex flex-col">
-                    <span>Booking Summary</span>
-                    <span>1 visitor * P100 (First Package)</span>
+                {selectedPackage && selectedGroupSize && (
+                  <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
+                    <div className="flex flex-col">
+                      <span>Booking Summary</span>
+                      <span>
+                        {selectedPackage.basePrice > 0 &&
+                          ` P${selectedPackage.basePrice} Base Price`}{" "}
+                        {selectedPackage.basePrice > 0 &&
+                          selectedPackage.pricePerPerson > 0 &&
+                          +" + "}
+                        {selectedPackage.pricePerPerson > 0 &&
+                          `P${selectedPackage.pricePerPerson} per person`}{" "}
+                        ({selectedPackage.name})
+                      </span>
+                    </div>
+                    <div className="flex flex-col text-end">
+                      <span className="font-bold text-xl">
+                        <FontAwesomeIcon icon={faPesoSign} />
+                        {selectedPackage.basePrice +
+                          (selectedPackage.pricePerPerson
+                            ? selectedPackage.pricePerPerson * selectedGroupSize
+                            : 0)}
+                      </span>
+                      <span>Estimated Total</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col text-end">
-                    <span className="font-bold text-xl">
-                      <FontAwesomeIcon icon={faPesoSign} />
-                      100
-                    </span>
-                    <span>Estimated Total</span>
-                  </div>
-                </div>
+                )}
 
                 <div className="flex items-center justify-center mt-6">
                   <button
