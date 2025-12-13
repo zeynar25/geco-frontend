@@ -145,6 +145,7 @@ function Book() {
       visitDate: document.getElementById("visitDate").value,
       visitTime: document.getElementById("visitTime").value,
       groupSize: selectedGroupSize,
+      paymentMethod: paymentMethod,
     };
 
     console.log(bookingRequest);
@@ -246,27 +247,17 @@ function Book() {
     return response.json();
   };
 
-  const {
-    mutate: createBooking,
-    isLoading: isBooking,
-    isError: bookingError,
-    error: bookingErrorObj,
-    isSuccess: bookingSuccess,
-    data: bookingData,
-  } = useMutation({
+  const { mutate: createBooking } = useMutation({
     mutationFn: addBooking,
     onError: (error) => {
       alert(error.message || "Booking failed");
     },
+
+    // Redirect to the confirmation page and pass booking data
     onSuccess: (data) => {
-      // Redirect to the confirmation page and pass booking data
       navigate("/booking-success", { state: { booking: data } });
     },
   });
-
-  if (bookingSuccess) {
-    alert("Booking successful!");
-  }
 
   return (
     <>
@@ -345,9 +336,9 @@ function Book() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* Online Down Payment Card */}
                     <HeaderCard
-                      onClick={() => handlePaymentMethodChange("online")}
+                      onClick={() => handlePaymentMethodChange("ONLINE")}
                       className={`cursor-pointer rounded-xl border-2 p-5 shadow transition-all ${
-                        paymentMethod === "online"
+                        paymentMethod === "ONLINE"
                           ? "border-[#222EDA] ring-2 ring-[#222EDA]"
                           : "border-gray-300"
                       }`}
@@ -394,9 +385,9 @@ function Book() {
 
                     {/* Pay at Park Card */}
                     <HeaderCard
-                      onClick={() => handlePaymentMethodChange("park")}
+                      onClick={() => handlePaymentMethodChange("PARK")}
                       className={`cursor-pointer rounded-xl border-2 p-5 shadow transition-all ${
-                        paymentMethod === "park"
+                        paymentMethod === "PARK"
                           ? "border-[#FDDB3C] ring-2 ring-[#FDDB3C]"
                           : "border-gray-300"
                       }`}
@@ -436,7 +427,7 @@ function Book() {
                       }
                     />
                   </div>
-                  {paymentMethod === "online" && (
+                  {paymentMethod === "ONLINE" && (
                     <div className="bg-[#222EDA]/20 text-[#222EDA] rounded-lg p-4 flex flex-col gap-3">
                       <div>
                         <span className="font-bold mr-2">Gcash Number:</span>
