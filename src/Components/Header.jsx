@@ -6,6 +6,7 @@ import {
   faBook,
   faArrowRightToBracket,
   faArrowRightFromBracket,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -184,25 +185,30 @@ function Header() {
           <div className="flex items-center gap-3">
             {/* Desktop CTA */}
             {loggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="hidden lg:flex items-center gap-2 rounded-md bg-[#E32726]/90 px-4 py-2 text-sm font-semibold text-white hover:bg-[#E32726] transition-colors"
-              >
-                <div className="leading-tight text-left flex flex-col gap-1">
-                  <span className="block font-bold">Logout</span>
-                  <span className="block text-[11px] font-normal text-green-100">
-                    {isPending
-                      ? "Loading..."
-                      : `${data?.detail.firstName || ""} ${
-                          data?.detail.surname || ""
-                        }`}
-                  </span>
-                </div>
-                <FontAwesomeIcon
-                  icon={faArrowRightFromBracket}
-                  className="text-white text-xl"
-                />
-              </button>
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/my-account"
+                  className="hidden lg:flex group items-center  font-semibold gap-2 rounded-md px-3 py-2 text-sm bg-white/50 text-gray-700 hover:bg-[#48BF56] hover:text-black hover:border-transparent transition-colors border h-full"
+                >
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    className="text-[#227B05] group-hover:text-black"
+                  />
+                  <span>My Account</span>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="hidden lg:flex items-center gap-2 rounded-md bg-[#E32726]/90 px-4 py-2 text-sm font-semibold text-white hover:bg-[#E32726] transition-colors"
+                >
+                  <div className="leading-tight text-left flex flex-col gap-1">
+                    <span className="block font-bold">Logout</span>
+                  </div>
+                  <FontAwesomeIcon
+                    icon={faArrowRightFromBracket}
+                    className="text-white text-xl"
+                  />
+                </button>
+              </div>
             ) : (
               <Link
                 to="/signin"
