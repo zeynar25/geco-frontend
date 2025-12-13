@@ -202,11 +202,20 @@ function ParkCalendar() {
                             // Determine background color based on bookings
                             let bgColor = "";
                             if (dayData) {
-                              if (dayData.bookings === 0)
-                                bgColor = "bg-[#48BF56]";
-                              else if (dayData.bookings === 1)
-                                bgColor = "bg-[#FDDB3C]/50";
-                              else bgColor = "bg-[#E32726]/50";
+                              console.log(dayData);
+                              if (
+                                dayData.status === "AVAILABLE" ||
+                                dayData.status === null
+                              ) {
+                                if (dayData.bookings > 0) {
+                                  bgColor = "bg-[#FDDB3C]/50";
+                                } else {
+                                  bgColor = "bg-[#48BF56]";
+                                }
+                              } else if (dayData.status === "FULLY_BOOKED")
+                                bgColor = "bg-[#E32726]/50";
+                              else if (dayData.status === "CLOSED")
+                                bgColor = "bg-[#020D00]/50";
                             }
 
                             // Highlight if selected
@@ -218,7 +227,7 @@ function ParkCalendar() {
                             return (
                               <div
                                 key={dayNum}
-                                className={`p-3 rounded cursor-pointer hover:bg-[#020D00]/50 ${bgColor} ${border}`}
+                                className={`p-3 rounded cursor-pointer ${bgColor} ${border} hover:border-2 hover:border-[#020D00]`}
                                 onClick={() => setDay(dayNum)}
                               >
                                 <span className="font-bold">{dayNum}</span>
