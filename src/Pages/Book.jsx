@@ -749,13 +749,13 @@ function Book() {
                   <button
                     type="submit"
                     className="text-center bg-[#48BF56] text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    // disabled={
-                    //   !(
-                    //     accountData?.detail?.surname &&
-                    //     accountData?.detail?.firstName &&
-                    //     accountData?.detail?.contactNumber
-                    //   )
-                    // }
+                    disabled={
+                      !(
+                        accountData?.detail?.surname &&
+                        accountData?.detail?.firstName &&
+                        accountData?.detail?.contactNumber
+                      )
+                    }
                   >
                     Confirm Reservation
                   </button>
