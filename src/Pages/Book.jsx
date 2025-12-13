@@ -152,12 +152,6 @@ function Book() {
     createBooking(bookingRequest);
   }
 
-  const token = localStorage.getItem("token");
-  let decoded = {};
-  if (loggedIn) {
-    decoded = jwtDecode(token);
-  }
-
   const {
     data: accountData,
     error: accountError,
@@ -165,6 +159,8 @@ function Book() {
   } = useQuery({
     queryKey: ["account"],
     queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const decoded = jwtDecode(token);
       const account = await fetch(
         `http://localhost:8080/account/${decoded.sub}`,
         {
