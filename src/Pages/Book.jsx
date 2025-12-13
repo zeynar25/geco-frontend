@@ -15,9 +15,13 @@ import {
   faCheck,
   faClock,
   faEarthAsia,
+  faEnvelope,
   faMoneyBill,
   faPesoSign,
+  faPhone,
   faPlus,
+  faUser,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import BackButton from "../Components/BackButton.jsx";
 import { ClipLoader } from "react-spinners";
@@ -624,7 +628,7 @@ function Book() {
                   </div>
                 )} */}
                 {/* account information */}
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 mb-10">
                   <header className="flex flex-col gap-2">
                     <span className="font-bold text-xl text-[#48BF56]">
                       Booking information
@@ -642,10 +646,13 @@ function Book() {
                     accountData?.detail?.contactNumber ? (
                     // Display account details, and get the group size for this booking
                     <div className="grid grid-cols-2 gap-10">
-                      <div>
-                        <label htmlFor="">Email</label>
+                      <div className="relative">
+                        <FontAwesomeIcon
+                          icon={faEnvelope}
+                          className="absolute text-xl left-3 top-1/3"
+                        />
                         <input
-                          className="w-full border px-2 py-3 pl-10"
+                          className="w-full border px-2 py-3 pl-11"
                           type="email"
                           id="email"
                           name="email"
@@ -654,10 +661,13 @@ function Book() {
                           readOnly
                         />
                       </div>
-                      <div>
-                        <label htmlFor="">Your Name</label>
+                      <div className="relative">
+                        <FontAwesomeIcon
+                          icon={faUser}
+                          className="absolute text-xl left-3 top-1/3"
+                        />
                         <input
-                          className="w-full border px-2 py-3 pl-10"
+                          className="w-full border px-2 py-3 pl-11"
                           type="text"
                           id="firstName"
                           name="firstName"
@@ -666,10 +676,13 @@ function Book() {
                           readOnly
                         />
                       </div>
-                      <div>
-                        <label htmlFor="">Contact Number</label>
+                      <div className="relative">
+                        <FontAwesomeIcon
+                          icon={faPhone}
+                          className="absolute text-xl left-3 top-1/3"
+                        />
                         <input
-                          className="w-full border px-2 py-3 pl-10"
+                          className="w-full border px-2 py-3 pl-11"
                           type="text"
                           id="contactNumber"
                           name="contactNumber"
@@ -678,16 +691,20 @@ function Book() {
                           readOnly
                         />
                       </div>
-                      <div>
-                        <label htmlFor="">Group size</label>
+                      <div className="relative">
+                        <FontAwesomeIcon
+                          icon={faUsers}
+                          className="absolute text-xl left-3 top-1/3"
+                        />
                         <input
-                          className={`w-full border px-2 py-3 pl-10 ${
+                          className={`w-full border px-2 py-3 pl-11 ${
                             groupSizeError ? "border-red-500" : ""
                           }`}
                           type="number"
                           id="groupSize"
                           name="groupSize"
                           required
+                          placeholder="Enter your group size"
                           min={selectedPackage?.minPerson || 1}
                           max={selectedPackage?.maxPerson || 1000}
                           value={selectedGroupSize ?? ""}
@@ -701,7 +718,7 @@ function Book() {
                           }}
                         />
                         {groupSizeError && (
-                          <div className="text-red-500 text-sm mt-1">
+                          <div className="absolute text-red-500 text-sm mt-1">
                             {groupSizeError}
                           </div>
                         )}
@@ -718,33 +735,36 @@ function Book() {
                     </div>
                   )}
                 </div>
-                {selectedPackage && selectedGroupSize > 0 && (
-                  <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
-                    <div className="flex flex-col">
-                      <span>Booking Summary</span>
-                      <span>
-                        {selectedPackage.basePrice > 0 &&
-                          ` P${selectedPackage.basePrice} Base Price`}{" "}
-                        {selectedPackage.basePrice > 0 &&
-                          selectedPackage.pricePerPerson > 0 &&
-                          +" + "}
-                        {selectedPackage.pricePerPerson > 0 &&
-                          `P${selectedPackage.pricePerPerson} per person`}{" "}
-                        ({selectedPackage.name})
-                      </span>
+                {selectedPackage &&
+                  selectedGroupSize >= selectedPackage.minPerson &&
+                  selectedGroupSize <= selectedPackage.maxPerson && (
+                    <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
+                      <div className="flex flex-col">
+                        <span>Booking Summary</span>
+                        <span>
+                          {selectedPackage.basePrice > 0 &&
+                            ` P${selectedPackage.basePrice} Base Price`}{" "}
+                          {selectedPackage.basePrice > 0 &&
+                            selectedPackage.pricePerPerson > 0 &&
+                            +" + "}
+                          {selectedPackage.pricePerPerson > 0 &&
+                            `P${selectedPackage.pricePerPerson} per person`}{" "}
+                          ({selectedPackage.name})
+                        </span>
+                      </div>
+                      <div className="flex flex-col text-end">
+                        <span className="font-bold text-xl">
+                          <FontAwesomeIcon icon={faPesoSign} />
+                          {selectedPackage.basePrice +
+                            (selectedPackage.pricePerPerson
+                              ? selectedPackage.pricePerPerson *
+                                selectedGroupSize
+                              : 0)}
+                        </span>
+                        <span>Estimated Total</span>
+                      </div>
                     </div>
-                    <div className="flex flex-col text-end">
-                      <span className="font-bold text-xl">
-                        <FontAwesomeIcon icon={faPesoSign} />
-                        {selectedPackage.basePrice +
-                          (selectedPackage.pricePerPerson
-                            ? selectedPackage.pricePerPerson * selectedGroupSize
-                            : 0)}
-                      </span>
-                      <span>Estimated Total</span>
-                    </div>
-                  </div>
-                )}
+                  )}
                 <div className="flex items-center justify-center mt-6">
                   <button
                     type="submit"
