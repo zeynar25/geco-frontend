@@ -92,7 +92,7 @@ function PackagesPromos() {
                 className="bg-white col-span-2 sm:col-span-1"
                 headerClass="bg-[#0A7A28] text-white"
                 title={pkg.name}
-                subtitle={pkg.duration + " minutes"}
+                subtitle={pkg.duration >= 0 ? pkg.duration + " minutes" : undefined}
                 descriptionContent={
                   <div className="flex flex-1 flex-col gap-4 my-5 mx-10">
                     <div className="flex gap-2 justify-between">
