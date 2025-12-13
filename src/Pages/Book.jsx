@@ -258,6 +258,10 @@ function Book() {
     onError: (error) => {
       alert(error.message || "Booking failed");
     },
+    onSuccess: (data) => {
+      // Redirect to the confirmation page and pass booking data
+      navigate("/booking-success", { state: { booking: data } });
+    },
   });
 
   if (bookingSuccess) {
@@ -336,7 +340,7 @@ function Book() {
                     <span className="font-bold text-xl text-[#48BF56]">
                       Payment Method
                     </span>
-                    <span>Choose how you'd like to pay for your visit</span>
+                    <span>Choose how'd like to pay for your visit</span>
                   </header>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* Online Down Payment Card */}
