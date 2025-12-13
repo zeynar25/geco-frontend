@@ -738,7 +738,7 @@ function Book() {
                 {selectedPackage &&
                   selectedGroupSize >= selectedPackage.minPerson &&
                   selectedGroupSize <= selectedPackage.maxPerson && (
-                    <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
+                    <div className="flex flex-col xs:flex-row justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
                       <div className="flex flex-col">
                         <span>Booking Summary</span>
                         <span>
