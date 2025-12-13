@@ -65,6 +65,22 @@ function Book() {
     }
   }, [location]);
 
+  function handlePaymentMethodChange(method) {
+    if (paymentMethod === method) {
+      setPaymentMethod(null);
+    } else {
+      setPaymentMethod(method);
+    }
+  }
+
+  function handleSelectedPackageIdChange(id) {
+    if (selectedPackageId === id) {
+      setSelectedPackageId(null);
+    } else {
+      setSelectedPackageId(id);
+    }
+  }
+
   // function handleInclusionToggle(inclusionId) {
   //   setSelectedInclusions((prev) =>
   //     prev.includes(inclusionId)
@@ -249,7 +265,7 @@ function Book() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* Online Down Payment Card */}
                     <HeaderCard
-                      onClick={() => setPaymentMethod("online")}
+                      onClick={() => handlePaymentMethodChange("online")}
                       className={`cursor-pointer rounded-xl border-2 p-5 shadow transition-all ${
                         paymentMethod === "online"
                           ? "border-[#222EDA] ring-2 ring-[#222EDA]"
@@ -298,7 +314,7 @@ function Book() {
 
                     {/* Pay at Park Card */}
                     <HeaderCard
-                      onClick={() => setPaymentMethod("park")}
+                      onClick={() => handlePaymentMethodChange("park")}
                       className={`cursor-pointer rounded-xl border-2 p-5 shadow transition-all ${
                         paymentMethod === "park"
                           ? "border-[#FDDB3C] ring-2 ring-[#FDDB3C]"
@@ -483,7 +499,9 @@ function Book() {
                       packageData?.map((pkg) => (
                         <div
                           key={pkg.packageId}
-                          onClick={() => setSelectedPackageId(pkg.packageId)}
+                          onClick={() =>
+                            handleSelectedPackageIdChange(pkg.packageId)
+                          }
                           className={`cursor-pointer bg-white col-span-2 sm:col-span-1 rounded-xl border-2 transition-all ${
                             selectedPackageId === pkg.packageId
                               ? "border-[#0A7A28] ring-2 ring-[#0A7A28]"
