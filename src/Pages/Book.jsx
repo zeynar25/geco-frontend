@@ -382,28 +382,28 @@ function Book() {
                     <span className="font-bold text-xl text-[#48BF56]">
                       Visit Schedule
                     </span>
-                    <div>
-                      <div>
-                        <label htmlFor="">Visit Date</label>
-                        <input
-                          className="w-full border px-2 py-3 pl-10"
-                          type="date"
-                          id="visitDate"
-                          name="visitDate"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="">Visit time</label>
-                        <input
-                          className="w-full border px-2 py-3 pl-10"
-                          type="time"
-                          id="visitTime"
-                          name="visitTime"
-                          required
-                        />
-                      </div>
-                    </div>
                   </header>
+                  <div className="grid grid-cols-2 gap-2 xs:gap-10">
+                    <div className="col-span-2 xs:col-span-1">
+                      <label htmlFor="">Visit Date</label>
+                      <input
+                        className="w-full border px-5 py-3"
+                        type="date"
+                        id="visitDate"
+                        name="visitDate"
+                      />
+                    </div>
+                    <div className="col-span-2 xs:col-span-1">
+                      <label htmlFor="">Visit time</label>
+                      <input
+                        className="w-full border px-5 py-3"
+                        type="time"
+                        id="visitTime"
+                        name="visitTime"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Tour packages */}
@@ -640,7 +640,7 @@ function Book() {
                   )}
                 </div>
 
-                {selectedPackage && selectedGroupSize && (
+                {selectedPackage && selectedGroupSize > 0 && (
                   <div className="flex justify-between py-4 px-10 bg-green-50 rounded-lg border border-[#227B05]">
                     <div className="flex flex-col">
                       <span>Booking Summary</span>
