@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import HeaderCard from "../Components/HeaderCard";
@@ -8,7 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleCheck,
   faEnvelope,
+  faLocationDot,
   faPesoSign,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 
@@ -47,7 +49,7 @@ function BookingSuccess() {
 
       <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10 flex flex-col gap-5">
         {booking && (
-          <div className="bg-white text-[#227B05]  flex flex-col gap-10 py-10  px-5 xs:px-10 sm:px-20 mx-5 xs:mx-10 sm:mx-15 md:mx-20 lg:mx-30">
+          <div className="bg-white text-[#227B05] flex flex-col gap-10 py-10 rounded-xl px-5 xs:px-10 sm:px-20 mx-5 xs:mx-10 sm:mx-15 md:mx-20 lg:mx-30">
             <div className="rounded-xl p-3 flex flex-col text-center justify-center gap-5 mt-10">
               <FontAwesomeIcon
                 icon={faCircleCheck}
@@ -190,6 +192,29 @@ function BookingSuccess() {
                 }
               />
             )}
+
+            <div className="grid grid-cols-2 gap-10">
+              <Link
+                to="/"
+                className="border border-black rounded-lg text-center flex justify-center py-2 px-3 text-[#227B05] hover:text-black hover:bg-[#227B05]/30"
+              >
+                <FontAwesomeIcon
+                  icon={faLocationDot}
+                  className="my-auto rounded-sm p-2"
+                />
+                <span className="my-auto">Back to Home</span>
+              </Link>
+              <Link
+                to="/my-account"
+                className="border border-black rounded-lg text-center flex justify-center py-2 px-3 text-[#227B05] hover:text-black hover:bg-[#227B05]/30"
+              >
+                <FontAwesomeIcon
+                  icon={faUser}
+                  className="my-auto rounded-sm p-2"
+                />
+                <span className="my-auto">My Account</span>
+              </Link>
+            </div>
           </div>
         )}
       </div>
