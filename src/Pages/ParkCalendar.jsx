@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleLeft,
   faAngleRight,
+  faBuildingCircleXmark,
   faPeopleGroup,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -229,32 +230,38 @@ function ParkCalendar() {
               headerClass="text-[#0A7A28] justify-center"
               title="Availability Legend"
               descriptionContent={
-                <div className="grid grid-cols-2 gap-3 my-2 mx-3">
-                  <div className="bg-[#48BF56]/50 text-[#48BF56] rounded-xl flex items-center px-3 py-2">
+                <div className="grid grid-cols-4 items-center gap-3 m-auto pb-2">
+                  <div className="bg-[#48BF56]/50 text-[#48BF56] rounded-xl flex items-center px-3 py-2 col-span-4 xs:col-span-2 md:col-span-1 lg:col-span-2 mx-3 h-full">
                     <FontAwesomeIcon
                       icon={faCircleCheck}
                       className="text-xl mr-3"
                     />
                     <div className="flex flex-col">
                       <span className="font-semibold">Available</span>
-                      <span>(0 booking)</span>
                     </div>
                   </div>
-                  <div className="bg-[#FDDB3C]/20 text-[#FDDB3C] py-2 px-3 rounded-xl flex items-center">
+                  <div className="bg-[#FDDB3C]/20 text-[#FDDB3C] py-2 px-3 rounded-xl flex items-center col-span-4 xs:col-span-2 md:col-span-1 lg:col-span-2 mx-3 h-full">
                     <FontAwesomeIcon icon={faUser} className="text-xl mr-3" />
                     <div className="flex flex-col">
                       <span className="font-semibold">Limited</span>
-                      <span>(1 booking)</span>
                     </div>
                   </div>
-                  <div className="bg-[#E32726]/50 text-[#E32726] py-2 px-3 rounded-xl flex items-center col-span-2">
+                  <div className="bg-[#E32726]/50 text-[#E32726] py-2 px-3 rounded-xl flex items-center col-span-4 xs:col-span-2 md:col-span-1 lg:col-span-2 mx-3 h-full">
                     <FontAwesomeIcon
                       icon={faPeopleGroup}
                       className="text-xl mr-3"
                     />
                     <div className="flex flex-col">
                       <span className="font-semibold">Fully Booked</span>
-                      <span>(2+ bookings)</span>
+                    </div>
+                  </div>
+                  <div className="bg-[#020D00]/50 text-[#020D00] py-2 px-3 rounded-xl flex items-center col-span-4 xs:col-span-2 md:col-span-1 lg:col-span-2 mx-3 h-full">
+                    <FontAwesomeIcon
+                      icon={faBuildingCircleXmark}
+                      className="text-xl mr-3"
+                    />
+                    <div className="flex flex-col">
+                      <span className="font-semibold">Park Closed</span>
                     </div>
                   </div>
                 </div>
