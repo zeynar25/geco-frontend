@@ -19,13 +19,11 @@ import {
   faMoneyBill,
   faPesoSign,
   faPhone,
-  faPlus,
   faUser,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import BackButton from "../Components/BackButton.jsx";
 import { ClipLoader } from "react-spinners";
-import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 
 function isLoggedIn() {
   const token = localStorage.getItem("token");
