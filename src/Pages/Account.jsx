@@ -34,6 +34,8 @@ function isLoggedIn() {
 
 function Account() {
   const [loggedIn] = useState(isLoggedIn());
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(null);
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -70,6 +72,35 @@ function Account() {
       return await account.json();
     },
   });
+
+  useEffect(() => {
+    if (accountData?.detail) {
+      setFormData(accountData.detail);
+    }
+  }, [accountData]);
+
+  const handleChange = (field) => (event) => {
+    if (!isEditing) return;
+    const value = event.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleCancel = () => {
+    setFormData(accountData?.detail || formData);
+    setIsEditing(false);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (!isEditing) return;
+
+    setIsEditing(false);
+
+    // implement update logic here.
+  };
 
   return (
     <>
@@ -108,7 +139,7 @@ function Account() {
             </div>
 
             {/* Names and Contact Number */}
-            <form className="grid grid-cols-2 gap-5">
+            <form className="grid grid-cols-2 gap-5" onSubmit={handleSubmit}>
               <div className="col-span-2 sm:col-span-1">
                 <label htmlFor="" className="font-semibold">
                   Surname
@@ -119,8 +150,9 @@ function Account() {
                   id="surname"
                   name="surname"
                   required
-                  readOnly
-                  value={accountData?.detail?.surname}
+                  readOnly={!isEditing}
+                  value={formData?.surname || ""}
+                  onChange={handleChange("surname")}
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">
@@ -133,8 +165,9 @@ function Account() {
                   id="firstName"
                   name="firstName"
                   required
-                  readOnly
-                  value={accountData?.detail?.firstName}
+                  readOnly={!isEditing}
+                  value={formData?.firstName || ""}
+                  onChange={handleChange("firstName")}
                 />
               </div>
               <div className="col-span-2">
@@ -147,14 +180,41 @@ function Account() {
                   id="contactNumber"
                   name="contactNumber"
                   required
-                  readOnly
-                  value={accountData?.detail?.contactNumber}
+                  readOnly={!isEditing}
+                  value={formData?.contactNumber || ""}
+                  onChange={handleChange("contactNumber")}
                 />
+              </div>
+              <div className="col-span-2 flex justify-center gap-3">
+                {!isEditing ? (
+                  <button
+                    type="button"
+                    className="mt-5 px-5 py-3 bg-[#227B05] hover:bg-[#227B05]/95 text-white rounded-md font-semibold"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit Profile
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="mt-5 px-5 py-3 border bg-white/90 hover:bg-white/80 text-black rounded-md font-semibold"
+                      onClick={handleCancel}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="mt-5 px-5 py-3 bg-[#227B05] hover:bg-[#227B05]/95 text-white rounded-md font-semibold"
+                    >
+                      Save Changes
+                    </button>
+                  </>
+                )}
               </div>
             </form>
           </div>
         </div>
-        {`${accountData?.detail?.firstName} ${accountData?.detail?.surname}`}
       </div>
       <Footer />
     </>
