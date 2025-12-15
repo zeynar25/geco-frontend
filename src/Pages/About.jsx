@@ -46,7 +46,7 @@ export default function About() {
 
         <div className="grid grid-cols-2 gap-10 my-10">
           <HeaderCard
-            headerClass="bg-[#a9e2a3] text-[#227B05]"
+            headerClass="bg-[#48BF56]/50 text-[#227B05]"
             icon={<FontAwesomeIcon icon={faBuilding} />}
             title="CvSU Mission"
             description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
@@ -54,7 +54,7 @@ export default function About() {
           />
 
           <HeaderCard
-            headerClass="bg-blue-50 text-blue-900"
+            headerClass="bg-[#BAD0F8] text-[#222EDA]"
             icon={<FontAwesomeIcon icon={faEye} />}
             title="CvSU Vision"
             description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
@@ -72,7 +72,7 @@ export default function About() {
               <div className="px-10 py-5 flex flex-col justify-center items-center text-center gap-3 bg-white">
                 <FontAwesomeIcon
                   icon={faHandsHolding}
-                  className=" bg-[#a9e2a3] text-[#227B05] p-5 rounded-xl"
+                  className=" bg-[#48BF56]/50 text-[#227B05] p-5 rounded-xl"
                 />
                 <h3 className="font-bold text-md">First Core Value</h3>
                 <p className="text-sm">
@@ -85,7 +85,7 @@ export default function About() {
               <div className="px-10 py-5 flex flex-col justify-center items-center text-center gap-3 bg-white">
                 <FontAwesomeIcon
                   icon={faUserGroup}
-                  className=" bg-blue-50 text-blue-900 p-5 rounded-xl"
+                  className=" bg-[#BAD0F8] text-[#222EDA] p-5 rounded-xl"
                 />
                 <h3 className="font-bold text-md">Second Core Value</h3>
                 <p className="text-sm">
@@ -98,7 +98,7 @@ export default function About() {
               <div className="px-10 py-5 flex flex-col justify-center items-center text-center gap-3 bg-white">
                 <FontAwesomeIcon
                   icon={faAward}
-                  className=" bg-[#F5F3C9] text-[#ADA128] p-5 rounded-xl"
+                  className=" bg-[#FDDB3C]/20 text-[#97750B] p-5 rounded-xl"
                 />
                 <h3 className="font-bold text-md">Third Core Value</h3>
                 <p className="text-sm">
@@ -111,7 +111,7 @@ export default function About() {
           </div>
 
           <HeaderCard
-            headerClass="bg-[#F5F3C9] text-[#ADA128]"
+            headerClass="bg-[#FDDB3C]/20 text-[#97750B]"
             icon={<FontAwesomeIcon icon={faBook} />}
             title="History"
             description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
@@ -180,7 +180,7 @@ export default function About() {
               icon={
                 <FontAwesomeIcon icon={faLocationDot} className="text-4xl" />
               }
-              iconClasses="text-blue-900"
+              iconClasses="text-[#222EDA]"
               className="col-span-3 md:col-span-1 border-0 shadow-2xl"
             />
 
@@ -190,7 +190,7 @@ export default function About() {
               description="(012) 345-6789"
               description2="agri-ecopark@cvsu.edu.ph"
               icon={<FontAwesomeIcon icon={faPhone} className="text-4xl" />}
-              iconClasses="text-[#7942C2]"
+              iconClasses="text-[#A86CCB]"
               className="col-span-3 md:col-span-1 border-0 shadow-2xl"
             />
           </div>
