@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { ClipLoader } from "react-spinners";
 
 function isLoggedIn() {
   const token = localStorage.getItem("token");
@@ -140,10 +141,33 @@ function Account() {
     }
   };
 
+  const {
+    data: bookingData,
+    error: bookingError,
+    isPending: bookingPending,
+  } = useQuery({
+    queryKey: ["bookings"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8080/booking/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error?.error || "Getting my bookings failed");
+      }
+      return await response.json();
+    },
+  });
+
+  const bookings = bookingData?.content ?? [];
+
   return (
     <>
       <Header />
-      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10">
+      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10 flex flex-col gap-5">
         <BackButton
           to={backTo}
           title="My Account"
@@ -159,6 +183,8 @@ function Account() {
             </Link>
           }
         />
+
+        {/* My profile */}
         <div id="#profile" className="rounded-lg overflow-hidden shadow-2xl">
           <div className="bg-[#4D9C43] text-white px-5 sm:px-10 py-2 md:py-5 font-bold text-lg mb-5 sm:mb-2">
             <span>My Profile</span>
@@ -251,6 +277,33 @@ function Account() {
                 )}
               </div>
             </form>
+          </div>
+        </div>
+
+        {/* My bookings */}
+        <div id="#profile" className="rounded-lg overflow-hidden shadow-2xl">
+          <div className="bg-[#4D9C43] text-white px-5 sm:px-10 py-2 md:py-5 font-bold text-lg mb-5 sm:mb-2">
+            <span>My Bookings</span>
+          </div>
+          <div className="px-5 sm:px-10 py-2 md:py-5 text-md flex flex-col gap-5">
+            {bookingPending ? (
+              <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
+                <ClipLoader color="#17EB88" size={40} />
+                <span className="ml-3 font-semibold">
+                  Loading Tour packages...
+                </span>
+              </div>
+            ) : bookings.length > 0 ? (
+              bookings.map((booking) => (
+                <div key={booking.bookingId}>
+                  booking ID: {booking.bookingId} | Date:{" "}
+                  {new Date(booking.visitDate).toLocaleDateString()} | Payment
+                  Method: {booking.paymentMethod}
+                </div>
+              ))
+            ) : (
+              <div>You have no bookings yet.</div>
+            )}
           </div>
         </div>
       </div>
