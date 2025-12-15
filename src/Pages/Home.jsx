@@ -72,7 +72,7 @@ export default function Home() {
             <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Agri‑Eco
             </h1>
-            <h1 className="mt-1 text-4xl font-extrabold tracking-tight text-green-400 sm:text-5xl lg:text-6xl">
+            <h1 className="mt-1 text-4xl font-extrabold tracking-tight text-[#17EB88] sm:text-5xl lg:text-6xl">
               Tourism Park
             </h1>
 
@@ -83,14 +83,14 @@ export default function Home() {
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <a
                 href="#book"
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-[#48BF56] px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-[#48BF56]/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17EB88]"
               >
                 <FontAwesomeIcon icon={faCalendarDays} />
                 <span>Book your Visit</span>
               </a>
               <a
                 href="#map"
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-white/90 px-5 py-2.5 text-sm font-semibold text-gray-900 shadow hover:bg-white focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-gray-900 shadow hover:bg-white/90 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 <FontAwesomeIcon icon={faMapLocationDot} />
                 <span>Explore Map</span>
@@ -151,7 +151,7 @@ export default function Home() {
       </section>
 
       <section id="map" className="relative z-10">
-        <div className="bg-[#a9e2a3] flex flex-col gap-5 justify-center text-center py-15 px-10">
+        <div className="bg-[#227B05]/20 flex flex-col gap-5 justify-center text-center py-15 px-10">
           <h1 className="font-semibold text-2xl md:text-4xl">
             Explore our Park Interactive Map
           </h1>
@@ -221,7 +221,7 @@ export default function Home() {
           <div className="lg:col-span-2 flex flex-col gap-3">
             {/* Park attractions */}
             <div className="rounded-xl overflow-hidden shadow-2xl bg-white">
-              <div className="bg-[#a9e2a3] p-3">
+              <div className="bg-[#0A7A28]/30 p-3">
                 <h3 className="font-semibold">Park Attractions</h3>
                 <span>Click to view on map</span>
               </div>
@@ -243,12 +243,12 @@ export default function Home() {
             </div>
 
             {/* Plan your visit */}
-            <div className="bg-[#227B05] text-white rounded-xl overflow-hidden shadow-2xl px-5 py-2">
+            <div className="bg-[#0A7A28] text-white rounded-xl overflow-hidden shadow-2xl px-5 py-2">
               <h3 className="font-semibold py-2">Plan your visit</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 px-5 py-2">
                 <Link
                   to="/book"
-                  className="bg-white/90 hover:bg-white text-green-600 font-semibold rounded-lg py-1.5 cursor-pointer text-center"
+                  className="bg-white hover:bg-white/90 hover:text-black text-[#0A7A28] font-semibold rounded-lg py-1.5 cursor-pointer text-center"
                 >
                   <FontAwesomeIcon
                     icon={faCalendarDays}
@@ -256,7 +256,7 @@ export default function Home() {
                   />
                   Book your visit
                 </Link>
-                <button className="border-white bg-[#a9e2a3]/90 hover:bg-[#a9e2a3] text-black font-semibold rounded-lg py-1.5 cursor-pointer">
+                <button className="border-white bg-[white]/50 hover:bg-[white]/30 hover:text-white text-black font-semibold rounded-lg py-1.5 cursor-pointer">
                   <FontAwesomeIcon
                     icon={faMessage}
                     className="text-black mr-2"
@@ -270,7 +270,7 @@ export default function Home() {
             <div className="relative min-h-40 max-h-40 bg-[url('/images/homepage.png')] bg-cover bg-bottom bg-no-repeat rounded-xl flex items-center justify-center shadow-2xl overflow-hidden">
               <Link
                 to="/about"
-                className="z-10 bg-white/80 hover:bg-white font-bold p-2 px-10 rounded-xl flex items-center justify-center"
+                className="z-10 bg-white/90 hover:bg-white/80 font-bold p-2 px-10 rounded-xl flex items-center justify-center"
               >
                 <span className="text-[#227B05]">Know more</span>
                 <FontAwesomeIcon
