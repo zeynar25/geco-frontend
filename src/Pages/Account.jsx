@@ -90,6 +90,30 @@ function Account() {
             </Link>
           }
         />
+        <div id="#profile" className="rounded-lg overflow-hidden">
+          <div className="bg-[#4D9C43] text-white px-5 md:px-10 py-2 md:py-5 font-bold text-lg">
+            <span>My Profile</span>
+          </div>
+          <div className="px-5 md:px-10 py-2 md:py-5 text-md">
+            {/* Email */}
+            <div className="bg-[#BAD0F8] px-5 md:px-10 py-2 md:py-5 flex flex-col gap-2 rounded-lg border border-[#222EDA]">
+              <div>
+                <span className="font-bold">Email: </span>{" "}
+                {accountData?.detail?.email}
+              </div>
+              <div className="text-[#222EDA]">
+                Your email is managed by the park and cannot be changed here.
+                Please contact the park administration for any changes.
+              </div>
+            </div>
+            {/* Name */}
+            <form action="">
+              <div></div>
+              <div></div>
+              <div></div>
+            </form>
+          </div>
+        </div>
         {`${accountData?.detail?.firstName} ${accountData?.detail?.surname}`}
       </div>
       <Footer />
