@@ -90,13 +90,13 @@ function Account() {
             </Link>
           }
         />
-        <div id="#profile" className="rounded-lg overflow-hidden">
-          <div className="bg-[#4D9C43] text-white px-5 md:px-10 py-2 md:py-5 font-bold text-lg">
+        <div id="#profile" className="rounded-lg overflow-hidden shadow-2xl">
+          <div className="bg-[#4D9C43] text-white px-5 sm:px-10 py-2 md:py-5 font-bold text-lg mb-5 sm:mb-2">
             <span>My Profile</span>
           </div>
-          <div className="px-5 md:px-10 py-2 md:py-5 text-md">
+          <div className="px-5 sm:px-10 py-2 md:py-5 text-md flex flex-col gap-5">
             {/* Email */}
-            <div className="bg-[#BAD0F8] px-5 md:px-10 py-2 md:py-5 flex flex-col gap-2 rounded-lg border border-[#222EDA]">
+            <div className="bg-[#BAD0F8] px-5 sm:px-10 py-2 md:py-5 flex flex-col gap-2 rounded-lg border border-[#222EDA]">
               <div>
                 <span className="font-bold">Email: </span>{" "}
                 {accountData?.detail?.email}
@@ -106,11 +106,51 @@ function Account() {
                 Please contact the park administration for any changes.
               </div>
             </div>
-            {/* Name */}
-            <form action="">
-              <div></div>
-              <div></div>
-              <div></div>
+
+            {/* Names and Contact Number */}
+            <form className="grid grid-cols-2 gap-5">
+              <div className="col-span-2 sm:col-span-1">
+                <label htmlFor="" className="font-semibold">
+                  Surname
+                </label>
+                <input
+                  className="w-full border px-5 py-3 rounded-md"
+                  type="text"
+                  id="surname"
+                  name="surname"
+                  required
+                  readOnly
+                  value={accountData?.detail?.surname}
+                />
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <label htmlFor="" className="font-semibold">
+                  First name
+                </label>
+                <input
+                  className="w-full border px-5 py-3 rounded-md"
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  required
+                  readOnly
+                  value={accountData?.detail?.firstName}
+                />
+              </div>
+              <div className="col-span-2">
+                <label htmlFor="" className="font-semibold">
+                  Contact Number
+                </label>
+                <input
+                  className="w-full border px-5 py-3 rounded-md"
+                  type="text"
+                  id="contactNumber"
+                  name="contactNumber"
+                  required
+                  readOnly
+                  value={accountData?.detail?.contactNumber}
+                />
+              </div>
             </form>
           </div>
         </div>
