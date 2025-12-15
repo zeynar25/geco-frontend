@@ -9,7 +9,7 @@ import { jwtDecode } from "jwt-decode";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faPesoSign } from "@fortawesome/free-solid-svg-icons";
 import { ClipLoader } from "react-spinners";
 
 function isLoggedIn() {
@@ -296,9 +296,12 @@ function Account() {
             ) : bookings.length > 0 ? (
               bookings.map((booking) => (
                 <div key={booking.bookingId}>
-                  booking ID: {booking.bookingId} | Date:{" "}
-                  {new Date(booking.visitDate).toLocaleDateString()} | Payment
-                  Method: {booking.paymentMethod}
+                  Visit on: {new Date(booking.visitDate).toLocaleDateString()}|{" "}
+                  {booking.groupSize} visitor(s) at {booking.visitTime}
+                  | <FontAwesomeIcon icon={faPesoSign} /> {booking.totalPrice}|
+                  Payment Method: {booking.paymentMethod}| Booking Status:{" "}
+                  {booking.bookingStatus}| Payment Status:{" "}
+                  {booking.paymentStatus}
                 </div>
               ))
             ) : (
