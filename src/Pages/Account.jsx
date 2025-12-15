@@ -1,21 +1,15 @@
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
-import HeaderCard from "../Components/HeaderCard";
-import { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCalendar,
-  faCircleCheck,
-  faEnvelope,
-  faLocationDot,
-  faPesoSign,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
-import { useQuery } from "@tanstack/react-query";
 import BackButton from "../Components/BackButton";
+
+import { jwtDecode } from "jwt-decode";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 
 function isLoggedIn() {
   const token = localStorage.getItem("token");
@@ -36,6 +30,7 @@ function Account() {
   const [loggedIn] = useState(isLoggedIn());
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -73,6 +68,10 @@ function Account() {
     },
   });
 
+  if (accountError) {
+    alert("something went wrong in retrieving account");
+  }
+
   useEffect(() => {
     if (accountData?.detail) {
       setFormData(accountData.detail);
@@ -93,13 +92,52 @@ function Account() {
     setIsEditing(false);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!isEditing) return;
 
-    setIsEditing(false);
+    if (!accountData?.accountId) {
+      alert("Account information not loaded. Please try again.");
+      return;
+    }
 
-    // implement update logic here.
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:8080/account/update-details/${accountData.accountId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            email: accountData?.detail?.email,
+            surname: formData?.surname,
+            firstName: formData?.firstName,
+            contactNumber: formData?.contactNumber,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Updating account details failed");
+      }
+
+      const updatedAccount = await response.json();
+      if (updatedAccount?.detail) {
+        setFormData(updatedAccount.detail);
+
+        // Update cached account data so it stays in sync across the app
+        queryClient.setQueryData(["account"], updatedAccount);
+      }
+
+      setIsEditing(false);
+      alert("Account details updated successfully.");
+    } catch (error) {
+      alert(error.message || "Something went wrong while updating details.");
+    }
   };
 
   return (
@@ -189,7 +227,7 @@ function Account() {
                 {!isEditing ? (
                   <button
                     type="button"
-                    className="mt-5 px-5 py-3 bg-[#227B05] hover:bg-[#227B05]/95 text-white rounded-md font-semibold"
+                    className="mt-5 px-5 py-3 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold cursor-pointer"
                     onClick={() => setIsEditing(true)}
                   >
                     Edit Profile
@@ -198,14 +236,14 @@ function Account() {
                   <>
                     <button
                       type="button"
-                      className="mt-5 px-5 py-3 border bg-white/90 hover:bg-white/80 text-black rounded-md font-semibold"
+                      className="mt-5 px-5 py-3 border bg-white hover:bg-black/10 cursor-pointer text-black rounded-md font-semibold"
                       onClick={handleCancel}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="mt-5 px-5 py-3 bg-[#227B05] hover:bg-[#227B05]/95 text-white rounded-md font-semibold"
+                      className="mt-5 px-5 py-3 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold  cursor-pointer"
                     >
                       Save Changes
                     </button>
