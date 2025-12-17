@@ -45,6 +45,16 @@ function Account() {
   const [selectedFeedback, setSelectedFeedback] = useState(null);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
+  const [isEditingFeedback, setIsEditingFeedback] = useState(false);
+  const [feedbackForm, setFeedbackForm] = useState({
+    stars: "",
+    comment: "",
+    suggestion: "",
+    categoryId: "",
+  });
+
+  const [isCreatingFeedback, setIsCreatingFeedback] = useState(false);
+
   // 0-based page index
   const [bookingPage, setBookingPage] = useState(0);
 
@@ -216,14 +226,80 @@ function Account() {
 
   const feedbacks = feedbackData?.content ?? [];
 
+  const {
+    data: feedbackCategoryData,
+    error: feedbackCategoryError,
+    isPending: feedbackCategoryPending,
+  } = useQuery({
+    queryKey: ["feedbackCategories"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        "http://localhost:8080/feedback-category/active",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error?.error || "Getting feedback categories failed");
+      }
+      return await response.json();
+    },
+  });
+
+  if (feedbackCategoryError) {
+    alert("something went wrong in retrieving feedback categories");
+  }
+
+  const feedbackCategories = feedbackCategoryData ?? [];
+
   const openFeedbackModal = (feedback) => {
     setSelectedFeedback(feedback);
     setIsFeedbackModalOpen(true);
+    setIsCreatingFeedback(false);
+    setIsEditingFeedback(false);
+    setFeedbackForm({
+      stars: feedback.stars != null ? String(feedback.stars) : "",
+      comment: feedback.comment || "",
+      suggestion: feedback.suggestion || "",
+      categoryId:
+        feedback.categoryId != null
+          ? String(feedback.categoryId)
+          : feedback.category?.categoryId != null
+          ? String(feedback.category.categoryId)
+          : "",
+    });
   };
 
   const closeFeedbackModal = () => {
     setIsFeedbackModalOpen(false);
     setSelectedFeedback(null);
+    setIsEditingFeedback(false);
+    setIsCreatingFeedback(false);
+  };
+
+  const openNewFeedbackModal = (booking) => {
+    setIsCreatingFeedback(true);
+    setIsFeedbackModalOpen(true);
+    setIsEditingFeedback(true);
+    setSelectedFeedback({
+      booking,
+      bookingId: booking.bookingId,
+      categoryId: null,
+      stars: null,
+      comment: null,
+      suggestion: null,
+      staffReply: null,
+    });
+    setFeedbackForm({
+      stars: "",
+      comment: "",
+      suggestion: "",
+      categoryId: "",
+    });
   };
 
   const handlePrevBookingPage = () => {
@@ -233,6 +309,159 @@ function Account() {
   const handleNextBookingPage = () => {
     if (totalBookingPages === 0) return;
     setBookingPage((prev) => (prev + 1 < totalBookingPages ? prev + 1 : prev));
+  };
+
+  const handleFeedbackFieldChange = (field) => (event) => {
+    const value = event.target.value;
+    setFeedbackForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSaveFeedback = async () => {
+    if (!selectedFeedback) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please log in again to update your feedback.");
+      return;
+    }
+
+    const feedbackId = selectedFeedback.feedbackId ?? selectedFeedback.id;
+
+    const isNewFeedback =
+      isCreatingFeedback ||
+      !(selectedFeedback.feedbackId || selectedFeedback.id);
+
+    try {
+      if (isNewFeedback) {
+        const bookingId =
+          selectedFeedback.bookingId || selectedFeedback.booking?.bookingId;
+
+        if (!bookingId) {
+          alert("Unable to identify the booking for this feedback.");
+          return;
+        }
+
+        if (!feedbackForm.categoryId) {
+          alert("Please choose a feedback category.");
+          return;
+        }
+
+        const feedbackDetails = {
+          bookingId,
+          categoryId: Number(feedbackForm.categoryId),
+          stars:
+            feedbackForm.stars !== "" && feedbackForm.stars != null
+              ? Number(feedbackForm.stars)
+              : null,
+          comment: feedbackForm.comment !== "" ? feedbackForm.comment : null,
+          suggestion:
+            feedbackForm.suggestion !== "" ? feedbackForm.suggestion : null,
+        };
+
+        const response = await fetch("http://localhost:8080/feedback", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(feedbackDetails),
+        });
+
+        if (!response.ok) {
+          const error = await response.json().catch(() => null);
+          throw new Error(error?.error || "Adding feedback failed");
+        }
+
+        const newFeedback = await response.json();
+
+        setSelectedFeedback(newFeedback);
+
+        queryClient.setQueryData(["feedbacks"], (oldData) => {
+          if (!oldData) return oldData;
+
+          const oldContent = oldData.content ?? [];
+          return {
+            ...oldData,
+            content: [newFeedback, ...oldContent],
+          };
+        });
+
+        setIsCreatingFeedback(false);
+        setIsEditingFeedback(false);
+        alert("Feedback added successfully.");
+      } else {
+        const feedbackDetails = {
+          stars:
+            feedbackForm.stars !== "" && feedbackForm.stars != null
+              ? Number(feedbackForm.stars)
+              : null,
+          comment: feedbackForm.comment !== "" ? feedbackForm.comment : null,
+          suggestion:
+            feedbackForm.suggestion !== "" ? feedbackForm.suggestion : null,
+        };
+
+        const response = await fetch(
+          `http://localhost:8080/feedback/${feedbackId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(feedbackDetails),
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.json().catch(() => null);
+          throw new Error(error?.error || "Updating feedback failed");
+        }
+
+        const updatedFeedback = await response.json();
+
+        setSelectedFeedback(updatedFeedback);
+
+        queryClient.setQueryData(["feedbacks"], (oldData) => {
+          if (!oldData) return oldData;
+
+          const oldContent = oldData.content ?? [];
+          const updatedId = updatedFeedback.feedbackId ?? updatedFeedback.id;
+
+          if (!updatedId) {
+            return {
+              ...oldData,
+              content: oldContent.map((fb) =>
+                fb.booking?.bookingId === updatedFeedback.booking?.bookingId
+                  ? updatedFeedback
+                  : fb
+              ),
+            };
+          }
+
+          return {
+            ...oldData,
+            content: oldContent.map((fb) => {
+              const fbId = fb.feedbackId ?? fb.id;
+              if (fbId === updatedId) return updatedFeedback;
+              return fb;
+            }),
+          };
+        });
+
+        setIsEditingFeedback(false);
+        alert("Feedback updated successfully.");
+      }
+    } catch (error) {
+      alert(
+        error.message ||
+          (isNewFeedback
+            ? "Something went wrong while adding feedback."
+            : "Something went wrong while updating feedback.")
+      );
+    }
   };
 
   return (
@@ -529,12 +758,13 @@ function Account() {
                             {booking.staffReply && (
                               <div className="mb-2">{booking.staffReply}</div>
                             )}
-                            <Link
-                              to={`/feedback?bookingId=${booking.bookingId}`}
+                            <button
+                              type="button"
                               className="inline-block mt-2 px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold"
+                              onClick={() => openNewFeedbackModal(booking)}
                             >
                               Add feedback
-                            </Link>
+                            </button>
                           </div>
                         );
                       })()
@@ -553,7 +783,7 @@ function Account() {
         (feedbackPending ? (
           <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
             <ClipLoader color="#17EB88" size={20} />
-            <span className="ml-3 font-semibold">Loading Feedbacks...</span>
+            <span className="ml-3 font-semibold">Loading Feedback...</span>
           </div>
         ) : (
           <div
@@ -572,46 +802,163 @@ function Account() {
                 <FontAwesomeIcon icon={faX} />
               </button>
               <h2 className="text-xl font-semibold mb-3 text-[#227B05]">
-                Your Feedback
+                {isCreatingFeedback ? "Add Feedback" : "Your Feedback"}
               </h2>
-              {selectedFeedback.stars != null && (
-                <div className="mb-2">
-                  <span className="font-semibold">Rating: </span>
-                  <span>{selectedFeedback.stars} / 5.0</span>
-                </div>
+              {!isEditingFeedback ? (
+                <>
+                  {selectedFeedback.stars != null && (
+                    <div className="mb-2">
+                      <span className="font-semibold">Rating: </span>
+                      <span>{selectedFeedback.stars} / 5</span>
+                    </div>
+                  )}
+                  {selectedFeedback.comment && (
+                    <div className="mb-2">
+                      <span className="font-semibold">Comment: </span>
+                      <span>{selectedFeedback.comment}</span>
+                    </div>
+                  )}
+                  {selectedFeedback.suggestion && (
+                    <div className="mb-4">
+                      <span className="font-semibold">Suggestion: </span>
+                      <span>{selectedFeedback.suggestion}</span>
+                    </div>
+                  )}
+                  {selectedFeedback.staffReply && (
+                    <div className="mb-4">
+                      <span className="font-semibold">Park Reply: </span>
+                      <span>{selectedFeedback.staffReply}</span>
+                    </div>
+                  )}
+                  {!selectedFeedback.comment &&
+                    !selectedFeedback.suggestion && (
+                      <div className="text-sm text-gray-600 mb-4">
+                        No additional details provided.
+                      </div>
+                    )}
+                  <div className="flex justify-end gap-3 mt-4">
+                    <button
+                      type="button"
+                      className="px-4 py-2 border border-[#227B05] text-[#227B05] rounded-md font-semibold hover:bg-[#227B05]/5"
+                      onClick={() => setIsEditingFeedback(true)}
+                    >
+                      Edit Feedback
+                    </button>
+                    <button
+                      type="button"
+                      className="px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold"
+                      onClick={closeFeedbackModal}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {isCreatingFeedback && (
+                    <div className="mb-3">
+                      <label className="block font-semibold mb-1">
+                        Feedback Category
+                      </label>
+                      {feedbackCategoryPending ? (
+                        <div className="text-sm text-gray-500">
+                          Loading categories...
+                        </div>
+                      ) : (
+                        <select
+                          className="w-full border px-3 py-2 rounded-md bg-white"
+                          value={feedbackForm.categoryId}
+                          onChange={handleFeedbackFieldChange("categoryId")}
+                        >
+                          <option value="">Select a category</option>
+                          {feedbackCategories.map((category) => {
+                            const id =
+                              category.categoryId ??
+                              category.feedbackCategoryId ??
+                              category.id;
+                            const name =
+                              category.name ||
+                              category.categoryName ||
+                              category.description ||
+                              `Category ${id}`;
+
+                            if (id == null) return null;
+
+                            return (
+                              <option key={id} value={String(id)}>
+                                {name}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      )}
+                    </div>
+                  )}
+                  <div className="mb-3">
+                    <label className="block font-semibold mb-1">
+                      Rating (1-5)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="5"
+                      className="w-full border px-3 py-2 rounded-md"
+                      value={feedbackForm.stars}
+                      onChange={handleFeedbackFieldChange("stars")}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="block font-semibold mb-1">Comment</label>
+                    <textarea
+                      className="w-full border px-3 py-2 rounded-md min-h-20"
+                      value={feedbackForm.comment}
+                      onChange={handleFeedbackFieldChange("comment")}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="block font-semibold mb-1">
+                      Suggestion
+                    </label>
+                    <textarea
+                      className="w-full border px-3 py-2 rounded-md min-h-20"
+                      value={feedbackForm.suggestion}
+                      onChange={handleFeedbackFieldChange("suggestion")}
+                    />
+                  </div>
+                  <div className="flex justify-end gap-3 mt-4">
+                    <button
+                      type="button"
+                      className="px-4 py-2 border rounded-md font-semibold hover:bg-black/5"
+                      onClick={() => {
+                        setFeedbackForm({
+                          stars:
+                            selectedFeedback.stars != null
+                              ? String(selectedFeedback.stars)
+                              : "",
+                          comment: selectedFeedback.comment || "",
+                          suggestion: selectedFeedback.suggestion || "",
+                          categoryId:
+                            selectedFeedback.categoryId != null
+                              ? String(selectedFeedback.categoryId)
+                              : selectedFeedback.category?.categoryId != null
+                              ? String(selectedFeedback.category.categoryId)
+                              : "",
+                        });
+                        setIsEditingFeedback(false);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold"
+                      onClick={handleSaveFeedback}
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </>
               )}
-              {selectedFeedback.comment && (
-                <div className="mb-2">
-                  <span className="font-semibold">Comment: </span>
-                  <span>{selectedFeedback.comment}</span>
-                </div>
-              )}
-              {selectedFeedback.suggestion && (
-                <div className="mb-4">
-                  <span className="font-semibold">Suggestion: </span>
-                  <span>{selectedFeedback.suggestion}</span>
-                </div>
-              )}
-              {selectedFeedback.staffReply && (
-                <div className="mb-4">
-                  <span className="font-semibold">Park Reply: </span>
-                  <span>{selectedFeedback.staffReply}</span>
-                </div>
-              )}
-              {!selectedFeedback.comment && !selectedFeedback.suggestion && (
-                <div className="text-sm text-gray-600 mb-4">
-                  No additional details provided.
-                </div>
-              )}
-              <div className="flex justify-end mt-4">
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold"
-                  onClick={closeFeedbackModal}
-                >
-                  Close
-                </button>
-              </div>
             </div>
           </div>
         ))}
