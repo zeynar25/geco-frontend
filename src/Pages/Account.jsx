@@ -592,6 +592,12 @@ function Account() {
                   <span>{selectedFeedback.suggestion}</span>
                 </div>
               )}
+              {selectedFeedback.staffReply && (
+                <div className="mb-4">
+                  <span className="font-semibold">Park Reply: </span>
+                  <span>{selectedFeedback.staffReply}</span>
+                </div>
+              )}
               {!selectedFeedback.comment && !selectedFeedback.suggestion && (
                 <div className="text-sm text-gray-600 mb-4">
                   No additional details provided.
