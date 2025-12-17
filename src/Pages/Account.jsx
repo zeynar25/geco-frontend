@@ -13,6 +13,7 @@ import {
   faCalendar,
   faClock,
   faPesoSign,
+  faX,
 } from "@fortawesome/free-solid-svg-icons";
 import { ClipLoader } from "react-spinners";
 import {
@@ -39,6 +40,8 @@ function Account() {
   const [loggedIn] = useState(isLoggedIn());
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -170,7 +173,48 @@ function Account() {
     },
   });
 
+  if (bookingError) {
+    alert("something went wrong in retrieving bookings");
+  }
+
   const bookings = bookingData?.content ?? [];
+
+  const {
+    data: feedbackData,
+    error: feedbackError,
+    isPending: feedbackPending,
+  } = useQuery({
+    queryKey: ["feedbacks"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8080/feedback/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error?.error || "Getting my bookings failed");
+      }
+      return await response.json();
+    },
+  });
+
+  if (feedbackError) {
+    alert("something went wrong in retrieving feedbacks");
+  }
+
+  const feedbacks = feedbackData?.content ?? [];
+
+  const openFeedbackModal = (feedback) => {
+    setSelectedFeedback(feedback);
+    setIsFeedbackModalOpen(true);
+  };
+
+  const closeFeedbackModal = () => {
+    setIsFeedbackModalOpen(false);
+    setSelectedFeedback(null);
+  };
 
   return (
     <>
@@ -311,9 +355,9 @@ function Account() {
               bookings.map((booking) => (
                 <div
                   key={booking.bookingId}
-                  className="px-5 md:px-10 py-3 md:py-5"
+                  className="px-5 md:px-10 py-3 border border-[#227B05] rounded-lg"
                 >
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-10 justify-between">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-5 justify-between">
                     <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center">
                       <div className="text-[#227B05] font-semibold text-lg">
                         Visit on:{" "}
@@ -323,7 +367,7 @@ function Account() {
                         {booking.groupSize} visitor(s) at {booking.visitTime}
                       </div>
                     </div>
-                    <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center">
+                    <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center text-center">
                       <div>{booking.tourPackage.name}</div>
                       <div>
                         <FontAwesomeIcon icon={faPesoSign} />
@@ -367,11 +411,88 @@ function Account() {
                       </div>
                       {/* Payment Status: {booking.paymentStatus} */}
                     </div>
-                    <div className="col-span-2 md:col-span-3 text-sm text-gray-600 mt-2 mb-4 text-center">
+                  </div>
+                  {booking.bookingStatus === "PENDING" ? (
+                    <div className="text-sm text-gray-600 text-center mt-5">
                       Waiting for staff confirmation
                     </div>
-                  </div>
-                  <hr />
+                  ) : booking.bookingStatus === "APPROVED" &&
+                    booking.paymentMethod === "ONLINE" &&
+                    booking.paymentStatus == "UNPAID" ? (
+                    <div className=" bg-[#222EDA]/15 text-[#222EDA] px-5 xs:px-10 sm:px-15 md:px-20 lg:px-25 py-3 rounded-md border border-[#222EDA] mt-5 w-fit mx-auto flex flex-col gap-3">
+                      <div className="flex font-semibold mb-2">
+                        <span>Down payment: </span>
+                        <span>
+                          <FontAwesomeIcon icon={faPesoSign} />
+                          {booking.totalPrice / 2}{" "}
+                        </span>
+                      </div>
+                      <button className="bg-[#222EDA] text-white px-5 py-2 rounded-lg self-center">
+                        Submit payment
+                      </button>
+                    </div>
+                  ) : booking.bookingStatus === "APPROVED" &&
+                    booking.paymentMethod === "ONLINE" &&
+                    booking.paymentStatus == "PAYMENT_VERIFICATION" ? (
+                    <div className="text-sm text-gray-600 text-center mt-5">
+                      Waiting for staff confirmation on your down payment
+                    </div>
+                  ) : booking.bookingStatus === "APPROVED" &&
+                    booking.paymentMethod === "ONLINE" &&
+                    booking.paymentStatus == "VERIFIED" ? (
+                    <div className="text-sm text-gray-600 text-center mt-5">
+                      Payment verified! You’re all set for your visit. See you
+                      there!
+                    </div>
+                  ) : booking.bookingStatus === "APPROVED" &&
+                    booking.paymentMethod === "PARK" ? (
+                    <div className="text-sm text-gray-600 text-center mt-5">
+                      Reservation confirmed! Just kindly prepare your full
+                      payment in cash once your arrived at the park. See you
+                      there!
+                    </div>
+                  ) : booking.bookingStatus === "COMPLETED" ? (
+                    (() => {
+                      const bookingFeedback = feedbacks.find(
+                        (feedback) =>
+                          feedback.booking?.bookingId === booking.bookingId
+                      );
+
+                      if (bookingFeedback) {
+                        return (
+                          <div className="text-sm text-gray-600 text-center mt-5">
+                            <div>
+                              Thank you for your{" "}
+                              <button
+                                type="button"
+                                className="underline text-[#227B05] font-semibold"
+                                onClick={() =>
+                                  openFeedbackModal(bookingFeedback)
+                                }
+                              >
+                                feedback
+                              </button>
+                              !
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className="text-sm text-gray-600 text-center mt-5">
+                          {booking.staffReply && (
+                            <div className="mb-2">{booking.staffReply}</div>
+                          )}
+                          <Link
+                            to={`/feedback?bookingId=${booking.bookingId}`}
+                            className="inline-block mt-2 px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold"
+                          >
+                            Add feedback
+                          </Link>
+                        </div>
+                      );
+                    })()
+                  ) : null}
                 </div>
               ))
             ) : (
@@ -380,6 +501,60 @@ function Account() {
           </div>
         </div>
       </div>
+      {isFeedbackModalOpen && selectedFeedback && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={closeFeedbackModal}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="absolute top-3 right-3 text-gray-500 hover:text-black text-lg"
+              onClick={closeFeedbackModal}
+            >
+              <FontAwesomeIcon icon={faX} />
+            </button>
+            <h2 className="text-xl font-semibold mb-3 text-[#227B05]">
+              Your Feedback
+            </h2>
+            {selectedFeedback.stars != null && (
+              <div className="mb-2">
+                <span className="font-semibold">Rating: </span>
+                <span>{selectedFeedback.stars} / 5.0</span>
+              </div>
+            )}
+            {selectedFeedback.comment && (
+              <div className="mb-2">
+                <span className="font-semibold">Comment: </span>
+                <span>{selectedFeedback.comment}</span>
+              </div>
+            )}
+            {selectedFeedback.suggestion && (
+              <div className="mb-4">
+                <span className="font-semibold">Suggestion: </span>
+                <span>{selectedFeedback.suggestion}</span>
+              </div>
+            )}
+            {!selectedFeedback.comment && !selectedFeedback.suggestion && (
+              <div className="text-sm text-gray-600 mb-4">
+                No additional details provided.
+              </div>
+            )}
+            <div className="flex justify-end mt-4">
+              <button
+                type="button"
+                className="px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold"
+                onClick={closeFeedbackModal}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );
