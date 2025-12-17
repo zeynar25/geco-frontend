@@ -41,17 +41,21 @@ function isLoggedIn() {
 }
 
 function Book() {
-  const [loggedIn] = useState(isLoggedIn());
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [selectedGroupSize, setSelectedGroupSize] = useState(null);
-  const [selectedPackageId, setSelectedPackageId] = useState(null);
-  const [selectedPackage, setSelectedPackage] = useState(null);
-  const [groupSizeError, setGroupSizeError] = useState("");
-  // const [selectedInclusions, setSelectedInclusions] = useState([]);
-
   const location = useLocation();
   const backTo = location.state?.from || "/";
   const navigate = useNavigate();
+
+  const [loggedIn] = useState(isLoggedIn());
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [selectedGroupSize, setSelectedGroupSize] = useState(null);
+  const [selectedPackageId, setSelectedPackageId] = useState(
+    location.state?.selectedPackageId || null
+  );
+  const [selectedPackage, setSelectedPackage] = useState(
+    location.state?.selectedPackage || null
+  );
+  const [groupSizeError, setGroupSizeError] = useState("");
+  // const [selectedInclusions, setSelectedInclusions] = useState([]);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -63,9 +67,15 @@ function Book() {
   useEffect(() => {
     // Scroll to the element with the ID matching the hash
     if (location.hash) {
-      const element = document.querySelector(location.hash);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+      const targetId = location.hash.startsWith("#")
+        ? location.hash.slice(1)
+        : location.hash;
+
+      if (targetId) {
+        const element = document.getElementById(targetId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
       }
     }
   }, [location]);
@@ -451,6 +461,7 @@ function Book() {
                         type="date"
                         id="visitDate"
                         name="visitDate"
+                        required
                       />
                     </div>
                     <div className="col-span-2 xs:col-span-1">
@@ -484,6 +495,7 @@ function Book() {
                       packageData?.map((pkg) => (
                         <div
                           key={pkg.packageId}
+                          id={pkg.packageId}
                           onClick={() => handleSelectedPackageIdChange(pkg)}
                           className={`cursor-pointer bg-white col-span-2 sm:col-span-1 rounded-xl border-2 transition-all ${
                             selectedPackageId === pkg.packageId

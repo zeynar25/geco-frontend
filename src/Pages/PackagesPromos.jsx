@@ -92,7 +92,9 @@ function PackagesPromos() {
                 className="bg-white col-span-2 sm:col-span-1"
                 headerClass="bg-[#0A7A28] text-white"
                 title={pkg.name}
-                subtitle={pkg.duration >= 0 ? pkg.duration + " minutes" : undefined}
+                subtitle={
+                  pkg.duration >= 0 ? pkg.duration + " minutes" : undefined
+                }
                 descriptionContent={
                   <div className="flex flex-1 flex-col gap-4 my-5 mx-10">
                     <div className="flex gap-2 justify-between">
@@ -131,8 +133,12 @@ function PackagesPromos() {
                       </ul>
                     </div>
                     <Link
-                      to="/book#package-selection"
-                      state={{ from: location.pathname }}
+                      to={"/book#" + pkg.packageId}
+                      state={{
+                        from: location.pathname,
+                        selectedPackageId: pkg.packageId,
+                        selectedPackage: pkg,
+                      }}
                       className="bg-[#0A7A28]/90 text-white border-2 border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] hover:cursor-pointer mt-auto flex items-center justify-center"
                     >
                       <FontAwesomeIcon
