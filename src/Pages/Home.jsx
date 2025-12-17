@@ -265,6 +265,7 @@ export default function Home() {
                   attractionData?.map((attraction) => (
                     <Link
                       to={`/attractions/${attraction.attractionId}`}
+                      state={{ from: "/#map" }}
                       key={attraction.attractionId}
                       id={attraction.attractionId}
                       className="self-center text-sm"
