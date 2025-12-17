@@ -249,30 +249,30 @@ export default function Home() {
             <div className="rounded-xl overflow-hidden shadow-2xl bg-white">
               <div className="bg-[#0A7A28]/30 p-3">
                 <h3 className="font-semibold">Park Attractions</h3>
-                <span>Click to view on map</span>
+                <span>Click to view</span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 text-center gap-1.5 px-3 py-1 max-h-50 overflow-y-auto">
                 {/* Attractions */}
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-10">
-                  {attractionPending ? (
-                    <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
-                      <ClipLoader color="#17EB88" size={40} />
-                      <span className="ml-3 font-semibold">
-                        Loading Attractions...
-                      </span>
-                    </div>
-                  ) : (
-                    attractionData?.map((attraction) => (
-                      <div
-                        key={attraction.attractionId}
-                        id={attraction.attractionId}
-                      >
-                        attraction.name
-                      </div>
-                    ))
-                  )}
-                </div>
+                {attractionPending ? (
+                  <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
+                    <ClipLoader color="#17EB88" size={40} />
+                    <span className="ml-3 font-semibold">
+                      Loading Attractions...
+                    </span>
+                  </div>
+                ) : (
+                  attractionData?.map((attraction) => (
+                    <Link
+                      to={`/attractions/${attraction.attractionId}`}
+                      key={attraction.attractionId}
+                      id={attraction.attractionId}
+                      className="self-center text-sm"
+                    >
+                      {attraction.name}
+                    </Link>
+                  ))
+                )}
               </div>
             </div>
 
