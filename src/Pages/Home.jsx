@@ -17,7 +17,6 @@ import {
   faPeopleGroup,
   faStar,
   faMagnifyingGlassLocation,
-  faMessage,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -37,7 +36,11 @@ export default function Home() {
     }
   }, [location]);
 
-  const { data, isPending, error } = useQuery({
+  const {
+    data: homeData,
+    isPending: homePending,
+    error: homeError,
+  } = useQuery({
     queryKey: ["home-stats"],
     // runs whenever we run the query with this key.
     queryFn: async () => {
@@ -50,8 +53,31 @@ export default function Home() {
     },
   });
 
-  if (error) {
+  if (homeError) {
     alert("something went wrong in retrieving home statistics");
+  }
+
+  const {
+    data: attractionData,
+    isPending: attractionPending,
+    error: attractionError,
+  } = useQuery({
+    queryKey: ["attractions"],
+    // runs whenever we run the query with this key.
+    queryFn: async () => {
+      const attractions = await fetch(
+        "http://localhost:8080/attraction/active"
+      );
+      if (!attractions.ok) {
+        const error = await attractions.json();
+        throw new Error(error?.error || "Getting attractions failed");
+      }
+      return await attractions.json();
+    },
+  });
+
+  if (attractionError) {
+    alert("something went wrong in retrieving attractions");
   }
 
   return (
@@ -105,7 +131,7 @@ export default function Home() {
           {/* Cards grid */}
           <div className="grid place-items-center sm:place-items-stretch grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <ValueCard
-              title={isPending ? "..." : data?.attractionNumber}
+              title={homePending ? "..." : homeData?.attractionNumber}
               titleClasses="text-gray-900"
               description="Attractions"
               descriptionClasses="text-gray-500"
@@ -117,7 +143,7 @@ export default function Home() {
             />
             <Link to="/packages-promos" state={{ from: location.pathname }}>
               <ValueCard
-                title={isPending ? "..." : data?.tourPackageNumber}
+                title={homePending ? "..." : homeData?.tourPackageNumber}
                 titleClasses="text-gray-900"
                 description="Tour Packages"
                 descriptionClasses="text-gray-500"
@@ -127,7 +153,7 @@ export default function Home() {
               />
             </Link>
             <ValueCard
-              title={isPending ? "..." : data?.averageVisitor}
+              title={homePending ? "..." : homeData?.averageVisitor}
               titleClasses="text-gray-900"
               description="Monthly Visitors"
               descriptionClasses="text-gray-500"
@@ -138,7 +164,7 @@ export default function Home() {
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
             <ValueCard
-              title={isPending ? "..." : data?.averageRating}
+              title={homePending ? "..." : homeData?.averageRating}
               titleClasses="text-gray-900"
               description="Average Rating"
               descriptionClasses="text-gray-500"
@@ -226,48 +252,32 @@ export default function Home() {
                 <span>Click to view on map</span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 text-center gap-1.5 px-3 py-1">
-                <div>Attraction 1</div>
-                <div>Attraction 2</div>
-                <div>Attraction 3</div>
-                <div>Attraction 4</div>
-                <div>Attraction 5</div>
-                <div>Attraction 6</div>
-                <div>Attraction 7</div>
-                <div>Attraction 8</div>
-                <div>Attraction 9</div>
-                <div>Attraction 10</div>
-                <div>Attraction 11</div>
-                <div>Attraction 12</div>
-              </div>
-            </div>
-
-            {/* Plan your visit */}
-            <div className="bg-[#0A7A28] text-white rounded-xl overflow-hidden shadow-2xl px-5 py-2">
-              <h3 className="font-semibold py-2">Plan your visit</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 px-5 py-2">
-                <Link
-                  to="/book"
-                  className="bg-white hover:bg-white/90 hover:text-black text-[#0A7A28] font-semibold rounded-lg py-1.5 cursor-pointer text-center"
-                >
-                  <FontAwesomeIcon
-                    icon={faCalendarDays}
-                    className="text-black mr-2"
-                  />
-                  Book your visit
-                </Link>
-                <button className="border-white bg-[white]/50 hover:bg-[white]/30 hover:text-white text-black font-semibold rounded-lg py-1.5 cursor-pointer">
-                  <FontAwesomeIcon
-                    icon={faMessage}
-                    className="text-black mr-2"
-                  />
-                  Share feedback
-                </button>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 text-center gap-1.5 px-3 py-1 max-h-50 overflow-y-auto">
+                {/* Attractions */}
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-10">
+                  {attractionPending ? (
+                    <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
+                      <ClipLoader color="#17EB88" size={40} />
+                      <span className="ml-3 font-semibold">
+                        Loading Attractions...
+                      </span>
+                    </div>
+                  ) : (
+                    attractionData?.map((attraction) => (
+                      <div
+                        key={attraction.attractionId}
+                        id={attraction.attractionId}
+                      >
+                        attraction.name
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Know more */}
-            <div className="relative min-h-40 max-h-40 bg-[url('/images/homepage.png')] bg-cover bg-bottom bg-no-repeat rounded-xl flex items-center justify-center shadow-2xl overflow-hidden">
+            <div className="relative min-h-35 max-h-60 bg-[url('/images/homepage.png')] bg-cover bg-bottom bg-no-repeat rounded-xl flex items-center justify-center shadow-2xl overflow-hidden">
               <Link
                 to="/about"
                 className="z-10 bg-white/90 hover:bg-white/80 font-bold p-2 px-10 rounded-xl flex items-center justify-center"
