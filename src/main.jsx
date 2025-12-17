@@ -9,6 +9,7 @@ import PackagesPromos from "./Pages/PackagesPromos.jsx";
 import ParkCalendar from "./Pages/ParkCalendar.jsx";
 import BookingSuccess from "./Pages/BookingSuccess.jsx";
 import Account from "./Pages/Account.jsx";
+import Attraction from "./Pages/Attraction.jsx";
 
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
   { path: "/park-calendar", element: <ParkCalendar /> },
   { path: "/booking-success", element: <BookingSuccess /> },
   { path: "/my-account", element: <Account /> },
+  { path: "/attractions/:id", element: <Attraction /> },
 ]);
 
 const queryClient = new QueryClient();
