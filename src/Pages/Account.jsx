@@ -9,8 +9,16 @@ import { jwtDecode } from "jwt-decode";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faPesoSign } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendar,
+  faClock,
+  faPesoSign,
+} from "@fortawesome/free-solid-svg-icons";
 import { ClipLoader } from "react-spinners";
+import {
+  faCheckCircle,
+  faCircleXmark,
+} from "@fortawesome/free-regular-svg-icons";
 
 function isLoggedIn() {
   const token = localStorage.getItem("token");
@@ -185,7 +193,10 @@ function Account() {
         />
 
         {/* My profile */}
-        <div id="#profile" className="rounded-lg overflow-hidden shadow-2xl">
+        <div
+          id="#profile"
+          className="bg-white rounded-lg overflow-hidden shadow-2xl"
+        >
           <div className="bg-[#4D9C43] text-white px-5 sm:px-10 py-2 md:py-5 font-bold text-lg mb-5 sm:mb-2">
             <span>My Profile</span>
           </div>
@@ -281,11 +292,14 @@ function Account() {
         </div>
 
         {/* My bookings */}
-        <div id="#profile" className="rounded-lg overflow-hidden shadow-2xl">
+        <div
+          id="#bookings"
+          className="bg-white rounded-lg overflow-hidden shadow-2xl"
+        >
           <div className="bg-[#4D9C43] text-white px-5 sm:px-10 py-2 md:py-5 font-bold text-lg mb-5 sm:mb-2">
             <span>My Bookings</span>
           </div>
-          <div className="px-5 sm:px-10 py-2 md:py-5 text-md flex flex-col gap-5">
+          <div className="bg-white px-5 sm:px-10 py-2 md:py-5 text-md flex flex-col gap-5">
             {bookingPending ? (
               <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
                 <ClipLoader color="#17EB88" size={40} />
@@ -295,13 +309,69 @@ function Account() {
               </div>
             ) : bookings.length > 0 ? (
               bookings.map((booking) => (
-                <div key={booking.bookingId}>
-                  Visit on: {new Date(booking.visitDate).toLocaleDateString()}|{" "}
-                  {booking.groupSize} visitor(s) at {booking.visitTime}
-                  | <FontAwesomeIcon icon={faPesoSign} /> {booking.totalPrice}|
-                  Payment Method: {booking.paymentMethod}| Booking Status:{" "}
-                  {booking.bookingStatus}| Payment Status:{" "}
-                  {booking.paymentStatus}
+                <div
+                  key={booking.bookingId}
+                  className="px-5 md:px-10 py-3 md:py-5"
+                >
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-10 justify-between">
+                    <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center">
+                      <div className="text-[#227B05] font-semibold text-lg">
+                        Visit on:{" "}
+                        {new Date(booking.visitDate).toLocaleDateString()}
+                      </div>
+                      <div>
+                        {booking.groupSize} visitor(s) at {booking.visitTime}
+                      </div>
+                    </div>
+                    <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center">
+                      <div>{booking.tourPackage.name}</div>
+                      <div>
+                        <FontAwesomeIcon icon={faPesoSign} />
+                        {booking.totalPrice}
+                      </div>
+                    </div>
+                    <div className="col-span-2 md:col-span-1 flex justify-center items-center">
+                      {/* Payment Method: {booking.paymentMethod} */}
+                      <div
+                        className={
+                          "font-semibold px-3 py-2 rounded-full " +
+                          (booking.bookingStatus === "PENDING"
+                            ? "bg-[#FDDB3C]"
+                            : booking.bookingStatus === "CANCELLED"
+                            ? "bg-[#E32726]/70"
+                            : booking.bookingStatus === "APPROVED"
+                            ? "bg-[#BAD0F8]/90"
+                            : booking.bookingStatus === "REJECTED"
+                            ? "bg-[#E32726]/70"
+                            : booking.bookingStatus === "COMPLETED"
+                            ? "bg-[#A86CCB]"
+                            : "")
+                        }
+                      >
+                        {booking.bookingStatus === "PENDING" ? (
+                          <FontAwesomeIcon icon={faClock} className="mr-2" />
+                        ) : booking.bookingStatus === "CANCELLED" ||
+                          booking.bookingStatus === "REJECTED" ? (
+                          <FontAwesomeIcon
+                            icon={faCircleXmark}
+                            className="mr-2"
+                          />
+                        ) : booking.bookingStatus === "APPROVED" ||
+                          booking.bookingStatus === "COMPLETED" ? (
+                          <FontAwesomeIcon
+                            icon={faCheckCircle}
+                            className="mr-2 text-xl"
+                          />
+                        ) : null}
+                        {booking.bookingStatus}
+                      </div>
+                      {/* Payment Status: {booking.paymentStatus} */}
+                    </div>
+                    <div className="col-span-2 md:col-span-3 text-sm text-gray-600 mt-2 mb-4 text-center">
+                      Waiting for staff confirmation
+                    </div>
+                  </div>
+                  <hr />
                 </div>
               ))
             ) : (
