@@ -447,7 +447,7 @@ function Book() {
                   )}
                 </div>
                 {/* Visit Schedule */}
-                <div className="flex flex-col gap-3">
+                <div id="visitSchedule" className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
                     <span className="font-bold text-xl text-[#48BF56]">
                       Visit Schedule
@@ -461,6 +461,7 @@ function Book() {
                         type="date"
                         id="visitDate"
                         name="visitDate"
+                        defaultValue={location.state?.selectedDate || ""}
                         required
                       />
                     </div>

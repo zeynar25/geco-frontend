@@ -250,7 +250,7 @@ function ParkCalendar() {
               headerClass="text-[#0A7A28] justify-center"
               title="Availability Legend"
               descriptionContent={
-                <div className="grid grid-cols-4 items-center gap-3 m-auto pb-2">
+                <div className="grid grid-cols-4 items-center gap-3 m-auto py-5 md:py-10 lg:py-5">
                   <div className="bg-[#48BF56]/50 text-[#48BF56] rounded-xl flex items-center px-3 py-2 col-span-4 xs:col-span-2 md:col-span-1 lg:col-span-2 mx-3 h-full">
                     <FontAwesomeIcon
                       icon={faCircleCheck}
@@ -299,6 +299,28 @@ function ParkCalendar() {
                   <span className="text-center">{totalVisitors}</span>
                   <span className="font-semibold">Total Bookings:</span>
                   <span className="text-center">{totalBookings}</span>
+
+                  {swappableDate !== currentDate && (
+                    <div className="col-span-2 text-center">
+                      <Link
+                        className="bg-[#0A7A28]/90 text-white border-2 border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] hover:cursor-pointer mt-5 flex items-center justify-center"
+                        to="/book#visitSchedule"
+                        state={{
+                          from: location.pathname,
+                          selectedDate: `${year}-${String(month + 1).padStart(
+                            2,
+                            "0"
+                          )}-${String(selectedDay).padStart(2, "0")}`,
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          icon={faCalendarCheck}
+                          className="text-white mr-2"
+                        />
+                        <span>Book your visit now</span>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               }
             />
