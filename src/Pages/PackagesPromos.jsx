@@ -6,7 +6,7 @@ import HeaderCard from "../Components/HeaderCard";
 import { useLocation, Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 
 import { ClipLoader } from "react-spinners";
@@ -115,6 +115,13 @@ function PackagesPromos() {
                         </div>
                       )}
                     </div>
+                    {pkg.minPerson > 0 && pkg.maxPerson > 0 && (
+                      <div className="flex">
+                        <h2 className="font-bold text-sm mb-2">
+                          {pkg.minPerson} - {pkg.maxPerson} pax
+                        </h2>
+                      </div>
+                    )}
                     <p>{pkg.description}</p>
                     <div>
                       <h3 className="font-semibold text-lg">

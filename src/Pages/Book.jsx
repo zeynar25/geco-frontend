@@ -539,6 +539,13 @@ function Book() {
                                     </div>
                                   )}
                                 </div>
+                                {pkg.minPerson > 0 && pkg.maxPerson > 0 && (
+                                  <div className="flex">
+                                    <h2 className="font-bold text-sm mb-2">
+                                      {pkg.minPerson} - {pkg.maxPerson} pax
+                                    </h2>
+                                  </div>
+                                )}
                                 <p>{pkg.description}</p>
                                 <div>
                                   <h3 className="font-semibold text-lg">
