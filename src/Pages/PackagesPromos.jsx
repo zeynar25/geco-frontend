@@ -73,8 +73,8 @@ function PackagesPromos() {
       <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10 flex flex-col gap-5">
         <BackButton
           to={backTo}
-          title="Operating Hours and Schedule"
-          description="Plan your visit with our detailed schedule information"
+          title="Packages & Promos"
+          description="Choose the perfect experience for your visit"
         />
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-5">
