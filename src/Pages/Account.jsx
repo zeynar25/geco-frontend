@@ -214,7 +214,7 @@ function Account() {
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error?.error || "Getting my bookings failed");
+        throw new Error(error?.error || "Getting my feedbacks failed");
       }
       return await response.json();
     },
