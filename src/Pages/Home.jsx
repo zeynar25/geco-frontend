@@ -163,15 +163,17 @@ export default function Home() {
               iconClasses="bg-purple-900 text-white"
               className="w-80 sm:w-auto border-0 shadow-sm"
             />
-            <ValueCard
-              title={homePending ? "..." : homeData?.averageRating}
-              titleClasses="text-gray-900"
-              description="Average Rating"
-              descriptionClasses="text-gray-500"
-              icon={<FontAwesomeIcon icon={faStar} className="text-2xl" />}
-              iconClasses="bg-yellow-400 text-gray-900"
-              className="w-80 sm:w-auto border-0 shadow-sm"
-            />
+            <Link to="/feedback" state={{ from: location.pathname }}>
+              <ValueCard
+                title={homePending ? "..." : homeData?.averageRating}
+                titleClasses="text-gray-900"
+                description="Average Rating"
+                descriptionClasses="text-gray-500"
+                icon={<FontAwesomeIcon icon={faStar} className="text-2xl" />}
+                iconClasses="bg-yellow-400 text-gray-900"
+                className="w-80 sm:w-auto border-0 shadow-sm"
+              />
+            </Link>
           </div>
         </div>
       </section>
