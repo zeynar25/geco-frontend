@@ -61,26 +61,6 @@ function Feedback() {
     );
   };
 
-  const {
-    data: bookingData,
-    error: bookingError,
-    isPending: bookingPending,
-  } = useQuery({
-    queryKey: ["bookings"],
-    queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/booking/active`);
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error?.error || "Getting my bookings failed");
-      }
-      return await response.json();
-    },
-  });
-
-  if (bookingError) {
-    alert("something went wrong in retrieving bookings");
-  }
-
   return (
     <>
       <Header />
