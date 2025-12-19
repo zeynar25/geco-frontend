@@ -93,7 +93,7 @@ function Header() {
       onSettled: () => {
         localStorage.removeItem("token");
         setLoggedIn(false);
-        navigate("/");
+        navigate("/signin");
       },
     });
   }
