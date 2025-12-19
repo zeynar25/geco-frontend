@@ -11,6 +11,7 @@ import BookingSuccess from "./Pages/BookingSuccess.jsx";
 import Account from "./Pages/Account.jsx";
 import Attraction from "./Pages/Attraction.jsx";
 import Feedback from "./Pages/Feedback.jsx";
+import AdminDashboard from "./Pages/AdminDashboard.jsx";
 
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
   { path: "/my-account", element: <Account /> },
   { path: "/attractions/:id", element: <Attraction /> },
   { path: "/feedback", element: <Feedback /> },
+  { path: "/admin", element: <AdminDashboard /> },
 ]);
 
 const queryClient = new QueryClient();
