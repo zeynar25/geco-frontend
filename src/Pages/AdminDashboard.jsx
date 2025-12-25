@@ -94,7 +94,10 @@ function AdminDashboard() {
     alert("something went wrong in retrieving account");
   }
 
-  if (accountData && accountData.role !== "ADMIN") {
+  const isAdmin = accountData?.role === "ADMIN";
+  const canViewAdmin = loggedIn && isAdmin;
+
+  if (accountData && isAdmin === false) {
     alert("You do not have admin privileges to access this page.");
     navigate("/");
   }
@@ -105,6 +108,7 @@ function AdminDashboard() {
     isPending: adminDashboardPending,
   } = useQuery({
     queryKey: ["dashboardStatistics"],
+    enabled: canViewAdmin,
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const stats = await fetch("http://localhost:8080/dashboard", {
@@ -136,7 +140,7 @@ function AdminDashboard() {
       paymentFilter,
       paymentMethodFilter,
     ],
-    enabled: bookingIn,
+    enabled: canViewAdmin && bookingIn,
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const baseUrl = "http://localhost:8080/booking";
@@ -174,6 +178,16 @@ function AdminDashboard() {
 
   if (bookingError) {
     alert("something went wrong in retrieving bookings");
+  }
+
+  if (accountPending) {
+    return (
+      <>
+        <Header />
+        <main className="m-10 text-center">Loading account...</main>
+        <Footer />
+      </>
+    );
   }
 
   const bookings = bookingData?.content ?? [];
