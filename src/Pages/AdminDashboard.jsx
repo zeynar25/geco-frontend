@@ -487,6 +487,7 @@ function AdminDashboard() {
                     </select>
                   </div>
                 </form>
+
                 <div className="p-4 flex flex-col gap-5">
                   {bookingPending && (
                     <p className="text-gray-600 text-sm">Loading bookings...</p>
@@ -668,6 +669,8 @@ function AdminDashboard() {
                                 </button>
                               </div>
                             </div>
+
+                            <hr className="mb-5" />
 
                             {/* Booking details */}
                             <div className="grid grid-cols-5 gap-3 mb-5">
