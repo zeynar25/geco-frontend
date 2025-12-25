@@ -15,6 +15,8 @@ import {
   faPesoSign,
   faCheckCircle,
   faCircleXmark,
+  faAngleLeft,
+  faAngleRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 
@@ -47,9 +49,14 @@ function AdminDashboard() {
   const [paymentFilter, setPaymentFilter] = useState("ALL");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("ALL");
   const [bookingPage, setBookingPage] = useState(0);
-  const [feedbacks] = useState([]);
-  const openFeedbackModal = () => {};
-  const openNewFeedbackModal = () => {};
+
+  const handlePrevBookingPage = () => {
+    setBookingPage((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleNextBookingPage = () => {
+    setBookingPage((prev) => prev + 1);
+  };
 
   useEffect(() => {
     if (!loggedIn) {
@@ -136,7 +143,7 @@ function AdminDashboard() {
 
       const params = new URLSearchParams();
       params.append("page", bookingPage.toString());
-      params.append("size", "5");
+      params.append("size", "10");
       if (bookingFilter !== "ALL") {
         params.append("bookingStatus", bookingFilter.toUpperCase());
       }
@@ -329,7 +336,7 @@ function AdminDashboard() {
                 <span>Booking Management</span>
               </div>
               <div>
-                <form className="flex justify-around mt-3">
+                <form className="flex justify-around my-3">
                   <div>
                     <span>Booking Status:</span>
                     <select
@@ -384,69 +391,107 @@ function AdminDashboard() {
 
                   {!bookingPending &&
                     bookingData &&
-                    bookings.map((booking) => (
-                      <div
-                        key={booking.bookingId}
-                        className="px-5 md:px-10 py-3 border border-[#227B05] rounded-lg"
-                      >
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-5 justify-between">
-                          <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center">
-                            <div className="text-[#227B05] font-semibold text-lg">
-                              Visit on:{" "}
-                              {new Date(booking.visitDate).toLocaleDateString()}
-                            </div>
-                            <div>
-                              {booking.groupSize} visitor(s) at{" "}
-                              {booking.visitTime}
-                            </div>
-                          </div>
-                          <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center text-center">
-                            <div>{booking.tourPackage.name}</div>
-                            <div>
-                              <FontAwesomeIcon icon={faPesoSign} />
-                              {booking.totalPrice}
-                            </div>
-                          </div>
-                          <div className="col-span-2 md:col-span-1 flex justify-center items-center">
-                            {/* Payment Method: {booking.paymentMethod} */}
-                            <div
-                              className={
-                                "font-semibold px-3 py-2 rounded-full " +
-                                (booking.bookingStatus === "PENDING"
-                                  ? "bg-[#FDDB3C]"
-                                  : booking.bookingStatus === "CANCELLED"
-                                  ? "bg-[#E32726]/70"
-                                  : booking.bookingStatus === "APPROVED"
-                                  ? "bg-[#BAD0F8]/90"
-                                  : booking.bookingStatus === "REJECTED"
-                                  ? "bg-[#E32726]/70"
-                                  : booking.bookingStatus === "COMPLETED"
-                                  ? "bg-[#A86CCB]"
-                                  : "")
+                    (bookings.length > 0 ? (
+                      <>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">
+                            Page {bookingPage + 1} of{" "}
+                            {Math.max(totalBookingPages, 1)}
+                          </span>
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              className="px-2 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                              onClick={handlePrevBookingPage}
+                              disabled={bookingPage === 0}
+                            >
+                              <FontAwesomeIcon icon={faAngleLeft} />
+                            </button>
+                            <button
+                              type="button"
+                              className="px-2 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                              onClick={handleNextBookingPage}
+                              disabled={
+                                totalBookingPages === 0 ||
+                                bookingPage + 1 >= totalBookingPages
                               }
                             >
-                              {booking.bookingStatus === "PENDING" ? (
-                                <FontAwesomeIcon
-                                  icon={faClock}
-                                  className="mr-2"
-                                />
-                              ) : booking.bookingStatus === "CANCELLED" ||
-                                booking.bookingStatus === "REJECTED" ? (
-                                <FontAwesomeIcon
-                                  icon={faCircleXmark}
-                                  className="mr-2"
-                                />
-                              ) : booking.bookingStatus === "APPROVED" ||
-                                booking.bookingStatus === "COMPLETED" ? (
-                                <FontAwesomeIcon
-                                  icon={faCheckCircle}
-                                  className="mr-2 text-xl"
-                                />
-                              ) : null}
-                              {booking.bookingStatus}
-                            </div>
+                              <FontAwesomeIcon icon={faAngleRight} />
+                            </button>
                           </div>
                         </div>
+
+                        {bookings.map((booking) => (
+                          <div
+                            key={booking.bookingId}
+                            className="px-5 md:px-10 py-3 border border-[#227B05] rounded-lg"
+                          >
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-5 justify-between">
+                              <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center">
+                                <div className="text-[#227B05] font-semibold text-lg">
+                                  Visit on:{" "}
+                                  {new Date(
+                                    booking.visitDate
+                                  ).toLocaleDateString()}
+                                </div>
+                                <div>
+                                  {booking.groupSize} visitor(s) at{" "}
+                                  {booking.visitTime}
+                                </div>
+                              </div>
+                              <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center text-center">
+                                <div>{booking.tourPackage.name}</div>
+                                <div>
+                                  <FontAwesomeIcon icon={faPesoSign} />
+                                  {booking.totalPrice}
+                                </div>
+                              </div>
+                              <div className="col-span-2 md:col-span-1 flex justify-center items-center">
+                                {/* Payment Method: {booking.paymentMethod} */}
+                                <div
+                                  className={
+                                    "font-semibold px-3 py-2 rounded-full " +
+                                    (booking.bookingStatus === "PENDING"
+                                      ? "bg-[#FDDB3C]"
+                                      : booking.bookingStatus === "CANCELLED"
+                                      ? "bg-[#E32726]/70"
+                                      : booking.bookingStatus === "APPROVED"
+                                      ? "bg-[#BAD0F8]/90"
+                                      : booking.bookingStatus === "REJECTED"
+                                      ? "bg-[#E32726]/70"
+                                      : booking.bookingStatus === "COMPLETED"
+                                      ? "bg-[#A86CCB]"
+                                      : "")
+                                  }
+                                >
+                                  {booking.bookingStatus === "PENDING" ? (
+                                    <FontAwesomeIcon
+                                      icon={faClock}
+                                      className="mr-2"
+                                    />
+                                  ) : booking.bookingStatus === "CANCELLED" ||
+                                    booking.bookingStatus === "REJECTED" ? (
+                                    <FontAwesomeIcon
+                                      icon={faCircleXmark}
+                                      className="mr-2"
+                                    />
+                                  ) : booking.bookingStatus === "APPROVED" ||
+                                    booking.bookingStatus === "COMPLETED" ? (
+                                    <FontAwesomeIcon
+                                      icon={faCheckCircle}
+                                      className="mr-2 text-xl"
+                                    />
+                                  ) : null}
+                                  {booking.bookingStatus}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <div className="text-center text-gray-500 m-5">
+                        No bookings yet.
                       </div>
                     ))}
                 </div>
