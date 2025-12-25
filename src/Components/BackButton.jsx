@@ -18,7 +18,10 @@ function BackButton(props) {
           <p>{props.description}</p>
         </div>
       </div>
-      {props.extraButton && props.extraButton}
+      <div className="flex flex-col md:flex-row gap-2">
+        {props.extraButton && props.extraButton}
+        {props.extraButton2 && props.extraButton2}
+      </div>
     </div>
   );
 }

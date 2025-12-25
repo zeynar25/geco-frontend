@@ -482,6 +482,16 @@ function Account() {
               <span>View Park Calendar</span>
             </Link>
           }
+          extraButton2={
+            <Link
+              to="/admin"
+              state={{ from: location.pathname }}
+              className="bg-[#4D9C43] hover:bg-[#4D9C43]/95 text-[#FDDB3C] px-4 py-2 rounded-md flex items-center my-auto"
+            >
+              <FontAwesomeIcon icon={faCalendar} className="mr-2" />
+              <span>Admin Dashboard</span>
+            </Link>
+          }
         />
 
         {/* My profile */}
