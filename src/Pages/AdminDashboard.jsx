@@ -17,6 +17,8 @@ import {
   faCircleXmark,
   faAngleLeft,
   faAngleRight,
+  faMoneyBill,
+  faEarthAsia,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 
@@ -212,8 +214,8 @@ function AdminDashboard() {
           ) : (
             <div className="grid grid-cols-4 gap-5">
               <div className="col-span-4 sm:col-span-2 lg:col-span-1 bg-white p-5 rounded shadow-lg">
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col justify-between">
+                <div className="flex items-center gap-2 justify-between">
+                  <div className="flex flex-col">
                     <span className="font-semibold text-sm">
                       This Month's Booking
                     </span>
@@ -229,8 +231,8 @@ function AdminDashboard() {
               </div>
 
               <div className="col-span-4 sm:col-span-2 lg:col-span-1 bg-white p-5 rounded shadow-lg">
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col justify-between">
+                <div className="flex items-center gap-2 justify-between">
+                  <div className="flex flex-col">
                     <span className="font-semibold text-sm">
                       This Month's Revenue
                     </span>
@@ -342,7 +344,7 @@ function AdminDashboard() {
         <div>
           {bookingIn && (
             <div className="rounded-lg overflow-hidden shadow-xl">
-              <div className="text-white bg-[#48BF56] px-4 py-2">
+              <div className="text-white bg-[#48BF56] px-4 py-2 font-bold">
                 <FontAwesomeIcon
                   icon={faCalendarCheck}
                   className="mr-2 text-lg"
@@ -350,9 +352,9 @@ function AdminDashboard() {
                 <span>Booking Management</span>
               </div>
               <div>
-                <form className="flex justify-around my-3">
+                <form className="flex justify-around my-3 flex-wrap gap-2">
                   <div>
-                    <span>Booking Status:</span>
+                    <span className="font-semibold">Booking Status:</span>
                     <select
                       value={bookingFilter}
                       onChange={(e) => setBookingFilter(e.target.value)}
@@ -368,7 +370,7 @@ function AdminDashboard() {
                   </div>
 
                   <div>
-                    <span>Payment Status:</span>
+                    <span className="font-semibold">Payment Status:</span>
                     <select
                       value={paymentFilter}
                       onChange={(e) => setPaymentFilter(e.target.value)}
@@ -386,7 +388,7 @@ function AdminDashboard() {
                   </div>
 
                   <div>
-                    <span>Payment Method:</span>
+                    <span className="font-semibold">Payment Method:</span>
                     <select
                       value={paymentMethodFilter}
                       onChange={(e) => setPaymentMethodFilter(e.target.value)}
@@ -440,64 +442,165 @@ function AdminDashboard() {
                             key={booking.bookingId}
                             className="px-5 md:px-10 py-3 border border-[#227B05] rounded-lg"
                           >
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-5 justify-between">
-                              <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center">
-                                <div className="text-[#227B05] font-semibold text-lg">
-                                  Visit on:{" "}
+                            <div className="grid grid-cols-3 gap-3 mb-5">
+                              {/* Account's details */}
+                              <div className="col-span-3 md:col-span-1 flex flex-wrap md:flex-col gap-3 md:gap-1 justify-center">
+                                <div className="font-semibold">
+                                  {booking.account.detail.firstName}{" "}
+                                  {booking.account.detail.surname}
+                                </div>
+                                <div className="font-semibold">
+                                  {booking.account.detail.email}
+                                </div>
+                                <div className="font-semibold">
+                                  {booking.account.detail.contactNumber}
+                                </div>
+                              </div>
+
+                              {/* Booking & payment statuses and payment method */}
+                              <div className="col-span-3 md:col-span-2 flex gap-2 flex-wrap justify-center">
+                                <div className="col-span-2 md:col-span-1 flex justify-center items-center">
+                                  <div
+                                    className={
+                                      "font-semibold px-3 py-2 rounded-full " +
+                                      (booking.bookingStatus === "PENDING"
+                                        ? "bg-[#FDDB3C]"
+                                        : booking.bookingStatus === "CANCELLED"
+                                        ? "bg-[#E32726]/70"
+                                        : booking.bookingStatus === "APPROVED"
+                                        ? "bg-[#BAD0F8]/90"
+                                        : booking.bookingStatus === "REJECTED"
+                                        ? "bg-[#E32726]/70"
+                                        : booking.bookingStatus === "COMPLETED"
+                                        ? "bg-[#A86CCB]"
+                                        : "")
+                                    }
+                                  >
+                                    {booking.bookingStatus === "PENDING" ? (
+                                      <FontAwesomeIcon
+                                        icon={faClock}
+                                        className="mr-2"
+                                      />
+                                    ) : booking.bookingStatus === "CANCELLED" ||
+                                      booking.bookingStatus === "REJECTED" ? (
+                                      <FontAwesomeIcon
+                                        icon={faCircleXmark}
+                                        className="mr-2"
+                                      />
+                                    ) : booking.bookingStatus === "APPROVED" ||
+                                      booking.bookingStatus === "COMPLETED" ? (
+                                      <FontAwesomeIcon
+                                        icon={faCheckCircle}
+                                        className="mr-2 text-xl"
+                                      />
+                                    ) : null}
+                                    {booking.bookingStatus} BOOKING
+                                  </div>
+                                </div>
+
+                                <div className="col-span-2 md:col-span-1 flex justify-center items-center">
+                                  <div
+                                    className={
+                                      "font-semibold px-3 py-2 rounded-full " +
+                                      (booking.paymentStatus === "UNPAID"
+                                        ? "bg-[#FDDB3C]"
+                                        : booking.paymentStatus === "REJECTED"
+                                        ? "bg-[#E32726]/70"
+                                        : booking.paymentStatus ===
+                                          "PAYMENT_VERIFICATION"
+                                        ? "bg-[#BAD0F8]/90"
+                                        : booking.paymentStatus === "REFUNDED"
+                                        ? "bg-[#E32726]/70"
+                                        : booking.paymentStatus === "VERIFIED"
+                                        ? "bg-[#A86CCB]"
+                                        : "")
+                                    }
+                                  >
+                                    {booking.paymentStatus === "UNPAID" ? (
+                                      <FontAwesomeIcon
+                                        icon={faClock}
+                                        className="mr-2"
+                                      />
+                                    ) : booking.paymentStatus === "REJECTED" ||
+                                      booking.paymentStatus === "REFUNDED" ? (
+                                      <FontAwesomeIcon
+                                        icon={faCircleXmark}
+                                        className="mr-2"
+                                      />
+                                    ) : booking.paymentStatus ===
+                                        "PAYMENT_VERIFICATION" ||
+                                      booking.paymentStatus === "VERIFIED" ? (
+                                      <FontAwesomeIcon
+                                        icon={faCheckCircle}
+                                        className="mr-2 text-xl"
+                                      />
+                                    ) : null}
+                                    {booking.paymentStatus} PAYMENT
+                                  </div>
+                                </div>
+
+                                <div className="col-span-2 md:col-span-1 flex justify-center items-center">
+                                  <div
+                                    className={
+                                      "font-semibold px-3 py-2 rounded-full " +
+                                      (booking.paymentMethod === "PARK"
+                                        ? "bg-[#FDDB3C]"
+                                        : booking.paymentMethod === "ONLINE"
+                                        ? "bg-[#222EDA]/70"
+                                        : "")
+                                    }
+                                  >
+                                    {booking.paymentMethod === "PARK" ? (
+                                      <FontAwesomeIcon
+                                        icon={faMoneyBill}
+                                        className="mr-2"
+                                      />
+                                    ) : booking.paymentMethod === "ONLINE" ? (
+                                      <FontAwesomeIcon
+                                        icon={faEarthAsia}
+                                        className="mr-2"
+                                      />
+                                    ) : null}
+                                    {booking.paymentMethod} PAYMENT METHOD
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Booking details */}
+                            <div className="grid grid-cols-5 gap-3">
+                              <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
+                                <span>Visit Date:</span>
+                                <span className="font-semibold">
                                   {new Date(
                                     booking.visitDate
                                   ).toLocaleDateString()}
-                                </div>
-                                <div>
-                                  {booking.groupSize} visitor(s) at{" "}
-                                  {booking.visitTime}
-                                </div>
+                                </span>
                               </div>
-                              <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center text-center">
-                                <div>{booking.tourPackage.name}</div>
-                                <div>
+                              <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
+                                <span>Time:</span>
+                                <span className="font-semibold">
+                                  {booking.visitTime}
+                                </span>
+                              </div>
+                              <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
+                                <span>Group Size:</span>
+                                <span className="font-semibold">
+                                  {booking.groupSize}
+                                </span>
+                              </div>
+                              <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
+                                <span>Package:</span>
+                                <span className="font-semibold">
+                                  {booking.tourPackage.name}
+                                </span>
+                              </div>
+                              <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
+                                <span>Total Fee:</span>
+                                <span className="font-semibold">
                                   <FontAwesomeIcon icon={faPesoSign} />
                                   {booking.totalPrice}
-                                </div>
-                              </div>
-                              <div className="col-span-2 md:col-span-1 flex justify-center items-center">
-                                {/* Payment Method: {booking.paymentMethod} */}
-                                <div
-                                  className={
-                                    "font-semibold px-3 py-2 rounded-full " +
-                                    (booking.bookingStatus === "PENDING"
-                                      ? "bg-[#FDDB3C]"
-                                      : booking.bookingStatus === "CANCELLED"
-                                      ? "bg-[#E32726]/70"
-                                      : booking.bookingStatus === "APPROVED"
-                                      ? "bg-[#BAD0F8]/90"
-                                      : booking.bookingStatus === "REJECTED"
-                                      ? "bg-[#E32726]/70"
-                                      : booking.bookingStatus === "COMPLETED"
-                                      ? "bg-[#A86CCB]"
-                                      : "")
-                                  }
-                                >
-                                  {booking.bookingStatus === "PENDING" ? (
-                                    <FontAwesomeIcon
-                                      icon={faClock}
-                                      className="mr-2"
-                                    />
-                                  ) : booking.bookingStatus === "CANCELLED" ||
-                                    booking.bookingStatus === "REJECTED" ? (
-                                    <FontAwesomeIcon
-                                      icon={faCircleXmark}
-                                      className="mr-2"
-                                    />
-                                  ) : booking.bookingStatus === "APPROVED" ||
-                                    booking.bookingStatus === "COMPLETED" ? (
-                                    <FontAwesomeIcon
-                                      icon={faCheckCircle}
-                                      className="mr-2 text-xl"
-                                    />
-                                  ) : null}
-                                  {booking.bookingStatus}
-                                </div>
+                                </span>
                               </div>
                             </div>
                           </div>
