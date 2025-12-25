@@ -568,7 +568,7 @@ function AdminDashboard() {
                             </div>
 
                             {/* Booking details */}
-                            <div className="grid grid-cols-5 gap-3">
+                            <div className="grid grid-cols-5 gap-3 mb-5">
                               <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
                                 <span>Visit Date:</span>
                                 <span className="font-semibold">
@@ -603,6 +603,36 @@ function AdminDashboard() {
                                 </span>
                               </div>
                             </div>
+
+                            {booking.paymentMethod === "ONLINE" &&
+                              (booking.paymentStatus ===
+                                "PAYMENT_VERIFICATION" ||
+                                booking.paymentStatus === "VERIFIED") && (
+                                <div className="bg-[#222EDA]/30 flex gap-3 justify-around rounded-lg p-3 mb-5">
+                                  <div className="flex flex-col gap-1 text-center">
+                                    <span>Down Payment:</span>
+                                    <span className="font-semibold">
+                                      <FontAwesomeIcon icon={faPesoSign} />
+                                      {booking.totalPrice / 2}
+                                    </span>
+                                  </div>
+                                  <div className="flex flex-col gap-1 text-center">
+                                    <span>Proof of Payment:</span>
+                                    <span className="underline font-semibold">
+                                      View Screenshot
+                                    </span>
+                                  </div>
+                                </div>
+                              )}
+
+                            {booking.staffReply && (
+                              <div className="bg-[#4D9C43]/30 rounded-lg py-3 px-5 mb-5 flex flex-col">
+                                <span>Staff notes:</span>
+                                <span className="font-semibold">
+                                  {booking.staffReply}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </>
