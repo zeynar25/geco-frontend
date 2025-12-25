@@ -5,7 +5,7 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import BackButton from "../Components/BackButton";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,6 +19,7 @@ import {
   faAngleRight,
   faMoneyBill,
   faEarthAsia,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 
@@ -51,6 +52,15 @@ function AdminDashboard() {
   const [paymentFilter, setPaymentFilter] = useState("ALL");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("ALL");
   const [bookingPage, setBookingPage] = useState(0);
+  const [editingBooking, setEditingBooking] = useState(null);
+  const [editForm, setEditForm] = useState({
+    bookingStatus: "",
+    paymentStatus: "",
+    paymentMethod: "",
+    staffReply: "",
+  });
+
+  const queryClient = useQueryClient();
 
   const handlePrevBookingPage = () => {
     setBookingPage((prev) => Math.max(prev - 1, 0));
@@ -58,6 +68,20 @@ function AdminDashboard() {
 
   const handleNextBookingPage = () => {
     setBookingPage((prev) => prev + 1);
+  };
+
+  const openEditModal = (booking) => {
+    setEditingBooking(booking);
+    setEditForm({
+      bookingStatus: booking.bookingStatus || "",
+      paymentStatus: booking.paymentStatus || "",
+      paymentMethod: booking.paymentMethod || "",
+      staffReply: booking.staffReply || "",
+    });
+  };
+
+  const closeEditModal = () => {
+    setEditingBooking(null);
   };
 
   useEffect(() => {
@@ -181,6 +205,68 @@ function AdminDashboard() {
   if (bookingError) {
     alert("something went wrong in retrieving bookings");
   }
+
+  const bookingUpdateMutation = useMutation({
+    mutationFn: async ({ bookingId, data }) => {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:8080/booking/staff/${bookingId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Updating booking failed");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bookings"], exact: false });
+      closeEditModal();
+      alert("Booking updated successfully.");
+    },
+    onError: (error) => {
+      alert(error.message || "Updating booking failed");
+    },
+  });
+
+  const handleEditSubmit = (event) => {
+    event.preventDefault();
+    if (!editingBooking) return;
+
+    const payload = {};
+
+    if (editForm.bookingStatus) {
+      payload.bookingStatus = editForm.bookingStatus;
+    }
+    if (editForm.paymentStatus) {
+      payload.paymentStatus = editForm.paymentStatus;
+    }
+    if (editForm.paymentMethod) {
+      payload.paymentMethod = editForm.paymentMethod;
+    }
+    if (editForm.staffReply && editForm.staffReply.trim().length > 0) {
+      payload.staffReply = editForm.staffReply.trim();
+    }
+
+    if (Object.keys(payload).length === 0) {
+      closeEditModal();
+      return;
+    }
+
+    bookingUpdateMutation.mutate({
+      bookingId: editingBooking.bookingId,
+      data: payload,
+    });
+  };
 
   if (accountPending) {
     return (
@@ -459,112 +545,127 @@ function AdminDashboard() {
                               </div>
 
                               {/* Booking & payment statuses and payment method */}
-                              <div className="col-span-3 md:col-span-2 flex gap-2 flex-wrap justify-center">
-                                <div className="col-span-2 md:col-span-1 flex justify-center items-center">
-                                  <div
-                                    className={
-                                      "font-semibold px-3 py-2 rounded-full " +
-                                      (booking.bookingStatus === "PENDING"
-                                        ? "bg-[#FDDB3C]"
-                                        : booking.bookingStatus === "CANCELLED"
-                                        ? "bg-[#E32726]/70"
-                                        : booking.bookingStatus === "APPROVED"
-                                        ? "bg-[#BAD0F8]/90"
-                                        : booking.bookingStatus === "REJECTED"
-                                        ? "bg-[#E32726]/70"
-                                        : booking.bookingStatus === "COMPLETED"
-                                        ? "bg-[#A86CCB]"
-                                        : "")
-                                    }
-                                  >
-                                    {booking.bookingStatus === "PENDING" ? (
-                                      <FontAwesomeIcon
-                                        icon={faClock}
-                                        className="mr-2"
-                                      />
-                                    ) : booking.bookingStatus === "CANCELLED" ||
-                                      booking.bookingStatus === "REJECTED" ? (
-                                      <FontAwesomeIcon
-                                        icon={faCircleXmark}
-                                        className="mr-2"
-                                      />
-                                    ) : booking.bookingStatus === "APPROVED" ||
-                                      booking.bookingStatus === "COMPLETED" ? (
-                                      <FontAwesomeIcon
-                                        icon={faCheckCircle}
-                                        className="mr-2 text-xl"
-                                      />
-                                    ) : null}
-                                    {booking.bookingStatus} BOOKING
+                              <div className="col-span-3 md:col-span-2 flex gap-2 justify-center items-center">
+                                <div className="text-sm flex gap-2 flex-wrap justify-center">
+                                  <div className="col-span-2 md:col-span-1 flex justify-center items-center">
+                                    <div
+                                      className={
+                                        "font-semibold px-3 py-2 rounded-full text-center " +
+                                        (booking.bookingStatus === "PENDING"
+                                          ? "bg-[#FDDB3C]"
+                                          : booking.bookingStatus ===
+                                            "CANCELLED"
+                                          ? "bg-[#E32726]/70"
+                                          : booking.bookingStatus === "APPROVED"
+                                          ? "bg-[#BAD0F8]/90"
+                                          : booking.bookingStatus === "REJECTED"
+                                          ? "bg-[#E32726]/70"
+                                          : booking.bookingStatus ===
+                                            "COMPLETED"
+                                          ? "bg-[#A86CCB]"
+                                          : "")
+                                      }
+                                    >
+                                      {booking.bookingStatus === "PENDING" ? (
+                                        <FontAwesomeIcon
+                                          icon={faClock}
+                                          className="mr-2"
+                                        />
+                                      ) : booking.bookingStatus ===
+                                          "CANCELLED" ||
+                                        booking.bookingStatus === "REJECTED" ? (
+                                        <FontAwesomeIcon
+                                          icon={faCircleXmark}
+                                          className="mr-2"
+                                        />
+                                      ) : booking.bookingStatus ===
+                                          "APPROVED" ||
+                                        booking.bookingStatus ===
+                                          "COMPLETED" ? (
+                                        <FontAwesomeIcon
+                                          icon={faCheckCircle}
+                                          className="mr-2 text-xl"
+                                        />
+                                      ) : null}
+                                      {booking.bookingStatus} BOOKING
+                                    </div>
                                   </div>
-                                </div>
 
-                                <div className="col-span-2 md:col-span-1 flex justify-center items-center">
-                                  <div
-                                    className={
-                                      "font-semibold px-3 py-2 rounded-full " +
-                                      (booking.paymentStatus === "UNPAID"
-                                        ? "bg-[#FDDB3C]"
-                                        : booking.paymentStatus === "REJECTED"
-                                        ? "bg-[#E32726]/70"
-                                        : booking.paymentStatus ===
-                                          "PAYMENT_VERIFICATION"
-                                        ? "bg-[#BAD0F8]/90"
-                                        : booking.paymentStatus === "REFUNDED"
-                                        ? "bg-[#E32726]/70"
-                                        : booking.paymentStatus === "VERIFIED"
-                                        ? "bg-[#A86CCB]"
-                                        : "")
-                                    }
-                                  >
-                                    {booking.paymentStatus === "UNPAID" ? (
-                                      <FontAwesomeIcon
-                                        icon={faClock}
-                                        className="mr-2"
-                                      />
-                                    ) : booking.paymentStatus === "REJECTED" ||
-                                      booking.paymentStatus === "REFUNDED" ? (
-                                      <FontAwesomeIcon
-                                        icon={faCircleXmark}
-                                        className="mr-2"
-                                      />
-                                    ) : booking.paymentStatus ===
-                                        "PAYMENT_VERIFICATION" ||
-                                      booking.paymentStatus === "VERIFIED" ? (
-                                      <FontAwesomeIcon
-                                        icon={faCheckCircle}
-                                        className="mr-2 text-xl"
-                                      />
-                                    ) : null}
-                                    {booking.paymentStatus} PAYMENT
+                                  <div className="col-span-2 md:col-span-1 flex justify-center items-center">
+                                    <div
+                                      className={
+                                        "font-semibold px-3 py-2 rounded-full text-center " +
+                                        (booking.paymentStatus === "UNPAID"
+                                          ? "bg-[#FDDB3C]"
+                                          : booking.paymentStatus === "REJECTED"
+                                          ? "bg-[#E32726]/70"
+                                          : booking.paymentStatus ===
+                                            "PAYMENT_VERIFICATION"
+                                          ? "bg-[#BAD0F8]/90"
+                                          : booking.paymentStatus === "REFUNDED"
+                                          ? "bg-[#E32726]/70"
+                                          : booking.paymentStatus === "VERIFIED"
+                                          ? "bg-[#A86CCB]"
+                                          : "")
+                                      }
+                                    >
+                                      {booking.paymentStatus === "UNPAID" ? (
+                                        <FontAwesomeIcon
+                                          icon={faClock}
+                                          className="mr-2"
+                                        />
+                                      ) : booking.paymentStatus ===
+                                          "REJECTED" ||
+                                        booking.paymentStatus === "REFUNDED" ? (
+                                        <FontAwesomeIcon
+                                          icon={faCircleXmark}
+                                          className="mr-2"
+                                        />
+                                      ) : booking.paymentStatus ===
+                                          "PAYMENT_VERIFICATION" ||
+                                        booking.paymentStatus === "VERIFIED" ? (
+                                        <FontAwesomeIcon
+                                          icon={faCheckCircle}
+                                          className="mr-2 text-xl"
+                                        />
+                                      ) : null}
+                                      {booking.paymentStatus} PAYMENT
+                                    </div>
                                   </div>
-                                </div>
 
-                                <div className="col-span-2 md:col-span-1 flex justify-center items-center">
-                                  <div
-                                    className={
-                                      "font-semibold px-3 py-2 rounded-full " +
-                                      (booking.paymentMethod === "PARK"
-                                        ? "bg-[#FDDB3C]"
-                                        : booking.paymentMethod === "ONLINE"
-                                        ? "bg-[#222EDA]/70"
-                                        : "")
-                                    }
-                                  >
-                                    {booking.paymentMethod === "PARK" ? (
-                                      <FontAwesomeIcon
-                                        icon={faMoneyBill}
-                                        className="mr-2"
-                                      />
-                                    ) : booking.paymentMethod === "ONLINE" ? (
-                                      <FontAwesomeIcon
-                                        icon={faEarthAsia}
-                                        className="mr-2"
-                                      />
-                                    ) : null}
-                                    {booking.paymentMethod} PAYMENT METHOD
+                                  <div className="col-span-2 md:col-span-1 flex justify-center items-center">
+                                    <div
+                                      className={
+                                        "font-semibold px-3 py-2 rounded-full text-center " +
+                                        (booking.paymentMethod === "PARK"
+                                          ? "bg-[#FDDB3C]"
+                                          : booking.paymentMethod === "ONLINE"
+                                          ? "bg-[#222EDA]/70"
+                                          : "")
+                                      }
+                                    >
+                                      {booking.paymentMethod === "PARK" ? (
+                                        <FontAwesomeIcon
+                                          icon={faMoneyBill}
+                                          className="mr-2"
+                                        />
+                                      ) : booking.paymentMethod === "ONLINE" ? (
+                                        <FontAwesomeIcon
+                                          icon={faEarthAsia}
+                                          className="mr-2"
+                                        />
+                                      ) : null}
+                                      {booking.paymentMethod} PAYMENT METHOD
+                                    </div>
                                   </div>
                                 </div>
+                                <button
+                                  type="button"
+                                  className="text-gray-600 hover:text-[#227B05]"
+                                  onClick={() => openEditModal(booking)}
+                                >
+                                  <FontAwesomeIcon icon={faEdit} />
+                                </button>
                               </div>
                             </div>
 
@@ -650,6 +751,122 @@ function AdminDashboard() {
           {financesIn && <div></div>}
         </div>
       </main>
+
+      {editingBooking && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="font-semibold text-lg">Edit Booking</h2>
+              <button
+                type="button"
+                className="text-gray-500 hover:text-gray-700"
+                onClick={closeEditModal}
+                disabled={bookingUpdateMutation.isPending}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form className="flex flex-col gap-4" onSubmit={handleEditSubmit}>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-semibold">Booking Status</label>
+                <select
+                  className="border border-gray-300 rounded px-2 py-1"
+                  value={editForm.bookingStatus}
+                  onChange={(e) =>
+                    setEditForm((prev) => ({
+                      ...prev,
+                      bookingStatus: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="PENDING">PENDING</option>
+                  <option value="CANCELLED">CANCELLED</option>
+                  <option value="APPROVED">APPROVED</option>
+                  <option value="REJECTED">REJECTED</option>
+                  <option value="COMPLETED">COMPLETED</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-semibold">Payment Status</label>
+                <select
+                  className="border border-gray-300 rounded px-2 py-1"
+                  value={editForm.paymentStatus}
+                  onChange={(e) =>
+                    setEditForm((prev) => ({
+                      ...prev,
+                      paymentStatus: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="UNPAID">UNPAID</option>
+                  <option value="PAYMENT_VERIFICATION">
+                    PAYMENT_VERIFICATION
+                  </option>
+                  <option value="VERIFIED">VERIFIED</option>
+                  <option value="REJECTED">REJECTED</option>
+                  <option value="REFUNDED">REFUNDED</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-semibold">Payment Method</label>
+                <select
+                  className="border border-gray-300 rounded px-2 py-1"
+                  value={editForm.paymentMethod}
+                  onChange={(e) =>
+                    setEditForm((prev) => ({
+                      ...prev,
+                      paymentMethod: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="PARK">PARK</option>
+                  <option value="ONLINE">ONLINE</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-semibold">Staff Reply</label>
+                <textarea
+                  className="border border-gray-300 rounded px-2 py-1 min-h-20"
+                  value={editForm.staffReply}
+                  onChange={(e) =>
+                    setEditForm((prev) => ({
+                      ...prev,
+                      staffReply: e.target.value,
+                    }))
+                  }
+                  placeholder="Add a note for the guest..."
+                />
+                <span className="text-xs text-gray-500">
+                  At least 5 characters if provided.
+                </span>
+              </div>
+
+              <div className="flex justify-end gap-2 mt-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded border border-gray-300 text-sm hover:bg-gray-100"
+                  onClick={closeEditModal}
+                  disabled={bookingUpdateMutation.isPending}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded bg-[#227B05]/80 text-white text-sm hover:bg-[#227B05] disabled:opacity-60 disabled:cursor-not-allowed"
+                  disabled={bookingUpdateMutation.isPending}
+                >
+                  {bookingUpdateMutation.isPending ? "Saving..." : "Save"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   );
