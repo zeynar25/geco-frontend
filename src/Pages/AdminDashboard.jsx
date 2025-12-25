@@ -291,7 +291,8 @@ function AdminDashboard() {
 
                 {adminDashboardData.unreadFeedback > 0 && (
                   <div className="text-sm text-gray-600 mt-3">
-                    Unread responses
+                    Unread response
+                    {adminDashboardData.unreadFeedback > 1 ? "s" : ""}
                   </div>
                 )}
               </div>
@@ -343,16 +344,16 @@ function AdminDashboard() {
 
         <div>
           {bookingIn && (
-            <div className="rounded-lg overflow-hidden shadow-xl">
-              <div className="text-white bg-[#48BF56] px-4 py-2 font-bold">
+            <div className="bg-white rounded-lg overflow-hidden shadow-xl">
+              <div className="text-white bg-[#48BF56] p-4 font-bold text-2xl">
                 <FontAwesomeIcon
                   icon={faCalendarCheck}
-                  className="mr-2 text-lg"
+                  className="mr-2 text-2xl"
                 />
                 <span>Booking Management</span>
               </div>
               <div>
-                <form className="flex justify-around my-3 flex-wrap gap-2">
+                <form className="flex justify-around mt-5 my-3 flex-wrap gap-2">
                   <div>
                     <span className="font-semibold">Booking Status:</span>
                     <select
@@ -627,7 +628,7 @@ function AdminDashboard() {
 
                             {booking.staffReply && (
                               <div className="bg-[#4D9C43]/30 rounded-lg py-3 px-5 mb-5 flex flex-col">
-                                <span>Staff notes:</span>
+                                <span>Staff Reply:</span>
                                 <span className="font-semibold">
                                   {booking.staffReply}
                                 </span>
