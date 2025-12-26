@@ -521,7 +521,7 @@ function AdminDashboard() {
             </div>
           )}
 
-          {logsIn && (
+          {logsIn && isAdmin && (
             <div className="bg-white rounded shadow p-6 mt-6">
               <h2 className="text-lg font-semibold mb-2">Logs</h2>
               <p className="text-sm text-gray-600">
