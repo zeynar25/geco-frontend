@@ -143,7 +143,7 @@ function AdminDashboard() {
               <p className="text-gray-600">Loading dashboard statistics...</p>
             </div>
           ) : (
-            <div className="grid grid-cols-4 gap-5">
+            <div className="grid grid-cols-4 gap-5 mb-10">
               <div className="col-span-4 sm:col-span-2 lg:col-span-1 bg-white p-5 rounded shadow-lg">
                 <div className="flex items-center gap-2 justify-between">
                   <div className="flex flex-col">
