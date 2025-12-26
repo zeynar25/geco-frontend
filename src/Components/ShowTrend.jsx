@@ -32,7 +32,7 @@ function ShowTrend(props) {
   } = useQuery({
     queryKey: ["graphTrendsMonthlyData", selectedYear],
     enabled:
-      props.canViewAdmin &&
+      props.canViewDashboard &&
       props.trendsIn &&
       viewMode === "MONTHLY" &&
       !!selectedYear,
@@ -65,7 +65,7 @@ function ShowTrend(props) {
   } = useQuery({
     queryKey: ["graphTrendsYearlyData", yearFrom, yearTo],
     enabled:
-      props.canViewAdmin &&
+      props.canViewDashboard &&
       props.trendsIn &&
       viewMode === "YEARLY" &&
       !!yearFrom &&

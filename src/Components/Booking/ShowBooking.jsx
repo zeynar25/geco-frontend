@@ -41,7 +41,7 @@ function ShowBooking(props) {
       paymentFilter,
       paymentMethodFilter,
     ],
-    enabled: props.canViewAdmin && props.bookingIn,
+    enabled: props.canViewDashboard && props.bookingIn,
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const baseUrl = "http://localhost:8080/booking";

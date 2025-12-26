@@ -44,6 +44,13 @@ function AdminDashboard() {
   const [bookingIn, setBookingIn] = useState(true);
   const [financesIn, setFinancesIn] = useState(false);
   const [trendsIn, setTrendsIn] = useState(false);
+  const [feedbackIn, setFeedbackIn] = useState(false);
+  const [packagesIn, setPackagesIn] = useState(false);
+  const [faqsIn, setFaqsIn] = useState(false);
+  const [attractionsIn, setAttractionsIn] = useState(false);
+  const [calendarIn, setCalendarIn] = useState(false);
+  const [accountsIn, setAccountsIn] = useState(false);
+  const [logsIn, setLogsIn] = useState(false);
 
   const [editingBooking, setEditingBooking] = useState(null);
 
@@ -83,10 +90,12 @@ function AdminDashboard() {
     alert("something went wrong in retrieving account");
   }
 
+  const isAuthorized =
+    accountData?.role === "ADMIN" || accountData?.role === "STAFF";
   const isAdmin = accountData?.role === "ADMIN";
-  const canViewAdmin = loggedIn && isAdmin;
+  const canViewDashboard = loggedIn && isAuthorized;
 
-  if (accountData && isAdmin === false) {
+  if (accountData && isAuthorized === false) {
     alert("You do not have admin privileges to access this page.");
     navigate("/");
   }
@@ -97,7 +106,7 @@ function AdminDashboard() {
     isPending: adminDashboardPending,
   } = useQuery({
     queryKey: ["dashboardStatistics"],
-    enabled: canViewAdmin,
+    enabled: canViewDashboard,
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const stats = await fetch("http://localhost:8080/dashboard", {
@@ -232,7 +241,7 @@ function AdminDashboard() {
           )}
         </div>
 
-        <div className="bg-white shadow-xl flex justify-around">
+        <div className="bg-white shadow-xl flex overflow-auto justify-around gap-2 py-2">
           <button
             type="button"
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
@@ -242,6 +251,13 @@ function AdminDashboard() {
               setBookingIn(true);
               setFinancesIn(false);
               setTrendsIn(false);
+              setFeedbackIn(false);
+              setPackagesIn(false);
+              setFaqsIn(false);
+              setAttractionsIn(false);
+              setCalendarIn(false);
+              setAccountsIn(false);
+              setLogsIn(false);
             }}
           >
             Bookings
@@ -255,6 +271,13 @@ function AdminDashboard() {
               setBookingIn(false);
               setFinancesIn(true);
               setTrendsIn(false);
+              setFeedbackIn(false);
+              setPackagesIn(false);
+              setFaqsIn(false);
+              setAttractionsIn(false);
+              setCalendarIn(false);
+              setAccountsIn(false);
+              setLogsIn(false);
             }}
           >
             Finances
@@ -268,27 +291,243 @@ function AdminDashboard() {
               setBookingIn(false);
               setFinancesIn(false);
               setTrendsIn(true);
+              setFeedbackIn(false);
+              setPackagesIn(false);
+              setFaqsIn(false);
+              setAttractionsIn(false);
+              setCalendarIn(false);
+              setAccountsIn(false);
+              setLogsIn(false);
             }}
           >
             Trends
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              feedbackIn ? "text-[#227B05]" : "text-black"
+            }`}
+            onClick={() => {
+              setBookingIn(false);
+              setFinancesIn(false);
+              setTrendsIn(false);
+              setFeedbackIn(true);
+              setPackagesIn(false);
+              setFaqsIn(false);
+              setAttractionsIn(false);
+              setCalendarIn(false);
+              setAccountsIn(false);
+              setLogsIn(false);
+            }}
+          >
+            Feedback
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              packagesIn ? "text-[#227B05]" : "text-black"
+            }`}
+            onClick={() => {
+              setBookingIn(false);
+              setFinancesIn(false);
+              setTrendsIn(false);
+              setFeedbackIn(false);
+              setPackagesIn(true);
+              setFaqsIn(false);
+              setAttractionsIn(false);
+              setCalendarIn(false);
+              setAccountsIn(false);
+              setLogsIn(false);
+            }}
+          >
+            Packages
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              faqsIn ? "text-[#227B05]" : "text-black"
+            }`}
+            onClick={() => {
+              setBookingIn(false);
+              setFinancesIn(false);
+              setTrendsIn(false);
+              setFeedbackIn(false);
+              setPackagesIn(false);
+              setFaqsIn(true);
+              setAttractionsIn(false);
+              setCalendarIn(false);
+              setAccountsIn(false);
+              setLogsIn(false);
+            }}
+          >
+            FAQs
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              attractionsIn ? "text-[#227B05]" : "text-black"
+            }`}
+            onClick={() => {
+              setBookingIn(false);
+              setFinancesIn(false);
+              setTrendsIn(false);
+              setFeedbackIn(false);
+              setPackagesIn(false);
+              setFaqsIn(false);
+              setAttractionsIn(true);
+              setCalendarIn(false);
+              setAccountsIn(false);
+              setLogsIn(false);
+            }}
+          >
+            Attractions
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              calendarIn ? "text-[#227B05]" : "text-black"
+            }`}
+            onClick={() => {
+              setBookingIn(false);
+              setFinancesIn(false);
+              setTrendsIn(false);
+              setFeedbackIn(false);
+              setPackagesIn(false);
+              setFaqsIn(false);
+              setAttractionsIn(false);
+              setCalendarIn(true);
+              setAccountsIn(false);
+              setLogsIn(false);
+            }}
+          >
+            Calendar
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              accountsIn ? "text-[#227B05]" : "text-black"
+            }`}
+            onClick={() => {
+              setBookingIn(false);
+              setFinancesIn(false);
+              setTrendsIn(false);
+              setFeedbackIn(false);
+              setPackagesIn(false);
+              setFaqsIn(false);
+              setAttractionsIn(false);
+              setCalendarIn(false);
+              setAccountsIn(true);
+              setLogsIn(false);
+            }}
+          >
+            Accounts
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              logsIn ? "text-[#227B05]" : "text-black"
+            }`}
+            onClick={() => {
+              setBookingIn(false);
+              setFinancesIn(false);
+              setTrendsIn(false);
+              setFeedbackIn(false);
+              setPackagesIn(false);
+              setFaqsIn(false);
+              setAttractionsIn(false);
+              setCalendarIn(false);
+              setAccountsIn(false);
+              setLogsIn(true);
+            }}
+          >
+            Logs
           </button>
         </div>
 
         <div>
           {bookingIn && (
             <ShowBooking
-              canViewAdmin={canViewAdmin}
+              canViewDashboard={canViewDashboard}
               bookingIn={bookingIn}
               onEditBooking={setEditingBooking}
             />
           )}
 
           {financesIn && (
-            <ShowFinance canViewAdmin={canViewAdmin} financesIn={financesIn} />
+            <ShowFinance
+              canViewDashboard={canViewDashboard}
+              financesIn={financesIn}
+            />
           )}
 
           {trendsIn && (
-            <ShowTrend canViewAdmin={canViewAdmin} trendsIn={trendsIn} />
+            <ShowTrend
+              canViewDashboard={canViewDashboard}
+              trendsIn={trendsIn}
+            />
+          )}
+
+          {feedbackIn && (
+            <div className="bg-white rounded shadow p-6 mt-6">
+              <h2 className="text-lg font-semibold mb-2">Feedback</h2>
+              <p className="text-sm text-gray-600">
+                Feedback management section coming soon.
+              </p>
+            </div>
+          )}
+
+          {packagesIn && (
+            <div className="bg-white rounded shadow p-6 mt-6">
+              <h2 className="text-lg font-semibold mb-2">Packages</h2>
+              <p className="text-sm text-gray-600">
+                Packages administration section coming soon.
+              </p>
+            </div>
+          )}
+
+          {faqsIn && (
+            <div className="bg-white rounded shadow p-6 mt-6">
+              <h2 className="text-lg font-semibold mb-2">FAQs</h2>
+              <p className="text-sm text-gray-600">
+                FAQ management section coming soon.
+              </p>
+            </div>
+          )}
+
+          {attractionsIn && (
+            <div className="bg-white rounded shadow p-6 mt-6">
+              <h2 className="text-lg font-semibold mb-2">Attractions</h2>
+              <p className="text-sm text-gray-600">
+                Attractions administration section coming soon.
+              </p>
+            </div>
+          )}
+
+          {calendarIn && (
+            <div className="bg-white rounded shadow p-6 mt-6">
+              <h2 className="text-lg font-semibold mb-2">Calendar</h2>
+              <p className="text-sm text-gray-600">
+                Park calendar management section coming soon.
+              </p>
+            </div>
+          )}
+
+          {accountsIn && (
+            <div className="bg-white rounded shadow p-6 mt-6">
+              <h2 className="text-lg font-semibold mb-2">Accounts</h2>
+              <p className="text-sm text-gray-600">
+                Accounts administration section coming soon.
+              </p>
+            </div>
+          )}
+
+          {logsIn && (
+            <div className="bg-white rounded shadow p-6 mt-6">
+              <h2 className="text-lg font-semibold mb-2">Logs</h2>
+              <p className="text-sm text-gray-600">
+                System logs and audit trail section coming soon.
+              </p>
+            </div>
           )}
         </div>
       </main>

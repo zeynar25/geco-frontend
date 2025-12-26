@@ -34,7 +34,7 @@ function ShowFinance(props) {
     isPending: financePending,
   } = useQuery({
     queryKey: ["financeStatistics"],
-    enabled: props.canViewAdmin && props.financesIn,
+    enabled: props.canViewDashboard && props.financesIn,
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const stats = await fetch("http://localhost:8080/dashboard/finances", {
@@ -61,7 +61,7 @@ function ShowFinance(props) {
   } = useQuery({
     queryKey: ["graphFinanceMonthlyData", selectedYear],
     enabled:
-      props.canViewAdmin &&
+      props.canViewDashboard &&
       props.financesIn &&
       viewMode === "MONTHLY" &&
       !!selectedYear,
@@ -94,7 +94,7 @@ function ShowFinance(props) {
   } = useQuery({
     queryKey: ["graphFinanceYearlyData", yearFrom, yearTo],
     enabled:
-      props.canViewAdmin &&
+      props.canViewDashboard &&
       props.financesIn &&
       viewMode === "YEARLY" &&
       !!yearFrom &&
