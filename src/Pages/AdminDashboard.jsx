@@ -283,7 +283,7 @@ function AdminDashboard() {
           )}
 
           {financesIn && (
-            <ShowFinance canViewAdmin={canViewAdmin} bookingIn={bookingIn} />
+            <ShowFinance canViewAdmin={canViewAdmin} financesIn={financesIn} />
           )}
         </div>
       </main>
