@@ -313,7 +313,7 @@ function ShowFinance(props) {
                     <XAxis dataKey="period" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="value" fill="#48BF56" />
+                    <Bar dataKey="value" fill="#FFEDB8" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
