@@ -87,7 +87,7 @@ function ShowBooking(props) {
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-xl">
       <div className="text-white bg-[#48BF56] p-4 font-bold text-2xl">
-        <FontAwesomeIcon icon={faCalendarCheck} className="mr-2 text-2xl" />
+        <FontAwesomeIcon icon={faCalendarCheck} className="mr-3 text-2xl" />
         <span>Booking Management</span>
       </div>
       <div>
