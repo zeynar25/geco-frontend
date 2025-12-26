@@ -130,7 +130,7 @@ function ShowFinance(props) {
         </div>
       ) : (
         <div className="mb-6 grid grid-cols-4 gap-5">
-          <div className="bg-white rounded-lg gap-2 flex items-center justify-between shadow-xl p-4">
+          <div className="col-span-4 md:col-span-2 lg:col-span-1 bg-white rounded-lg gap-2 flex items-center justify-between shadow-xl p-4">
             <div className="flex flex-col">
               <span>Total Revenue</span>
               <span className="font-semibold text-xl">
@@ -141,7 +141,7 @@ function ShowFinance(props) {
             <FontAwesomeIcon icon={faPesoSign} className="mr-3 text-2xl" />
           </div>
 
-          <div className="bg-white rounded-lg gap-2 flex items-center justify-between  shadow-xl p-4">
+          <div className="col-span-4 md:col-span-2 lg:col-span-1 bg-white rounded-lg gap-2 flex items-center justify-between  shadow-xl p-4">
             <div className="flex flex-col">
               <span>Average Revenue Per Booking</span>
               <span className="font-semibold text-xl">
@@ -152,7 +152,7 @@ function ShowFinance(props) {
             <FontAwesomeIcon icon={faChartLine} className="mr-3 text-2xl" />
           </div>
 
-          <div className="bg-white rounded-lg gap-2 flex items-center justify-between shadow-xl p-4">
+          <div className="col-span-4 md:col-span-2 lg:col-span-1 bg-white rounded-lg gap-2 flex items-center justify-between shadow-xl p-4">
             <div className="flex flex-col">
               <span>Total Bookings</span>
               <span className="font-semibold text-xl">
@@ -162,7 +162,7 @@ function ShowFinance(props) {
             <FontAwesomeIcon icon={faPeopleGroup} className="mr-3 text-2xl" />
           </div>
 
-          <div className="bg-white rounded-lg gap-2 flex items-center justify-between shadow-xl p-4">
+          <div className="col-span-4 md:col-span-2 lg:col-span-1 bg-white rounded-lg gap-2 flex items-center justify-between shadow-xl p-4">
             <div className="flex flex-col">
               <span>Completed Bookings</span>
               <span className="font-semibold text-xl">
