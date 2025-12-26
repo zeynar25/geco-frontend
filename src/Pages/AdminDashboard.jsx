@@ -7,6 +7,7 @@ import BackButton from "../Components/BackButton";
 import ShowBooking from "../Components/Booking/ShowBooking";
 import EditBooking from "../Components/Booking/EditBooking";
 import ShowFinance from "../Components/ShowFinance";
+import ShowTrend from "../Components/ShowTrend";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -284,6 +285,10 @@ function AdminDashboard() {
 
           {financesIn && (
             <ShowFinance canViewAdmin={canViewAdmin} financesIn={financesIn} />
+          )}
+
+          {trendsIn && (
+            <ShowTrend canViewAdmin={canViewAdmin} trendsIn={trendsIn} />
           )}
         </div>
       </main>
