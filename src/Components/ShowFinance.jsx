@@ -6,6 +6,9 @@ import { faPesoSign } from "@fortawesome/free-solid-svg-icons";
 
 function ShowFinance(props) {
   const [viewMode, setViewMode] = useState("YEARLY");
+  const [yearFrom, setYearFrom] = useState("");
+  const [yearTo, setYearTo] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
 
   const {
     data: financeData,
@@ -35,39 +38,112 @@ function ShowFinance(props) {
 
   return (
     <>
-      <div className="bg-white flex justify-between items-center p-4 rounded-lg shadow-md mb-6">
+      <div className="bg-white flex flex-wrap gap-5 justify-between items-center p-4 rounded-lg shadow-md mb-6">
         <div className="flex flex-col">
           <span className="text-[#227B05] font-bold">Revenue View Options</span>
           <span>Choose how you want to view the financial data</span>
         </div>
-        <div className="w-fit rounded-lg bg-white/70 p-1 ring-2 ring-black/5 backdrop-blur">
-          <button
-            type="button"
-            aria-pressed={viewMode === "YEARLY"}
-            onClick={() => setViewMode("YEARLY")}
-            className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-              viewMode === "YEARLY"
-                ? "bg-white/90 text-gray-900 shadow"
-                : "text-gray-700 hover:text-gray-900"
-            }`}
-          >
-            Yearly
-          </button>
+        <div>
+          <div className="w-fit rounded-lg bg-white/70 p-1 ring-2 ring-black/5 backdrop-blur">
+            <button
+              type="button"
+              aria-pressed={viewMode === "YEARLY"}
+              onClick={() => setViewMode("YEARLY")}
+              className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                viewMode === "YEARLY"
+                  ? "bg-white/90 text-gray-900 shadow"
+                  : "text-gray-700 hover:text-gray-900"
+              }`}
+            >
+              Yearly
+            </button>
 
-          <button
-            type="button"
-            aria-pressed={viewMode === "MONTHLY"}
-            onClick={() => setViewMode("MONTHLY")}
-            className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-              viewMode === "MONTHLY"
-                ? "bg-white text-gray-900 shadow"
-                : "text-gray-700 hover:text-gray-900"
-            }`}
-          >
-            Monthly
-          </button>
+            <button
+              type="button"
+              aria-pressed={viewMode === "MONTHLY"}
+              onClick={() => setViewMode("MONTHLY")}
+              className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                viewMode === "MONTHLY"
+                  ? "bg-white text-gray-900 shadow"
+                  : "text-gray-700 hover:text-gray-900"
+              }`}
+            >
+              Monthly
+            </button>
+          </div>
+          <div className="mt-2 text-sm text-gray-700">
+            {viewMode === "YEARLY" ? (
+              yearFrom && yearTo ? (
+                <span>
+                  Showing revenue from{" "}
+                  <span className="font-semibold">{yearFrom}</span> to{" "}
+                  <span className="font-semibold">{yearTo}</span>
+                </span>
+              ) : (
+                <span>Select a start and end year.</span>
+              )
+            ) : selectedYear ? (
+              <span>
+                Showing revenue for{" "}
+                <span className="font-semibold">{selectedYear}</span>
+              </span>
+            ) : (
+              <span>Select a year.</span>
+            )}
+          </div>
         </div>
       </div>
+
+      <div className="bg-white rounded-lg shadow p-4 mb-6 flex flex-wrap gap-4 items-end">
+        {viewMode === "YEARLY" ? (
+          <>
+            <div className="flex flex-col">
+              <label className="text-sm font-semibold" htmlFor="year-from">
+                From year
+              </label>
+              <input
+                id="year-from"
+                type="number"
+                min="2000"
+                max="2100"
+                value={yearFrom}
+                onChange={(e) => setYearFrom(e.target.value)}
+                className="mt-1 border border-gray-300 rounded px-2 py-1 w-28"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-sm font-semibold" htmlFor="year-to">
+                To year
+              </label>
+              <input
+                id="year-to"
+                type="number"
+                min="2000"
+                max="2100"
+                value={yearTo}
+                onChange={(e) => setYearTo(e.target.value)}
+                className="mt-1 border border-gray-300 rounded px-2 py-1 w-28"
+              />
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold" htmlFor="year-single">
+              Year
+            </label>
+            <input
+              id="year-single"
+              type="number"
+              min="2000"
+              max="2100"
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="mt-1 border border-gray-300 rounded px-2 py-1 w-28"
+            />
+          </div>
+        )}
+      </div>
+
       <div>
         <div>{financeData?.totalRevenue}</div>
         <div>{financeData?.averageRevenuePerBooking}</div>
