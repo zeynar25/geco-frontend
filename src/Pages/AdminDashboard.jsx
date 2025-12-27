@@ -486,7 +486,14 @@ function AdminDashboard() {
             />
           )}
 
-          {packagesIn && <ShowTourPackage />}
+          {packagesIn && (
+            <ShowTourPackage
+              canViewDashboard={canViewDashboard}
+              packagesIn={packagesIn}
+              onAddPackage={() => setAddingPackage(true)}
+              onEditPackage={setEditingPackage}
+            />
+          )}
 
           {faqsIn && (
             <div className="bg-white rounded shadow p-6 mt-6">
