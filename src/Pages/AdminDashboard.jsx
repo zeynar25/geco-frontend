@@ -8,6 +8,7 @@ import ShowBooking from "../Components/Admin/Booking/ShowBooking";
 import EditBooking from "../Components/Admin/Booking/EditBooking";
 import ShowFinance from "../Components/Admin/ShowFinance";
 import ShowTrend from "../Components/Admin/ShowTrend";
+import ShowFeedback from "../Components/Admin/Feedback/ShowFeedback";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -468,12 +469,10 @@ function AdminDashboard() {
           )}
 
           {feedbackIn && (
-            <div className="bg-white rounded shadow p-6 mt-6">
-              <h2 className="text-lg font-semibold mb-2">Feedback</h2>
-              <p className="text-sm text-gray-600">
-                Feedback management section coming soon.
-              </p>
-            </div>
+            <ShowFeedback
+              canViewDashboard={canViewDashboard}
+              feedbackIn={feedbackIn}
+            />
           )}
 
           {packagesIn && (
