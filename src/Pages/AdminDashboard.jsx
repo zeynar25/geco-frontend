@@ -9,6 +9,7 @@ import EditBooking from "../Components/Admin/Booking/EditBooking";
 import ShowFinance from "../Components/Admin/ShowFinance";
 import ShowTrend from "../Components/Admin/ShowTrend";
 import ShowFeedback from "../Components/Admin/Feedback/ShowFeedback";
+import EditFeedback from "../Components/Admin/Feedback/EditFeedback";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -54,6 +55,7 @@ function AdminDashboard() {
   const [logsIn, setLogsIn] = useState(false);
 
   const [editingBooking, setEditingBooking] = useState(null);
+  const [editingFeedback, setEditingFeedback] = useState(null);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -472,6 +474,7 @@ function AdminDashboard() {
             <ShowFeedback
               canViewDashboard={canViewDashboard}
               feedbackIn={feedbackIn}
+              onEditFeedback={setEditingFeedback}
             />
           )}
 
@@ -535,6 +538,13 @@ function AdminDashboard() {
         <EditBooking
           booking={editingBooking}
           onClose={() => setEditingBooking(null)}
+        />
+      )}
+
+      {editingFeedback && (
+        <EditFeedback
+          feedback={editingFeedback}
+          onClose={() => setEditingFeedback(null)}
         />
       )}
 

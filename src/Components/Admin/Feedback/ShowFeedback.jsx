@@ -144,7 +144,13 @@ function ShowFeedback(props) {
                   className="col-span-4 xs:col-span-2 md:col-span-1 py-3 px-2 md:px-3 border border-[#227B05] rounded-lg flex justify-between items-center gap-2"
                 >
                   <span>{feedbackCategory.label}</span>
-                  <FontAwesomeIcon icon={faEdit} />
+                  <button
+                    type="button"
+                    className="text-gray-600 hover:text-[#227B05]"
+                    onClick={() => props.onEditFeedback?.(feedbackCategory)}
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
                 </div>
               ))}
             </div>
@@ -169,7 +175,13 @@ function ShowFeedback(props) {
                   className="col-span-4 xs:col-span-2 md:col-span-1 py-3 px-2 md:px-3 border border-[#227B05] rounded-lg flex justify-between items-center gap-2"
                 >
                   <span>{feedbackCategory.label}</span>
-                  <FontAwesomeIcon icon={faEdit} />
+                  <button
+                    type="button"
+                    className="text-gray-600 hover:text-[#227B05]"
+                    onClick={() => props.onEditFeedback?.(feedbackCategory)}
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
                 </div>
               ))}
             </div>
@@ -196,7 +208,13 @@ function ShowFeedback(props) {
                   className="col-span-4 xs:col-span-2 md:col-span-1 py-3 px-2 md:px-3 border border-[#227B05] rounded-lg flex justify-between items-center gap-2"
                 >
                   <span>{feedbackCategory.label}</span>
-                  <FontAwesomeIcon icon={faEdit} />
+                  <button
+                    type="button"
+                    className="text-gray-600 hover:text-[#227B05]"
+                    onClick={() => props.onEditFeedback?.(feedbackCategory)}
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
                 </div>
               ))}
             </div>
