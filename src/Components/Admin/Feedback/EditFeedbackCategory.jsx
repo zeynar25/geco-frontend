@@ -3,8 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
-function EditFeedback({ feedback, onClose }) {
-  const [label, setLabel] = useState(feedback?.label || "");
+function EditFeedbackCategory({ feedbackCategory, onClose }) {
+  const [label, setLabel] = useState(feedbackCategory?.label || "");
 
   const queryClient = useQueryClient();
 
@@ -136,10 +136,10 @@ function EditFeedback({ feedback, onClose }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!feedback) return;
+    if (!feedbackCategory) return;
 
     const trimmed = label.trim();
-    const original = feedback.label || "";
+    const original = feedbackCategory.label || "";
 
     if (!trimmed || trimmed === original) {
       onClose?.();
@@ -147,29 +147,31 @@ function EditFeedback({ feedback, onClose }) {
     }
 
     updateCategoryMutation.mutate({
-      id: feedback.feedbackCategoryId,
+      id: feedbackCategory.feedbackCategoryId,
       label: trimmed,
     });
   };
 
   const handleDisable = () => {
-    if (!feedback) return;
+    if (!feedbackCategory) return;
     if (!window.confirm("Disable this feedback category?")) return;
 
-    disableCategoryMutation.mutate({ id: feedback.feedbackCategoryId });
+    disableCategoryMutation.mutate({ id: feedbackCategory.feedbackCategoryId });
   };
 
   const handleRestore = () => {
-    if (!feedback) return;
+    if (!feedbackCategory) return;
     if (!window.confirm("Restore this feedback category?")) return;
 
-    restoreCategoryMutation.mutate({ id: feedback.feedbackCategoryId });
+    restoreCategoryMutation.mutate({ id: feedbackCategory.feedbackCategoryId });
   };
 
   // Assume feedback has a boolean flag indicating active status.
   // Adjust this logic if your property name differs.
   const isActive =
-    feedback?.active ?? feedback?.enabled ?? feedback?.status === "ACTIVE";
+    feedbackCategory?.active ??
+    feedbackCategory?.enabled ??
+    feedbackCategory?.status === "ACTIVE";
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -249,4 +251,4 @@ function EditFeedback({ feedback, onClose }) {
   );
 }
 
-export default EditFeedback;
+export default EditFeedbackCategory;
