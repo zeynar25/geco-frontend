@@ -6,19 +6,45 @@ import {
   faEdit,
   faLayerGroup,
   faMessage,
+  faStar,
+  faEnvelope,
+  faPhone,
+  faThumbsUp,
+  faAngleLeft,
+  faAngleRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 function ShowFeedback(props) {
-  const [feedbackCategoryFilter, setFeedbackCategoryFilter] =
-    useState("ACTIVE");
+  const [feedbackCategoryFilter, setFeedbackCategoryFilter] = useState("ALL");
+  const [feedbackActivityFilter, setFeedbackActivityFilter] = useState("ALL");
+  const [feedbackStatusFilter, setFeedbackStatusFilter] = useState("ALL");
+  const [feedbackPage, setFeedbackPage] = useState(0);
 
-  const isActiveCategory = (category) => {
-    if (!category) return true;
-    if (typeof category.active === "boolean") return category.active;
-    if (typeof category.enabled === "boolean") return category.enabled;
-    if (typeof category.status === "string")
-      return category.status.toUpperCase() === "ACTIVE";
+  const isActive = (something) => {
+    if (!something) return true;
+    if (typeof something.active === "boolean") return something.active;
+    if (typeof something.enabled === "boolean") return something.enabled;
+    if (typeof something.status === "string")
+      return something.status.toUpperCase() === "ACTIVE";
     return true;
+  };
+
+  const handlePrevFeedbackPage = () => {
+    setFeedbackPage((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleNextFeedbackPage = () => {
+    setFeedbackPage((prev) => prev + 1);
+  };
+
+  const handleFeedbackActivityChange = (event) => {
+    setFeedbackActivityFilter(event.target.value);
+    setFeedbackPage(0);
+  };
+
+  const handleFeedbackStatusChange = (event) => {
+    setFeedbackStatusFilter(event.target.value);
+    setFeedbackPage(0);
   };
 
   const {
@@ -121,8 +147,159 @@ function ShowFeedback(props) {
     alert("something went wrong in retrieving inactive feedback categories");
   }
 
+  const {
+    data: feedbackData,
+    error: feedbackError,
+    isPending: feedbackPending,
+  } = useQuery({
+    queryKey: ["Feedback", feedbackPage, feedbackStatusFilter],
+    enabled:
+      props.canViewDashboard &&
+      props.feedbackIn &&
+      feedbackActivityFilter === "ALL",
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const params = new URLSearchParams();
+      params.append("page", feedbackPage.toString());
+      params.append("size", "10");
+
+      if (feedbackStatusFilter !== "ALL") {
+        params.append("feedbackStatus", feedbackStatusFilter);
+      }
+
+      const endpoint = `http://localhost:8080/feedback?${params.toString()}`;
+
+      const feedbacks = await fetch(endpoint, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!feedbacks.ok) {
+        const error = await feedbacks.json();
+        throw new Error(error?.error || "Getting feedback failed");
+      }
+      return await feedbacks.json();
+    },
+  });
+
+  if (feedbackError) {
+    alert("something went wrong in retrieving feedbacks");
+  }
+
+  const {
+    data: activeFeedbackData,
+    error: activeFeedbackError,
+    isPending: activeFeedbackPending,
+  } = useQuery({
+    queryKey: ["activeFeedback", feedbackPage, feedbackStatusFilter],
+    enabled:
+      props.canViewDashboard &&
+      props.feedbackIn &&
+      feedbackActivityFilter === "ACTIVE",
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const params = new URLSearchParams();
+      params.append("page", feedbackPage.toString());
+      params.append("size", "10");
+
+      if (feedbackStatusFilter !== "ALL") {
+        params.append("feedbackStatus", feedbackStatusFilter);
+      }
+
+      const activeFeedback = await fetch(
+        `http://localhost:8080/feedback/active?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!activeFeedback.ok) {
+        const error = await activeFeedback.json();
+        throw new Error(error?.error || "Getting active feedback failed");
+      }
+      return await activeFeedback.json();
+    },
+  });
+
+  if (activeFeedbackError) {
+    alert("something went wrong in retrieving active feedbacks");
+  }
+
+  const {
+    data: inactiveFeedbackData,
+    error: inactiveFeedbackError,
+    isPending: inactiveFeedbackPending,
+  } = useQuery({
+    queryKey: ["inactiveFeedback", feedbackPage, feedbackStatusFilter],
+    enabled:
+      props.canViewDashboard &&
+      props.feedbackIn &&
+      feedbackActivityFilter === "INACTIVE",
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const params = new URLSearchParams();
+      params.append("page", feedbackPage.toString());
+      params.append("size", "10");
+
+      if (feedbackStatusFilter !== "ALL") {
+        params.append("feedbackStatus", feedbackStatusFilter);
+      }
+
+      const inactiveFeedbacks = await fetch(
+        `http://localhost:8080/feedback/inactive?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!inactiveFeedbacks.ok) {
+        const error = await inactiveFeedbacks.json();
+        throw new Error(error?.error || "Getting inactive feedbacks failed");
+      }
+      return await inactiveFeedbacks.json();
+    },
+  });
+
+  if (inactiveFeedbackError) {
+    alert("something went wrong in retrieving inactive feedbacks");
+  }
+
+  const currentFeedbackPageData =
+    feedbackActivityFilter === "ALL"
+      ? feedbackData
+      : feedbackActivityFilter === "ACTIVE"
+      ? activeFeedbackData
+      : inactiveFeedbackData;
+
+  const feedbacks = Array.isArray(currentFeedbackPageData?.content)
+    ? currentFeedbackPageData.content
+    : Array.isArray(currentFeedbackPageData)
+    ? currentFeedbackPageData
+    : [];
+
+  const totalFeedbackPages =
+    typeof currentFeedbackPageData?.totalPages === "number"
+      ? currentFeedbackPageData.totalPages
+      : feedbacks.length > 0
+      ? 1
+      : 0;
+
+  const totalFeedbackCount =
+    typeof currentFeedbackPageData?.totalElements === "number"
+      ? currentFeedbackPageData.totalElements
+      : feedbacks.length;
+
+  const feedbackIsPending =
+    feedbackActivityFilter === "ALL"
+      ? feedbackPending
+      : feedbackActivityFilter === "ACTIVE"
+      ? activeFeedbackPending
+      : inactiveFeedbackPending;
+
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-10">
       <div className="bg-white rounded-lg overflow-hidden shadow-xl">
         <div className="text-white bg-[#48BF56] p-4 font-bold text-2xl">
           <FontAwesomeIcon icon={faLayerGroup} className="mr-3 text-2xl" />
@@ -137,9 +314,9 @@ function ShowFeedback(props) {
                 onChange={(e) => setFeedbackCategoryFilter(e.target.value)}
                 className="ml-2 border border-[#227B05]"
               >
+                <option value="ALL">All</option>
                 <option value="ACTIVE">Active</option>
                 <option value="INACTIVE">Inactive</option>
-                <option value="ALL">All</option>
               </select>
             </div>
           </form>
@@ -156,7 +333,7 @@ function ShowFeedback(props) {
                   <div
                     key={feedbackCategory.feedbackCategoryId}
                     className={`col-span-4 xs:col-span-2 md:col-span-1 py-3 px-2 md:px-3 rounded-lg flex justify-between items-center gap-2 border ${
-                      isActiveCategory(feedbackCategory)
+                      isActive(feedbackCategory)
                         ? "border-[#227B05]"
                         : "border-gray-300 bg-gray-100 text-gray-400"
                     }`}
@@ -245,12 +422,201 @@ function ShowFeedback(props) {
             ))}
         </div>
       </div>
+
       <div className="bg-white rounded-lg overflow-hidden shadow-xl">
         <div className="text-white bg-[#48BF56] p-4 font-bold text-2xl">
           <FontAwesomeIcon icon={faMessage} className="mr-3 text-2xl" />
-          <span>Visitor Feedbacks</span>
+          <span>Visitor Feedbacks ({totalFeedbackCount ?? 0})</span>
         </div>
-        <div></div>
+        <div>
+          <form className="flex justify-end mt-5 mx-5 my-3 flex-wrap gap-2">
+            <div>
+              <span className="font-semibold">Feedback Activity:</span>
+              <select
+                value={feedbackActivityFilter}
+                onChange={handleFeedbackActivityChange}
+                className="ml-2 border border-[#227B05]"
+              >
+                <option value="ALL">All</option>
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Inactive</option>
+              </select>
+            </div>
+            <div>
+              <span className="font-semibold ml-4">Feedback Status:</span>
+              <select
+                value={feedbackStatusFilter}
+                onChange={handleFeedbackStatusChange}
+                className="ml-2 border border-[#227B05]"
+              >
+                <option value="ALL">All</option>
+                <option value="NEW">New</option>
+                <option value="VIEWED">Viewed</option>
+              </select>
+            </div>
+          </form>
+          <div className="px-5 md:px-10 py-5 flex flex-col gap-5">
+            {feedbackIsPending && (
+              <div className="flex flex-col items-center justify-center gap-4 h-100">
+                <div className="h-10 w-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
+                <p className="text-gray-600">Loading feedbacks...</p>
+              </div>
+            )}
+
+            {!feedbackIsPending &&
+              currentFeedbackPageData &&
+              (feedbacks.length > 0 ? (
+                <>
+                  <div className="flex justify-between items-center text-sm text-gray-600">
+                    <span>
+                      Page {feedbackPage + 1} of{" "}
+                      {Math.max(totalFeedbackPages, 1)}
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className="px-2 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={handlePrevFeedbackPage}
+                        disabled={feedbackPage === 0}
+                      >
+                        <FontAwesomeIcon icon={faAngleLeft} />
+                      </button>
+                      <button
+                        type="button"
+                        className="px-2 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={handleNextFeedbackPage}
+                        disabled={
+                          totalFeedbackPages === 0 ||
+                          feedbackPage + 1 >= totalFeedbackPages
+                        }
+                      >
+                        <FontAwesomeIcon icon={faAngleRight} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-5 mt-2">
+                    {feedbacks.map((feedback) => {
+                      const fullName = `${feedback.account.detail.firstName} ${feedback.account.detail.surname}`;
+
+                      const statusClass =
+                        feedback.feedbackStatus === "NEW"
+                          ? "bg-yellow-300 text-gray-800"
+                          : feedback.feedbackStatus === "VIEWED"
+                          ? "bg-emerald-400 text-white"
+                          : "bg-gray-300 text-gray-700";
+
+                      return (
+                        <div
+                          key={feedback.feedbackId}
+                          className={`border rounded-lg p-5 flex flex-col gap-4 ${
+                            isActive(feedback)
+                              ? "border-[#227B05]"
+                              : "border-gray-300 bg-gray-100 text-gray-400"
+                          }`}
+                        >
+                          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                            <div className="flex flex-col gap-2">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-semibold text-lg">
+                                  {fullName}
+                                </span>
+                                <div className="flex items-center gap-1 text-yellow-400">
+                                  {Array.from({
+                                    length: feedback.stars || 0,
+                                  }).map((_, index) => (
+                                    <FontAwesomeIcon
+                                      key={index}
+                                      icon={faStar}
+                                    />
+                                  ))}
+                                  <span className="text-xs text-gray-600 ml-1">
+                                    ({feedback.stars}/5)
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-col gap-1 text-sm text-gray-600">
+                                <div className="flex items-center gap-2">
+                                  <FontAwesomeIcon icon={faEnvelope} />
+                                  <span>{feedback.account.detail.email}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <FontAwesomeIcon icon={faPhone} />
+                                  <span>
+                                    {feedback.account.detail.contactNumber}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col items-end gap-2">
+                              <span className="text-xs text-gray-500">
+                                Booking #{feedback.booking.bookingId}
+                              </span>
+                              <div
+                                className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${statusClass}`}
+                              >
+                                {feedback.feedbackStatus?.toLowerCase()}
+                              </div>
+                              <button
+                                type="button"
+                                className="text-gray-600 hover:text-[#227B05]"
+                                onClick={() => props.onEditFeedback?.(feedback)}
+                              >
+                                <FontAwesomeIcon icon={faEdit} />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-xs font-semibold text-gray-700 w-fit">
+                            {feedback.category?.label ?? feedback.category}
+                          </div>
+
+                          <div className="mt-3 space-y-3 text-sm">
+                            <div>
+                              <span className="font-semibold block mb-1">
+                                Comments:
+                              </span>
+                              <div className="bg-gray-100 rounded-md px-3 py-2">
+                                {feedback.comment}
+                              </div>
+                            </div>
+                            <div>
+                              <span className="font-semibold block mb-1">
+                                Recommendations:
+                              </span>
+                              <div className="bg-gray-100 rounded-md px-3 py-2">
+                                {feedback.suggestion}
+                              </div>
+                            </div>
+                          </div>
+
+                          {feedback.recommendToOthers && (
+                            <div className="mt-3 flex items-center gap-2 text-sm text-emerald-700">
+                              <FontAwesomeIcon icon={faThumbsUp} />
+                              <span>Would recommend to others</span>
+                            </div>
+                          )}
+
+                          {feedback.staffReply && (
+                            <div className="mt-4 bg-emerald-50 border border-emerald-300 rounded-lg px-4 py-3 text-sm">
+                              <span className="font-semibold block mb-1">
+                                Admin Response:
+                              </span>
+                              <span>{feedback.staffReply}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <div className="text-center m-5">No feedbacks found.</div>
+              ))}
+          </div>
+        </div>
       </div>
     </div>
   );
