@@ -9,7 +9,7 @@ import EditBooking from "../Components/Admin/Booking/EditBooking";
 import ShowFinance from "../Components/Admin/ShowFinance";
 import ShowTrend from "../Components/Admin/ShowTrend";
 import ShowFeedback from "../Components/Admin/Feedback/ShowFeedback";
-import EditFeedback from "../Components/Admin/Feedback/EditFeedback";
+import EditFeedbackCategory from "../Components/Admin/Feedback/EditFeedbackCategory";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -542,7 +542,7 @@ function AdminDashboard() {
       )}
 
       {editingFeedback && (
-        <EditFeedback
+        <EditFeedbackCategory
           feedback={editingFeedback}
           onClose={() => setEditingFeedback(null)}
         />
