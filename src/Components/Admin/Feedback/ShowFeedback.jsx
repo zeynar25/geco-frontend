@@ -342,7 +342,9 @@ function ShowFeedback(props) {
                     <button
                       type="button"
                       className="text-gray-600 hover:text-[#227B05]"
-                      onClick={() => props.onEditFeedback?.(feedbackCategory)}
+                      onClick={() =>
+                        props.onEditFeedbackCategory?.(feedbackCategory)
+                      }
                     >
                       <FontAwesomeIcon icon={faEdit} />
                     </button>
