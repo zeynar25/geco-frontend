@@ -11,6 +11,9 @@ import ShowTrend from "../Components/Admin/ShowTrend";
 import ShowFeedback from "../Components/Admin/Feedback/ShowFeedback";
 import EditFeedbackCategory from "../Components/Admin/Feedback/EditFeedbackCategory";
 import EditFeedback from "../Components/Admin/Feedback/EditFeedback";
+import ShowTourPackage from "../Components/Admin/TourPackage/ShowTourPackage";
+import AddTourPackage from "../Components/Admin/TourPackage/AddTourPackage";
+import EditTourPackage from "../Components/Admin/TourPackage/EditTourPackage";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -58,6 +61,8 @@ function AdminDashboard() {
   const [editingBooking, setEditingBooking] = useState(null);
   const [editingFeedbackCategory, setEditingFeedbackCategory] = useState(null);
   const [editingFeedback, setEditingFeedback] = useState(null);
+  const [addingPackage, setAddingPackage] = useState(null);
+  const [editingPackage, setEditingPackage] = useState(null);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -481,14 +486,7 @@ function AdminDashboard() {
             />
           )}
 
-          {packagesIn && (
-            <div className="bg-white rounded shadow p-6 mt-6">
-              <h2 className="text-lg font-semibold mb-2">Packages</h2>
-              <p className="text-sm text-gray-600">
-                Packages administration section coming soon.
-              </p>
-            </div>
-          )}
+          {packagesIn && <ShowTourPackage />}
 
           {faqsIn && (
             <div className="bg-white rounded shadow p-6 mt-6">
@@ -546,7 +544,7 @@ function AdminDashboard() {
 
       {editingFeedbackCategory && (
         <EditFeedbackCategory
-          feedback={editingFeedbackCategory}
+          feedbackCategory={editingFeedbackCategory}
           onClose={() => setEditingFeedbackCategory(null)}
         />
       )}
@@ -555,6 +553,20 @@ function AdminDashboard() {
         <EditFeedback
           feedback={editingFeedback}
           onClose={() => setEditingFeedback(null)}
+        />
+      )}
+
+      {addingPackage && (
+        <AddTourPackage
+          package={addingPackage}
+          onClose={() => setAddingPackage(null)}
+        />
+      )}
+
+      {editingPackage && (
+        <EditTourPackage
+          package={editingPackage}
+          onClose={() => setEditingPackage(null)}
         />
       )}
 
