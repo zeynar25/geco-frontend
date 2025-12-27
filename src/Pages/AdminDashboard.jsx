@@ -4,10 +4,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import BackButton from "../Components/BackButton";
-import ShowBooking from "../Components/Booking/ShowBooking";
-import EditBooking from "../Components/Booking/EditBooking";
-import ShowFinance from "../Components/ShowFinance";
-import ShowTrend from "../Components/ShowTrend";
+import ShowBooking from "../Components/Admin/Booking/ShowBooking";
+import EditBooking from "../Components/Admin/Booking/EditBooking";
+import ShowFinance from "../Components/Admin/ShowFinance";
+import ShowTrend from "../Components/Admin/ShowTrend";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
