@@ -15,6 +15,16 @@ import {
 function ShowTourPackage(props) {
   const [tourPackageFilter, setTourPackageFilter] = useState("ALL");
 
+  const isPackageActive = (pkg) => {
+    if (!pkg) return true;
+    if (typeof pkg.isActive === "boolean") return pkg.isActive;
+    if (typeof pkg.active === "boolean") return pkg.active;
+    if (typeof pkg.enabled === "boolean") return pkg.enabled;
+    if (typeof pkg.status === "string")
+      return pkg.status.toUpperCase() === "ACTIVE";
+    return true;
+  };
+
   const {
     data: allPackages,
     error: allPackagesError,
@@ -156,14 +166,14 @@ function ShowTourPackage(props) {
             <p className="text-gray-600">Loading tour packages...</p>
           </div>
         ) : packagesToShow && packagesToShow.length > 0 ? (
-          <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-2 gap-10">
             {packagesToShow.map((pkg) => {
-              const isActive = pkg.isActive ?? true;
+              const isActive = isPackageActive(pkg);
 
               return (
                 <div
                   key={pkg.packageId}
-                  className={`border rounded-lg p-4 flex flex-col gap-3 ${
+                  className={`col-span-2 md:col-span-1 border rounded-lg p-5 flex flex-col gap-3 ${
                     isActive
                       ? "border-[#227B05]"
                       : "border-gray-300 bg-gray-100 text-gray-400"
