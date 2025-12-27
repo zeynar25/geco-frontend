@@ -15,6 +15,8 @@ import {
   PieChart,
   Pie,
   Cell,
+  LineChart,
+  Line,
 } from "recharts";
 
 function ShowTrend(props) {
@@ -293,13 +295,20 @@ function ShowTrend(props) {
               ) : (
                 <div className="p-4 h-80">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={graphMonthlyData.visitors || []}>
+                    <LineChart data={graphMonthlyData.visitors || []}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="period" />
                       <YAxis />
                       <Tooltip />
-                      <Bar dataKey="value" fill="#7423E2" />
-                    </BarChart>
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="#7423E2"
+                        strokeWidth={2}
+                        dot={{ r: 3 }}
+                        activeDot={{ r: 5 }}
+                      />
+                    </LineChart>
                   </ResponsiveContainer>
                 </div>
               ))}
@@ -315,13 +324,20 @@ function ShowTrend(props) {
               ) : (
                 <div className="p-4 h-80">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={graphYearlyData.visitors || []}>
+                    <LineChart data={graphYearlyData.visitors || []}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="period" />
                       <YAxis />
                       <Tooltip />
-                      <Bar dataKey="value" fill="#7423E2" />
-                    </BarChart>
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="#7423E2"
+                        strokeWidth={2}
+                        dot={{ r: 3 }}
+                        activeDot={{ r: 5 }}
+                      />
+                    </LineChart>
                   </ResponsiveContainer>
                 </div>
               ))}
