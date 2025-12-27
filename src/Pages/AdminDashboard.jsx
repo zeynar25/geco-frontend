@@ -14,6 +14,7 @@ import EditFeedback from "../Components/Admin/Feedback/EditFeedback";
 import ShowTourPackage from "../Components/Admin/TourPackage/ShowTourPackage";
 import AddTourPackage from "../Components/Admin/TourPackage/AddTourPackage";
 import EditTourPackage from "../Components/Admin/TourPackage/EditTourPackage";
+import ShowFaq from "../Components/Admin/Faq/ShowFaq";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -495,14 +496,7 @@ function AdminDashboard() {
             />
           )}
 
-          {faqsIn && (
-            <div className="bg-white rounded shadow p-6 mt-6">
-              <h2 className="text-lg font-semibold mb-2">FAQs</h2>
-              <p className="text-sm text-gray-600">
-                FAQ management section coming soon.
-              </p>
-            </div>
-          )}
+          {faqsIn && <ShowFaq />}
 
           {attractionsIn && (
             <div className="bg-white rounded shadow p-6 mt-6">
