@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 
 function ShowFeedback(props) {
   const [feedbackCategoryFilter, setFeedbackCategoryFilter] =
@@ -132,64 +132,78 @@ function ShowFeedback(props) {
 
         {feedbackCategoryFilter === "ALL" &&
           (feedbackCategoryPending ? (
-            <div className="text-center my-5">
-              Loading feedback categories...
+            <div className="flex flex-col items-center justify-center gap-4 h-100">
+              <div className="h-10 w-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
+              <p className="text-gray-600">Loading feedback categories...</p>
             </div>
           ) : feedbackCategoryData && feedbackCategoryData.length > 0 ? (
-            <div>
+            <div className="grid grid-cols-4 gap-5 px-5 md:px-10 py-5">
               {feedbackCategoryData.map((feedbackCategory) => (
                 <div
                   key={feedbackCategory.feedbackCategoryId}
-                  className="px-5 md:px-10 py-3 border border-[#227B05] rounded-lg"
+                  className="col-span-4 xs:col-span-2 md:col-span-1 py-3 px-2 md:px-3 border border-[#227B05] rounded-lg flex justify-between items-center gap-2"
                 >
-                  {feedbackCategory.label}
+                  <span>{feedbackCategory.label}</span>
+                  <FontAwesomeIcon icon={faEdit} />
                 </div>
               ))}
             </div>
           ) : (
-            <div>No feedback categories found.</div>
+            <div className="text-center m-5">No feedback categories found.</div>
           ))}
 
         {feedbackCategoryFilter === "ACTIVE" &&
           (activeFeedbackCategoryPending ? (
-            <div className="text-center my-5">
-              Loading active feedback categories...
+            <div className="flex flex-col items-center justify-center gap-4 h-100">
+              <div className="h-10 w-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
+              <p className="text-gray-600">
+                Loading active feedback categories...
+              </p>
             </div>
           ) : activeFeedbackCategoryData &&
             activeFeedbackCategoryData.length > 0 ? (
-            <div>
+            <div className="grid grid-cols-4 gap-5 px-5 md:px-10 py-5">
               {activeFeedbackCategoryData.map((feedbackCategory) => (
                 <div
                   key={feedbackCategory.feedbackCategoryId}
-                  className="px-5 md:px-10 py-3 border border-[#227B05] rounded-lg"
+                  className="col-span-4 xs:col-span-2 md:col-span-1 py-3 px-2 md:px-3 border border-[#227B05] rounded-lg flex justify-between items-center gap-2"
                 >
-                  {feedbackCategory.label}
+                  <span>{feedbackCategory.label}</span>
+                  <FontAwesomeIcon icon={faEdit} />
                 </div>
               ))}
             </div>
           ) : (
-            <div>No active feedback categories found.</div>
+            <div className="text-center m-5">
+              No active feedback categories found.
+            </div>
           ))}
 
         {feedbackCategoryFilter === "INACTIVE" &&
           (inactiveFeedbackCategoryPending ? (
-            <div className="text-center my-5">
-              Loading inactive feedback categories...
+            <div className="flex flex-col items-center justify-center gap-4 h-100">
+              <div className="h-10 w-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
+              <p className="text-gray-600">
+                Loading inactive feedback categories...
+              </p>
             </div>
           ) : inactiveFeedbackCategoryData &&
             inactiveFeedbackCategoryData.length > 0 ? (
-            <div>
+            <div className="grid grid-cols-4 gap-5 px-5 md:px-10 py-5">
               {inactiveFeedbackCategoryData.map((feedbackCategory) => (
                 <div
                   key={feedbackCategory.feedbackCategoryId}
-                  className="px-5 md:px-10 py-3 border border-[#227B05] rounded-lg"
+                  className="col-span-4 xs:col-span-2 md:col-span-1 py-3 px-2 md:px-3 border border-[#227B05] rounded-lg flex justify-between items-center gap-2"
                 >
-                  {feedbackCategory.label}
+                  <span>{feedbackCategory.label}</span>
+                  <FontAwesomeIcon icon={faEdit} />
                 </div>
               ))}
             </div>
           ) : (
-            <div>No inactive feedback categories found.</div>
+            <div className="text-center m-5">
+              No inactive feedback categories found.
+            </div>
           ))}
       </div>
     </div>
