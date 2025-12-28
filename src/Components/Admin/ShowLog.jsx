@@ -18,6 +18,7 @@ function ShowLog(props) {
   const [action, setAction] = useState("ALL");
   const [logPage, setLogPage] = useState(0);
   const [selectedLog, setSelectedLog] = useState(null);
+  const [show, setShow] = useState(true);
 
   const handlePrevLogPage = () => {
     setLogPage((prev) => Math.max(prev - 1, 0));
@@ -25,6 +26,13 @@ function ShowLog(props) {
 
   const handleNextLogPage = () => {
     setLogPage((prev) => prev + 1);
+  };
+
+  const triggerFade = () => {
+    setShow(false);
+    setTimeout(() => {
+      setShow(true);
+    }, 250);
   };
 
   const {
@@ -136,6 +144,7 @@ function ShowLog(props) {
               onChange={(e) => {
                 setStartDate(e.target.value);
                 setLogPage(0);
+                triggerFade();
               }}
               className="border border-gray-300 rounded px-2 py-1 text-sm"
             />
@@ -149,6 +158,7 @@ function ShowLog(props) {
               onChange={(e) => {
                 setEndDate(e.target.value);
                 setLogPage(0);
+                triggerFade();
               }}
               className="border border-gray-300 rounded px-2 py-1 text-sm"
             />
@@ -165,6 +175,7 @@ function ShowLog(props) {
                 onChange={(e) => {
                   setEntityName(e.target.value);
                   setLogPage(0);
+                  triggerFade();
                 }}
                 className="border border-gray-300 rounded pl-7 pr-2 py-1 text-sm w-full appearance-none bg-white"
               >
@@ -189,6 +200,7 @@ function ShowLog(props) {
               onChange={(e) => {
                 setAction(e.target.value);
                 setLogPage(0);
+                triggerFade();
               }}
               className="border border-gray-300 rounded px-2 py-1 text-sm min-w-[130px]"
             >
@@ -203,7 +215,11 @@ function ShowLog(props) {
         </form>
 
         {/* Logs table / list */}
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div
+          className={`bg-white border border-gray-200 rounded-lg overflow-hidden transition-opacity duration-300 ${
+            show ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
           {logsPending ? (
             <div className="flex flex-col items-center justify-center gap-4 py-10">
               <div className="h-10 w-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
