@@ -61,6 +61,14 @@ function Account() {
   const [paymentFile, setPaymentFile] = useState(null);
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
 
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+
   // 0-based page index
   const [bookingPage, setBookingPage] = useState(0);
 
@@ -414,6 +422,92 @@ function Account() {
     }
   };
 
+  const handlePasswordFieldChange = (field) => (event) => {
+    const value = event.target.value;
+    setPasswordForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const openPasswordModal = () => {
+    setIsPasswordModalOpen(true);
+  };
+
+  const closePasswordModal = () => {
+    setIsPasswordModalOpen(false);
+    setPasswordForm({
+      currentPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    });
+  };
+
+  const handlePasswordSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!accountData?.accountId) {
+      alert("Account information not loaded. Please try again.");
+      return;
+    }
+
+    if (!passwordForm.currentPassword || !passwordForm.newPassword) {
+      alert("Please fill in your current and new password.");
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
+      alert("New password and confirmation do not match.");
+      return;
+    }
+
+    try {
+      setIsUpdatingPassword(true);
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please log in again to update your password.");
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:8080/account/update-password/${accountData.accountId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            oldPassword: passwordForm.currentPassword,
+            password: passwordForm.newPassword,
+            confirmPassword: passwordForm.confirmNewPassword,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Updating password failed");
+      }
+
+      await response.json();
+
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
+
+      alert("Password updated successfully.");
+      closePasswordModal();
+    } catch (error) {
+      alert(error.message || "Something went wrong while updating password.");
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
+
   const handleSaveFeedback = async () => {
     if (!selectedFeedback) return;
 
@@ -688,6 +782,15 @@ function Account() {
                 )}
               </div>
             </form>
+            <div className="pt-2 mt-2 border-t flex justify-center">
+              <button
+                type="button"
+                className="mt-2 px-5 py-3 bg-white border border-[#227B05] text-[#227B05] hover:bg-[#227B05]/5 rounded-md font-semibold cursor-pointer"
+                onClick={openPasswordModal}
+              >
+                Update Password
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1084,6 +1187,94 @@ function Account() {
             </div>
           </div>
         ))}
+      {isPasswordModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={closePasswordModal}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="absolute top-3 right-3 text-gray-500 hover:text-black text-lg"
+              onClick={closePasswordModal}
+            >
+              <FontAwesomeIcon icon={faX} />
+            </button>
+            <h2 className="text-xl font-semibold mb-3 text-[#227B05]">
+              Update Password
+            </h2>
+            <form
+              className="grid grid-cols-2 gap-5"
+              onSubmit={handlePasswordSubmit}
+            >
+              <div className="col-span-2 sm:col-span-1">
+                <label htmlFor="currentPassword" className="font-semibold">
+                  Current Password
+                </label>
+                <input
+                  className="w-full border px-5 py-3 rounded-md"
+                  type="password"
+                  id="currentPassword"
+                  name="currentPassword"
+                  value={passwordForm.currentPassword}
+                  onChange={handlePasswordFieldChange("currentPassword")}
+                  required
+                />
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <label htmlFor="newPassword" className="font-semibold">
+                  New Password
+                </label>
+                <input
+                  className="w-full border px-5 py-3 rounded-md"
+                  type="password"
+                  id="newPassword"
+                  name="newPassword"
+                  value={passwordForm.newPassword}
+                  onChange={handlePasswordFieldChange("newPassword")}
+                  required
+                />
+              </div>
+              <div className="col-span-2">
+                <label htmlFor="confirmNewPassword" className="font-semibold">
+                  Confirm New Password
+                </label>
+                <input
+                  className="w-full border px-5 py-3 rounded-md"
+                  type="password"
+                  id="confirmNewPassword"
+                  name="confirmNewPassword"
+                  value={passwordForm.confirmNewPassword}
+                  onChange={handlePasswordFieldChange("confirmNewPassword")}
+                  required
+                />
+              </div>
+              <div className="col-span-2 flex justify-end gap-3 mt-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 border rounded-md font-semibold hover:bg-black/5"
+                  onClick={closePasswordModal}
+                  disabled={isUpdatingPassword}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  disabled={isUpdatingPassword}
+                >
+                  {isUpdatingPassword
+                    ? "Updating Password..."
+                    : "Update Password"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       {isPaymentModalOpen && selectedBookingForPayment && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
