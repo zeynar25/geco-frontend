@@ -14,7 +14,7 @@ import {
 function ShowLog(props) {
   const [startDate, setStartDate] = useState(""); // yyyy-MM-dd
   const [endDate, setEndDate] = useState(""); // yyyy-MM-dd
-  const [entityName, setEntityName] = useState("");
+  const [entityName, setEntityName] = useState("ALL");
   const [action, setAction] = useState("ALL");
   const [logPage, setLogPage] = useState(0);
   const [selectedLog, setSelectedLog] = useState(null);
@@ -53,8 +53,8 @@ function ShowLog(props) {
       if (endDate) {
         params.append("end", `${endDate}T23:59:59`);
       }
-      if (entityName.trim()) {
-        params.append("entityName", entityName.trim());
+      if (entityName && entityName !== "ALL") {
+        params.append("entityName", entityName);
       }
       if (action && action !== "ALL") {
         params.append("action", action);
@@ -154,22 +154,31 @@ function ShowLog(props) {
             />
           </div>
 
-          <div className="flex flex-col flex-1 min-w-40 text-xs md:text-sm">
+          <div className="flex flex-col flex-1 min-w-20 text-xs md:text-sm">
             <label className="font-medium mb-1">Entity name</label>
             <div className="relative">
               <span className="absolute left-2 top-1.5 text-gray-400">
                 <FontAwesomeIcon icon={faMagnifyingGlass} />
               </span>
-              <input
-                type="text"
+              <select
                 value={entityName}
                 onChange={(e) => {
                   setEntityName(e.target.value);
                   setLogPage(0);
                 }}
-                placeholder="e.g. Account, TourPackage, Faq"
-                className="border border-gray-300 rounded px-7 py-1 text-sm w-full"
-              />
+                className="border border-gray-300 rounded pl-7 pr-2 py-1 text-sm w-full appearance-none bg-white"
+              >
+                <option value="ALL">All entities</option>
+                <option value="Account">Account</option>
+                <option value="Attraction">Attraction</option>
+                <option value="Booking">Booking</option>
+                <option value="CalendarDate">CalendarDate</option>
+                <option value="Faq">Faq</option>
+                <option value="Feedback">Feedback</option>
+                <option value="FeedbackCategory">FeedbackCategory</option>
+                <option value="PackageInclusion">PackageInclusion</option>
+                <option value="TourPackage">TourPackage</option>
+              </select>
             </div>
           </div>
 
