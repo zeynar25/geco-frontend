@@ -74,9 +74,11 @@ function EditAccount({ account, onClose, isAdmin }) {
   const isBusy =
     updateRoleMutation.isPending || resetPasswordMutation.isPending;
 
+  const isTargetAdmin = (account?.role || "").toUpperCase() === "ADMIN";
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!account || !isAdmin) {
+    if (!account || !isAdmin || isTargetAdmin) {
       onClose?.();
       return;
     }
@@ -133,7 +135,7 @@ function EditAccount({ account, onClose, isAdmin }) {
             />
           </div>
 
-          {isAdmin ? (
+          {isAdmin && !isTargetAdmin ? (
             <div className="flex flex-col gap-1">
               <label className="text-sm font-semibold">Role</label>
               <select
@@ -156,6 +158,11 @@ function EditAccount({ account, onClose, isAdmin }) {
                 value={(account?.role || "USER").toLowerCase()}
                 readOnly
               />
+              {isTargetAdmin && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Admin accounts cannot have their role changed.
+                </p>
+              )}
             </div>
           )}
 
@@ -184,7 +191,7 @@ function EditAccount({ account, onClose, isAdmin }) {
               >
                 Close
               </button>
-              {isAdmin && (
+              {isAdmin && !isTargetAdmin && (
                 <button
                   type="submit"
                   className="px-4 py-2 rounded bg-[#227B05]/80 text-white text-sm hover:bg-[#227B05] disabled:opacity-60 disabled:cursor-not-allowed"
