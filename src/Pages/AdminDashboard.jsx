@@ -26,9 +26,9 @@ import ShowLog from "../Components/Admin/ShowLog";
 import ShowAccount from "../Components/Admin/Account/ShowAccount";
 import AddAccount from "../Components/Admin/Account/AddAccount";
 import EditAccount from "../Components/Admin/Account/EditAccount";
-// import ShowAttraction from "../Components/Admin/Attraction/ShowAttraction";
-// import AddAttraction from "../Components/Admin/Attraction/AddAttraction";
-// import EditAttraction from "../Components/Admin/Attraction/EditAttraction";
+import ShowAttraction from "../Components/Admin/Attraction/ShowAttraction";
+import AddAttraction from "../Components/Admin/Attraction/AddAttraction";
+import EditAttraction from "../Components/Admin/Attraction/EditAttraction";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -89,6 +89,9 @@ function AdminDashboard() {
 
   const [addingAccount, setAddingAccount] = useState(null);
   const [editingAccount, setEditingAccount] = useState(null);
+
+  const [addingAttraction, setAddingAttraction] = useState(null);
+  const [editingAttraction, setEditingAttraction] = useState(null);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -543,12 +546,12 @@ function AdminDashboard() {
           )}
 
           {attractionsIn && (
-            <div className="bg-white rounded shadow p-6 mt-6">
-              <h2 className="text-lg font-semibold mb-2">Attractions</h2>
-              <p className="text-sm text-gray-600">
-                Attractions administration section coming soon.
-              </p>
-            </div>
+            <ShowAttraction
+              canViewDashboard={canViewDashboard}
+              attractionsIn={attractionsIn}
+              onAddAttraction={() => setAddingAttraction(true)}
+              onEditAttraction={setEditingAttraction}
+            />
           )}
 
           {calendarIn && (
@@ -641,6 +644,21 @@ function AdminDashboard() {
         <EditFaq
           faq={editingFaq}
           onClose={() => setEditingFaq(null)}
+          isAdmin={isAdmin}
+        />
+      )}
+
+      {addingAttraction && (
+        <AddAttraction
+          onClose={() => setAddingAttraction(null)}
+          isAdmin={isAdmin}
+        />
+      )}
+
+      {editingAttraction && (
+        <EditAttraction
+          attraction={editingAttraction}
+          onClose={() => setEditingAttraction(null)}
           isAdmin={isAdmin}
         />
       )}
