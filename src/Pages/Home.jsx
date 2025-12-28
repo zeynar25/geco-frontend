@@ -254,7 +254,7 @@ export default function Home() {
                 <span>Click to view</span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 text-center gap-1.5 px-3 py-1 max-h-50 overflow-y-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 text-center gap-3 px-3 py-1 max-h-50 overflow-y-auto">
                 {/* Attractions */}
                 {attractionPending ? (
                   <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
