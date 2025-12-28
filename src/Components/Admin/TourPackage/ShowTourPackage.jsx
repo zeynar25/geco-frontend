@@ -129,7 +129,7 @@ function ShowTourPackage(props) {
 
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-xl">
-      <div className="text-white bg-[#48BF56] p-4 font-bold flex justify-between gap-2">
+      <div className="text-white bg-[#48BF56] p-4 font-bold flex flex-wrap justify-between gap-2">
         <div className="text-2xl flex items-center">
           <FontAwesomeIcon icon={faBoxOpen} className="mr-3" />
           <span>Tour Package Management</span>
@@ -173,15 +173,15 @@ function ShowTourPackage(props) {
               return (
                 <div
                   key={pkg.packageId}
-                  className={`col-span-2 md:col-span-1 border rounded-lg p-5 flex flex-col gap-3 ${
+                  className={`col-span-2 lg:col-span-1 border rounded-lg p-5 flex flex-col gap-3 ${
                     isActive
                       ? "border-[#227B05]"
                       : "border-gray-300 bg-gray-100 text-gray-400"
                   }`}
                 >
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2 flex-wrap">
+                  <div className="grid grid-cols-2 md:flex-row md:items-start md:justify-between gap-3">
+                    <div className="col-span-2 flex justify-between gap-2 mb-3">
+                      <div className="flex items-center flex-wrap gap-3">
                         <span className="font-semibold text-lg">
                           {pkg.name}
                         </span>
@@ -195,7 +195,16 @@ function ShowTourPackage(props) {
                           {isActive ? "Active" : "Inactive"}
                         </span>
                       </div>
+                      <button
+                        type="button"
+                        className="self-end text-gray-600 hover:text-[#227B05] my-5"
+                        onClick={() => props.onEditPackage?.(pkg)}
+                      >
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                    </div>
 
+                    <div className="col-span-2 sm:col-span-1 flex flex-col gap-1 text-sm mr-5">
                       {pkg.duration != null && (
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <FontAwesomeIcon icon={faClock} />
@@ -226,19 +235,19 @@ function ShowTourPackage(props) {
                       )}
                     </div>
 
-                    <div className="flex flex-col items-end gap-2 text-sm">
-                      <div className="flex flex-col items-end">
+                    <div className="col-span-2 xs:col-span-1 flex flex-col gap-1 text-sm">
+                      <div className="flex flex-col gap-1 sm:mx-auto">
                         {pkg.basePrice != null && (
-                          <div className="flex items-center gap-1">
+                          <div className="grid grid-cols-2 items-center gap-1">
                             <span className="text-gray-600">Base Price:</span>
-                            <span className="font-semibold">
+                            <span className="font-semibold min-w-full">
                               <FontAwesomeIcon icon={faPesoSign} />
                               {pkg.basePrice}
                             </span>
                           </div>
                         )}
                         {pkg.pricePerPerson != null && (
-                          <div className="flex items-center gap-1">
+                          <div className="grid grid-cols-2 gap-1">
                             <span className="text-gray-600">Per Person:</span>
                             <span className="font-semibold">
                               <FontAwesomeIcon icon={faPesoSign} />
@@ -247,14 +256,6 @@ function ShowTourPackage(props) {
                           </div>
                         )}
                       </div>
-
-                      <button
-                        type="button"
-                        className="text-gray-600 hover:text-[#227B05] mt-1"
-                        onClick={() => props.onEditPackage?.(pkg)}
-                      >
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
                     </div>
                   </div>
 
