@@ -486,33 +486,39 @@ function ShowFeedback(props) {
           <span>Visitor Feedbacks ({totalFeedbackCount ?? 0})</span>
         </div>
         <div>
-          <form className="flex justify-end mt-5 mx-5 my-3 flex-wrap gap-2">
-            <div>
-              <span className="font-semibold">Feedback Activity:</span>
+          <form className="flex flex-wrap items-end gap-4 px-5 py-4 border-b border-gray-100 bg-white text-sm justify-between">
+            <div className="flex flex-col min-w-[150px]">
+              <span className="text-xs font-semibold text-gray-600 mb-1">
+                Feedback Activity
+              </span>
               <select
                 value={feedbackActivityFilter}
                 onChange={handleFeedbackActivityChange}
-                className="ml-2 border border-[#227B05]"
+                className="border border-[#227B05] rounded-md px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-[#227B05]"
               >
                 <option value="ALL">All</option>
                 <option value="ACTIVE">Active</option>
                 <option value="INACTIVE">Inactive</option>
               </select>
             </div>
-            <div>
-              <span className="font-semibold ml-4">Feedback Status:</span>
+            <div className="flex flex-col min-w-40">
+              <span className="text-xs font-semibold text-gray-600 mb-1">
+                Feedback Status
+              </span>
               <select
                 value={feedbackStatusFilter}
                 onChange={handleFeedbackStatusChange}
-                className="ml-2 border border-[#227B05]"
+                className="border border-[#227B05] rounded-md px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-[#227B05]"
               >
                 <option value="ALL">All</option>
                 <option value="NEW">New</option>
                 <option value="VIEWED">Viewed</option>
               </select>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 ml-0 sm:ml-4 mt-2 sm:mt-0">
-              <span className="font-semibold">Date:</span>
+            <div className="flex flex-col min-w-[220px]">
+              <span className="text-xs font-semibold text-gray-600 mb-1">
+                Date Range
+              </span>
               <div className="flex items-center gap-2">
                 <input
                   type="date"
@@ -521,9 +527,9 @@ function ShowFeedback(props) {
                     setStartDateFilter(e.target.value);
                     setFeedbackPage(0);
                   }}
-                  className="border border-[#227B05] px-1 py-0.5 text-sm rounded"
+                  className="border border-[#227B05] rounded-md px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#227B05]"
                 />
-                <span className="text-sm">to</span>
+                <span className="text-xs text-gray-500">to</span>
                 <input
                   type="date"
                   value={endDateFilter}
@@ -531,7 +537,7 @@ function ShowFeedback(props) {
                     setEndDateFilter(e.target.value);
                     setFeedbackPage(0);
                   }}
-                  className="border border-[#227B05] px-1 py-0.5 text-sm rounded"
+                  className="border border-[#227B05] rounded-md px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#227B05]"
                 />
               </div>
             </div>

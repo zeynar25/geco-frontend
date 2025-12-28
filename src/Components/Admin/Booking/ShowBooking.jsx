@@ -30,7 +30,6 @@ function ShowBooking(props) {
   const handleNextBookingPage = () => {
     setBookingPage((prev) => prev + 1);
   };
-
   const {
     data: bookingData,
     error: bookingError,
@@ -103,77 +102,87 @@ function ShowBooking(props) {
         <span>Booking Management</span>
       </div>
       <div>
-        <form className="flex justify-around mt-5 my-3 flex-wrap gap-2">
-          <div>
-            <span className="font-semibold">Booking Status:</span>
-            <select
-              value={bookingFilter}
-              onChange={(e) => setBookingFilter(e.target.value)}
-              className="ml-2 border border-[#227B05]"
-            >
-              <option value="ALL">All</option>
-              <option value="PENDING">Pending</option>
-              <option value="CANCELLED">Cancelled</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="COMPLETED">Completed</option>
-            </select>
-          </div>
-
-          <div>
-            <span className="font-semibold">Payment Status:</span>
-            <select
-              value={paymentFilter}
-              onChange={(e) => setPaymentFilter(e.target.value)}
-              className="ml-2 border border-[#227B05]"
-            >
-              <option value="ALL">All</option>
-              <option value="UNPAID">Unpaid</option>
-              <option value="PAYMENT_VERIFICATION">Payment Verified</option>
-              <option value="VERIFIED">Verified</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="REFUNDED">Refunded</option>
-            </select>
-          </div>
-
-          <div>
-            <span className="font-semibold">Payment Method:</span>
-            <select
-              value={paymentMethodFilter}
-              onChange={(e) => setPaymentMethodFilter(e.target.value)}
-              className="ml-2 border border-[#227B05]"
-            >
-              <option value="ALL">All</option>
-              <option value="PARK">On-park</option>
-              <option value="ONLINE">Online</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-            <span className="font-semibold">Visit Date:</span>
-            <div className="flex items-center gap-2">
-              <input
-                type="date"
-                value={startDateFilter}
-                onChange={(e) => {
-                  setStartDateFilter(e.target.value);
-                  setBookingPage(0);
-                }}
-                className="border border-[#227B05] px-1 py-0.5 text-sm rounded"
-              />
-              <span className="text-sm">to</span>
-              <input
-                type="date"
-                value={endDateFilter}
-                onChange={(e) => {
-                  setEndDateFilter(e.target.value);
-                  setBookingPage(0);
-                }}
-                className="border border-[#227B05] px-1 py-0.5 text-sm rounded"
-              />
+        <div className="border-b border-gray-100 bg-white">
+          <form className="flex flex-wrap items-end gap-4 px-5 py-4 text-sm justify-between">
+            <div className="flex flex-col min-w-[150px]">
+              <span className="text-xs font-semibold text-gray-600 mb-1">
+                Booking Status
+              </span>
+              <select
+                value={bookingFilter}
+                onChange={(e) => setBookingFilter(e.target.value)}
+                className="border border-[#227B05] rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#227B05] bg-white"
+              >
+                <option value="ALL">All</option>
+                <option value="PENDING">Pending</option>
+                <option value="CANCELLED">Cancelled</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+                <option value="COMPLETED">Completed</option>
+              </select>
             </div>
-          </div>
-        </form>
+
+            <div className="flex flex-col min-w-40">
+              <span className="text-xs font-semibold text-gray-600 mb-1">
+                Payment Status
+              </span>
+              <select
+                value={paymentFilter}
+                onChange={(e) => setPaymentFilter(e.target.value)}
+                className="border border-[#227B05] rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#227B05] bg-white"
+              >
+                <option value="ALL">All</option>
+                <option value="UNPAID">Unpaid</option>
+                <option value="PAYMENT_VERIFICATION">Payment Verified</option>
+                <option value="VERIFIED">Verified</option>
+                <option value="REJECTED">Rejected</option>
+                <option value="REFUNDED">Refunded</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col min-w-[150px]">
+              <span className="text-xs font-semibold text-gray-600 mb-1">
+                Payment Method
+              </span>
+              <select
+                value={paymentMethodFilter}
+                onChange={(e) => setPaymentMethodFilter(e.target.value)}
+                className="border border-[#227B05] rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#227B05] bg-white"
+              >
+                <option value="ALL">All</option>
+                <option value="PARK">On-park</option>
+                <option value="ONLINE">Online</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col min-w-[220px]">
+              <span className="text-xs font-semibold text-gray-600 mb-1">
+                Visit Date Range
+              </span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={startDateFilter}
+                  onChange={(e) => {
+                    setStartDateFilter(e.target.value);
+                    setBookingPage(0);
+                  }}
+                  className="border border-[#227B05] rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#227B05] bg-white"
+                />
+                <span className="text-xs text-gray-500">to</span>
+                <input
+                  type="date"
+                  value={endDateFilter}
+                  onChange={(e) => {
+                    setEndDateFilter(e.target.value);
+                    setBookingPage(0);
+                  }}
+                  className="border border-[#227B05] rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#227B05] bg-white"
+                />
+              </div>
+            </div>
+          </form>
+        </div>
 
         <div className="p-4 flex flex-col gap-5">
           {bookingPending && (
