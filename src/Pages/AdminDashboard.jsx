@@ -22,6 +22,7 @@ import ShowFaq from "../Components/Admin/Faq/ShowFaq";
 import AddFaq from "../Components/Admin/Faq/AddFaq";
 import EditFaq from "../Components/Admin/Faq/EditFaq";
 import ShowCalendar from "../Components/Admin/ShowCalendar";
+import ShowLog from "../Components/Admin/ShowLog";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -556,12 +557,7 @@ function AdminDashboard() {
           )}
 
           {logsIn && isAdmin && (
-            <div className="bg-white rounded shadow p-6 mt-6">
-              <h2 className="text-lg font-semibold mb-2">Logs</h2>
-              <p className="text-sm text-gray-600">
-                System logs and audit trail section coming soon.
-              </p>
-            </div>
+            <ShowLog canViewDashboard={canViewDashboard} logsIn={logsIn} />
           )}
         </div>
       </main>
