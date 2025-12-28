@@ -196,7 +196,7 @@ function ShowFaq(props) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-xl mt-6">
+    <div className="bg-white rounded-lg shadow-xl">
       <div className="text-white bg-[#48BF56] p-4 font-bold flex justify-between gap-2">
         <div className="text-2xl flex items-center">
           <FontAwesomeIcon icon={faQuestionCircle} className="mr-3" />
