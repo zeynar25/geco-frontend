@@ -137,7 +137,7 @@ function ShowPackageInclusion(props) {
 
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-xl mt-6">
-      <div className="text-white bg-[#48BF56] p-4 font-bold flex justify-between gap-2">
+      <div className="text-white bg-[#48BF56] p-4 font-bold flex flex-wrap justify-between gap-2">
         <div className="text-2xl flex items-center">
           <FontAwesomeIcon icon={faList} className="mr-3" />
           <span>Package Inclusion Management</span>
