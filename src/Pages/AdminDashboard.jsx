@@ -520,7 +520,14 @@ function AdminDashboard() {
             />
           )}
 
-          {faqsIn && <ShowFaq />}
+          {faqsIn && (
+            <ShowFaq
+              canViewDashboard={canViewDashboard}
+              faqsIn={faqsIn}
+              onAddFaq={() => setAddingFaq(true)}
+              onEditFaq={setEditingFaq}
+            />
+          )}
 
           {attractionsIn && (
             <div className="bg-white rounded shadow p-6 mt-6">
