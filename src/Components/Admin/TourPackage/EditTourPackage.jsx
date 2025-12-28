@@ -3,9 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
-function EditTourPackage(props) {
-  const pkg = props.package;
-
+function EditTourPackage({ package: pkg, onClose, isAdmin }) {
   const [form, setForm] = useState(() => ({
     name: pkg?.name || "",
     description: pkg?.description || "",
@@ -84,7 +82,7 @@ function EditTourPackage(props) {
         exact: false,
       });
       alert("Tour package updated successfully.");
-      props.onClose?.();
+      onClose?.();
     },
     onError: (error) => {
       alert(error.message || "Updating tour package failed");
@@ -115,7 +113,7 @@ function EditTourPackage(props) {
         exact: false,
       });
       alert("Tour package disabled successfully.");
-      props.onClose?.();
+      onClose?.();
     },
     onError: (error) => {
       alert(error.message || "Disabling tour package failed");
@@ -146,7 +144,7 @@ function EditTourPackage(props) {
         exact: false,
       });
       alert("Tour package restored successfully.");
-      props.onClose?.();
+      onClose?.();
     },
     onError: (error) => {
       alert(error.message || "Restoring tour package failed");
@@ -237,7 +235,7 @@ function EditTourPackage(props) {
     }
 
     if (Object.keys(payload).length === 0) {
-      props.onClose?.();
+      onClose?.();
       return;
     }
 
@@ -279,7 +277,7 @@ function EditTourPackage(props) {
           <button
             type="button"
             className="text-gray-500 hover:text-gray-700"
-            onClick={props.onClose}
+            onClick={onClose}
             disabled={isBusy}
           >
             <FontAwesomeIcon icon={faX} />
@@ -434,34 +432,40 @@ function EditTourPackage(props) {
             </div>
           </div>
 
-          <div className="flex justify-between items-center mt-4">
-            <div className="flex gap-2">
-              {isActive ? (
-                <button
-                  type="button"
-                  className="px-3 py-2 rounded border border-red-500 text-red-600 text-sm hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                  onClick={handleDisable}
-                  disabled={isBusy}
-                >
-                  Disable
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="px-3 py-2 rounded border border-green-600 text-green-700 text-sm hover:bg-green-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                  onClick={handleRestore}
-                  disabled={isBusy}
-                >
-                  Restore
-                </button>
-              )}
-            </div>
+          <div
+            className={`flex items-center mt-4 ${
+              isAdmin ? "justify-between" : "justify-end"
+            }`}
+          >
+            {isAdmin && (
+              <div className="flex gap-2">
+                {isActive ? (
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded border border-red-500 text-red-600 text-sm hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={handleDisable}
+                    disabled={isBusy}
+                  >
+                    Disable
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded border border-green-600 text-green-700 text-sm hover:bg-green-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={handleRestore}
+                    disabled={isBusy}
+                  >
+                    Restore
+                  </button>
+                )}
+              </div>
+            )}
 
             <div className="flex gap-2">
               <button
                 type="button"
                 className="px-4 py-2 rounded border border-gray-300 text-sm hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
-                onClick={props.onClose}
+                onClick={onClose}
                 disabled={isBusy}
               >
                 Cancel

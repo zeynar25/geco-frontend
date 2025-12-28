@@ -580,6 +580,7 @@ function AdminDashboard() {
         <EditFeedbackCategory
           feedbackCategory={editingFeedbackCategory}
           onClose={() => setEditingFeedbackCategory(null)}
+          isAdmin={isAdmin}
         />
       )}
 
@@ -601,6 +602,7 @@ function AdminDashboard() {
         <EditTourPackageInclusion
           package={editingPackageInclusion}
           onClose={() => setEditingPackageInclusion(null)}
+          isAdmin={isAdmin}
         />
       )}
 
@@ -615,6 +617,7 @@ function AdminDashboard() {
         <EditTourPackage
           package={editingPackage}
           onClose={() => setEditingPackage(null)}
+          isAdmin={isAdmin}
         />
       )}
 
@@ -623,7 +626,11 @@ function AdminDashboard() {
       )}
 
       {editingFaq && (
-        <EditFaq faq={editingFaq} onClose={() => setEditingFaq(null)} />
+        <EditFaq
+          faq={editingFaq}
+          onClose={() => setEditingFaq(null)}
+          isAdmin={isAdmin}
+        />
       )}
 
       <Footer />

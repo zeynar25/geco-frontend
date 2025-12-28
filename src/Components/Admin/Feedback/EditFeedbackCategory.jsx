@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
-function EditFeedbackCategory({ feedbackCategory, onClose }) {
+function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
   const [label, setLabel] = useState(feedbackCategory?.label || "");
 
   const queryClient = useQueryClient();
@@ -204,28 +204,34 @@ function EditFeedbackCategory({ feedbackCategory, onClose }) {
             </span>
           </div>
 
-          <div className="flex justify-between items-center mt-4">
-            <div className="flex gap-2">
-              {isActive ? (
-                <button
-                  type="button"
-                  className="px-3 py-2 rounded border border-red-500 text-red-600 text-sm hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                  onClick={handleDisable}
-                  disabled={isBusy}
-                >
-                  Disable
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="px-3 py-2 rounded border border-green-600 text-green-700 text-sm hover:bg-green-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                  onClick={handleRestore}
-                  disabled={isBusy}
-                >
-                  Restore
-                </button>
-              )}
-            </div>
+          <div
+            className={`flex items-center mt-4 ${
+              isAdmin ? "justify-between" : "justify-end"
+            }`}
+          >
+            {isAdmin && (
+              <div className="flex gap-2">
+                {isActive ? (
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded border border-red-500 text-red-600 text-sm hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={handleDisable}
+                    disabled={isBusy}
+                  >
+                    Disable
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded border border-green-600 text-green-700 text-sm hover:bg-green-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={handleRestore}
+                    disabled={isBusy}
+                  >
+                    Restore
+                  </button>
+                )}
+              </div>
+            )}
 
             <div className="flex gap-2">
               <button
