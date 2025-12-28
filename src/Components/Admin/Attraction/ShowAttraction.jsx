@@ -25,7 +25,7 @@ function ShowAttraction(props) {
     error: allError,
     isPending: allPending,
   } = useQuery({
-    queryKey: ["attractions", "ALL"],
+    queryKey: ["attractions", "ALL", props.refreshToken],
     enabled:
       props.canViewDashboard && props.attractionsIn && activityFilter === "ALL",
     queryFn: async () => {
@@ -52,7 +52,7 @@ function ShowAttraction(props) {
     error: activeError,
     isPending: activePending,
   } = useQuery({
-    queryKey: ["attractions", "ACTIVE"],
+    queryKey: ["attractions", "ACTIVE", props.refreshToken],
     enabled:
       props.canViewDashboard &&
       props.attractionsIn &&
@@ -81,7 +81,7 @@ function ShowAttraction(props) {
     error: inactiveError,
     isPending: inactivePending,
   } = useQuery({
-    queryKey: ["attractions", "INACTIVE"],
+    queryKey: ["attractions", "INACTIVE", props.refreshToken],
     enabled:
       props.canViewDashboard &&
       props.attractionsIn &&
@@ -230,9 +230,6 @@ function ShowAttraction(props) {
 
                     <div className="col-span-2 flex flex-col gap-2 text-sm">
                       <div>
-                        <span className="font-semibold block mb-1">
-                          Description:
-                        </span>
                         <p className="text-gray-700">{descriptionSnippet}</p>
                       </div>
 

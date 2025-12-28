@@ -92,6 +92,7 @@ function AdminDashboard() {
 
   const [addingAttraction, setAddingAttraction] = useState(null);
   const [editingAttraction, setEditingAttraction] = useState(null);
+  const [attractionRefreshToken, setAttractionRefreshToken] = useState(0);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -549,6 +550,7 @@ function AdminDashboard() {
             <ShowAttraction
               canViewDashboard={canViewDashboard}
               attractionsIn={attractionsIn}
+              refreshToken={attractionRefreshToken}
               onAddAttraction={() => setAddingAttraction(true)}
               onEditAttraction={setEditingAttraction}
             />
@@ -660,6 +662,9 @@ function AdminDashboard() {
           attraction={editingAttraction}
           onClose={() => setEditingAttraction(null)}
           isAdmin={isAdmin}
+          onUpdated={() =>
+            setAttractionRefreshToken((previous) => previous + 1)
+          }
         />
       )}
 

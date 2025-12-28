@@ -3,15 +3,16 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
-function EditAttraction({ attraction, onClose, isAdmin }) {
+function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
   const [name, setName] = useState(attraction?.name || "");
   const [description, setDescription] = useState(attraction?.description || "");
   const [funFact, setFunFact] = useState(attraction?.funFact || "");
+  const [imageFile, setImageFile] = useState(null);
 
   const queryClient = useQueryClient();
 
   const updateAttractionMutation = useMutation({
-    mutationFn: async ({ attractionId, data }) => {
+    mutationFn: async ({ attractionId, formData }) => {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
@@ -19,10 +20,9 @@ function EditAttraction({ attraction, onClose, isAdmin }) {
         {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(data),
+          body: formData,
         }
       );
 
@@ -38,8 +38,13 @@ function EditAttraction({ attraction, onClose, isAdmin }) {
         queryKey: ["attractions"],
         exact: false,
       });
+      queryClient.refetchQueries({
+        queryKey: ["attractions"],
+        exact: false,
+      });
       alert("Attraction updated successfully.");
       onClose?.();
+      onUpdated?.();
     },
     onError: (error) => {
       alert(error.message || "Updating attraction failed");
@@ -70,8 +75,13 @@ function EditAttraction({ attraction, onClose, isAdmin }) {
         queryKey: ["attractions"],
         exact: false,
       });
+      queryClient.refetchQueries({
+        queryKey: ["attractions"],
+        exact: false,
+      });
       alert("Attraction disabled successfully.");
       onClose?.();
+      onUpdated?.();
     },
     onError: (error) => {
       alert(error.message || "Disabling attraction failed");
@@ -102,8 +112,13 @@ function EditAttraction({ attraction, onClose, isAdmin }) {
         queryKey: ["attractions"],
         exact: false,
       });
+      queryClient.refetchQueries({
+        queryKey: ["attractions"],
+        exact: false,
+      });
       alert("Attraction restored successfully.");
       onClose?.();
+      onUpdated?.();
     },
     onError: (error) => {
       alert(error.message || "Restoring attraction failed");
@@ -119,31 +134,50 @@ function EditAttraction({ attraction, onClose, isAdmin }) {
     event.preventDefault();
     if (!attraction) return;
 
-    const payload = {};
-
     const cleanedName = name.trim();
     const cleanedDescription = description.trim();
     const cleanedFunFact = funFact.trim();
 
-    if (cleanedName && cleanedName !== attraction.name) {
-      payload.name = cleanedName;
-    }
-    if (cleanedDescription && cleanedDescription !== attraction.description) {
-      payload.description = cleanedDescription;
-    }
-    if (cleanedFunFact && cleanedFunFact !== (attraction.funFact || "")) {
-      payload.funFact = cleanedFunFact;
-    }
+    const textChanged =
+      (cleanedName && cleanedName !== attraction.name) ||
+      (cleanedDescription && cleanedDescription !== attraction.description) ||
+      (cleanedFunFact && cleanedFunFact !== (attraction.funFact || ""));
 
-    if (Object.keys(payload).length === 0) {
+    const imageChanged = !!imageFile;
+
+    if (!textChanged && !imageChanged) {
       onClose?.();
       return;
     }
 
+    const formData = new FormData();
+
+    formData.append("attractionName", cleanedName || attraction.name || "");
+    formData.append(
+      "attractionDescription",
+      cleanedDescription || attraction.description || ""
+    );
+
+    if (cleanedFunFact || attraction.funFact) {
+      formData.append(
+        "attractionFunFact",
+        cleanedFunFact || attraction.funFact || ""
+      );
+    }
+
+    if (imageChanged) {
+      formData.append("image", imageFile);
+    }
+
     updateAttractionMutation.mutate({
       attractionId: attraction.attractionId,
-      data: payload,
+      formData,
     });
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setImageFile(file);
   };
 
   const handleDisable = () => {
@@ -184,6 +218,19 @@ function EditAttraction({ attraction, onClose, isAdmin }) {
         </div>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          {attraction?.photo2dUrl && (
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-semibold">Current Image</label>
+              <div className="aspect-video rounded-md overflow-hidden bg-gray-100 flex items-center justify-center">
+                <img
+                  src={`http://localhost:8080${attraction.photo2dUrl}`}
+                  alt={attraction.name || "Attraction image"}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col gap-1">
             <label className="text-sm font-semibold">Name</label>
             <input
@@ -213,6 +260,36 @@ function EditAttraction({ attraction, onClose, isAdmin }) {
               onChange={(e) => setFunFact(e.target.value)}
               disabled={isBusy}
             />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">
+              Change Image (optional)
+            </label>
+            <div className="flex items-center gap-3">
+              <label
+                className={`px-3 py-1.5 rounded border text-sm cursor-pointer transition-colors ${
+                  isBusy
+                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                <span>Choose image</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  disabled={isBusy}
+                />
+              </label>
+              <span className="text-xs text-gray-500 truncate">
+                {imageFile ? imageFile.name : "No file chosen"}
+              </span>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">
+              JPG, PNG, or GIF. A clear 2D image works best.
+            </p>
           </div>
 
           <div
