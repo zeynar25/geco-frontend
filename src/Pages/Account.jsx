@@ -55,6 +55,12 @@ function Account() {
 
   const [isCreatingFeedback, setIsCreatingFeedback] = useState(false);
 
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedBookingForPayment, setSelectedBookingForPayment] =
+    useState(null);
+  const [paymentFile, setPaymentFile] = useState(null);
+  const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
+
   // 0-based page index
   const [bookingPage, setBookingPage] = useState(0);
 
@@ -317,6 +323,95 @@ function Account() {
       ...prev,
       [field]: value,
     }));
+  };
+
+  const openPaymentModal = (booking) => {
+    setSelectedBookingForPayment(booking);
+    setPaymentFile(null);
+    setIsPaymentModalOpen(true);
+  };
+
+  const closePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setSelectedBookingForPayment(null);
+    setPaymentFile(null);
+  };
+
+  const handlePaymentFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setPaymentFile(file);
+  };
+
+  const handleSubmitPayment = async () => {
+    if (!selectedBookingForPayment) return;
+
+    if (!paymentFile) {
+      alert("Please select a file as proof of payment.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please log in again to submit your payment.");
+      return;
+    }
+
+    setIsSubmittingPayment(true);
+
+    try {
+      const formData = new FormData();
+
+      // Backend expects a "data" part as JSON and an optional file.
+      const payload = {};
+      formData.append(
+        "data",
+        new Blob([JSON.stringify(payload)], { type: "application/json" })
+      );
+      formData.append("proofOfPayment", paymentFile);
+
+      const response = await fetch(
+        `http://localhost:8080/booking/${selectedBookingForPayment.bookingId}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(
+          error?.error || "Submitting payment proof failed. Please try again."
+        );
+      }
+
+      const updatedBooking = await response.json();
+
+      // Update bookings cache for the current page
+      queryClient.setQueryData(["bookings", bookingPage], (oldData) => {
+        if (!oldData) return oldData;
+
+        const oldContent = oldData.content ?? [];
+        return {
+          ...oldData,
+          content: oldContent.map((b) =>
+            b.bookingId === updatedBooking.bookingId ? updatedBooking : b
+          ),
+        };
+      });
+
+      alert("Payment proof submitted successfully.\nWe'll verify it shortly.");
+      closePaymentModal();
+    } catch (error) {
+      alert(
+        error.message ||
+          "Something went wrong while submitting your payment proof."
+      );
+    } finally {
+      setIsSubmittingPayment(false);
+    }
   };
 
   const handleSaveFeedback = async () => {
@@ -712,7 +807,11 @@ function Account() {
                             {booking.totalPrice / 2}{" "}
                           </span>
                         </div>
-                        <button className="bg-[#222EDA] text-white px-5 py-2 rounded-lg self-center">
+                        <button
+                          type="button"
+                          className="bg-[#222EDA] text-white px-5 py-2 rounded-lg self-center"
+                          onClick={() => openPaymentModal(booking)}
+                        >
                           Submit payment
                         </button>
                       </div>
@@ -982,6 +1081,72 @@ function Account() {
             </div>
           </div>
         ))}
+      {isPaymentModalOpen && selectedBookingForPayment && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={closePaymentModal}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="absolute top-3 right-3 text-gray-500 hover:text-black text-lg"
+              onClick={closePaymentModal}
+            >
+              <FontAwesomeIcon icon={faX} />
+            </button>
+            <h2 className="text-xl font-semibold mb-3 text-[#227B05]">
+              Submit Payment Proof
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Please upload a clear photo or screenshot of your payment
+              transaction for your booking on{" "}
+              <span className="font-semibold">
+                {" "}
+                {new Date(
+                  selectedBookingForPayment.visitDate
+                ).toLocaleDateString()}
+              </span>
+              .
+            </p>
+            <div className="mb-4">
+              <label className="block font-semibold mb-1">
+                Proof of payment
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                className="w-full border px-3 py-2 rounded-md"
+                onChange={handlePaymentFileChange}
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Accepted formats: JPG, PNG. Max size depends on your network and
+                server limits.
+              </p>
+            </div>
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                type="button"
+                className="px-4 py-2 border rounded-md font-semibold hover:bg-black/5"
+                onClick={closePaymentModal}
+                disabled={isSubmittingPayment}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                onClick={handleSubmitPayment}
+                disabled={isSubmittingPayment}
+              >
+                {isSubmittingPayment ? "Submitting..." : "Submit"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );
