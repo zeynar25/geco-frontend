@@ -26,6 +26,9 @@ import ShowLog from "../Components/Admin/ShowLog";
 import ShowAccount from "../Components/Admin/Account/ShowAccount";
 import AddAccount from "../Components/Admin/Account/AddAccount";
 import EditAccount from "../Components/Admin/Account/EditAccount";
+// import ShowAttraction from "../Components/Admin/Attraction/ShowAttraction";
+// import AddAttraction from "../Components/Admin/Attraction/AddAttraction";
+// import EditAttraction from "../Components/Admin/Attraction/EditAttraction";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -455,26 +458,28 @@ function AdminDashboard() {
           >
             Accounts
           </button>
-          <button
-            type="button"
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              logsIn ? "text-[#227B05]" : "text-black"
-            }`}
-            onClick={() => {
-              setBookingIn(false);
-              setFinancesIn(false);
-              setTrendsIn(false);
-              setFeedbackIn(false);
-              setPackagesIn(false);
-              setFaqsIn(false);
-              setAttractionsIn(false);
-              setCalendarIn(false);
-              setAccountsIn(false);
-              setLogsIn(true);
-            }}
-          >
-            Logs
-          </button>
+          {isAdmin && (
+            <button
+              type="button"
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                logsIn ? "text-[#227B05]" : "text-black"
+              }`}
+              onClick={() => {
+                setBookingIn(false);
+                setFinancesIn(false);
+                setTrendsIn(false);
+                setFeedbackIn(false);
+                setPackagesIn(false);
+                setFaqsIn(false);
+                setAttractionsIn(false);
+                setCalendarIn(false);
+                setAccountsIn(false);
+                setLogsIn(true);
+              }}
+            >
+              Logs
+            </button>
+          )}
         </div>
 
         <div>
