@@ -33,6 +33,7 @@ function ParkCalendar() {
     if (selectedDay === day) {
       setTimeout(() => {
         setSelectedDay(null);
+        setSelectedDayStatus(null);
         setShow(true);
       }, 250);
     } else {
@@ -51,6 +52,7 @@ function ParkCalendar() {
 
   // NEW: State for selected day
   const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedDayStatus, setSelectedDayStatus] = useState(null);
 
   const currentDate = new Date(year, month).toLocaleString("default", {
     month: "long",
@@ -228,7 +230,10 @@ function ParkCalendar() {
                               <div
                                 key={dayNum}
                                 className={`p-3 rounded cursor-pointer ${bgColor} ${border} hover:border-2 hover:border-[#020D00]`}
-                                onClick={() => setDay(dayNum)}
+                                onClick={() => (
+                                  setDay(dayNum),
+                                  setSelectedDayStatus(dayData?.status)
+                                )}
                               >
                                 <span className="font-bold">{dayNum}</span>
                               </div>
@@ -300,27 +305,28 @@ function ParkCalendar() {
                   <span className="font-semibold">Total Bookings:</span>
                   <span className="text-center">{totalBookings}</span>
 
-                  {swappableDate !== currentDate && (
-                    <div className="col-span-2 text-center">
-                      <Link
-                        className="bg-[#0A7A28]/90 text-white border-2 border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] hover:cursor-pointer mt-5 flex items-center justify-center"
-                        to="/book#visitSchedule"
-                        state={{
-                          from: location.pathname,
-                          selectedDate: `${year}-${String(month + 1).padStart(
-                            2,
-                            "0"
-                          )}-${String(selectedDay).padStart(2, "0")}`,
-                        }}
-                      >
-                        <FontAwesomeIcon
-                          icon={faCalendarCheck}
-                          className="text-white mr-2"
-                        />
-                        <span>Book your visit now</span>
-                      </Link>
-                    </div>
-                  )}
+                  {swappableDate !== currentDate &&
+                    selectedDayStatus !== "CLOSED" && (
+                      <div className="col-span-2 text-center">
+                        <Link
+                          className="bg-[#0A7A28]/90 text-white border-2 border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] hover:cursor-pointer mt-5 flex items-center justify-center"
+                          to="/book#visitSchedule"
+                          state={{
+                            from: location.pathname,
+                            selectedDate: `${year}-${String(month + 1).padStart(
+                              2,
+                              "0"
+                            )}-${String(selectedDay).padStart(2, "0")}`,
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={faCalendarCheck}
+                            className="text-white mr-2"
+                          />
+                          <span>Book your visit now</span>
+                        </Link>
+                      </div>
+                    )}
                 </div>
               }
             />
