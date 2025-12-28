@@ -21,6 +21,7 @@ import EditTourPackage from "../Components/Admin/TourPackage/EditTourPackage";
 import ShowFaq from "../Components/Admin/Faq/ShowFaq";
 import AddFaq from "../Components/Admin/Faq/AddFaq";
 import EditFaq from "../Components/Admin/Faq/EditFaq";
+import ShowCalendar from "../Components/Admin/ShowCalendar";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -539,12 +540,10 @@ function AdminDashboard() {
           )}
 
           {calendarIn && (
-            <div className="bg-white rounded shadow p-6 mt-6">
-              <h2 className="text-lg font-semibold mb-2">Calendar</h2>
-              <p className="text-sm text-gray-600">
-                Park calendar management section coming soon.
-              </p>
-            </div>
+            <ShowCalendar
+              canViewDashboard={canViewDashboard}
+              calendarIn={calendarIn}
+            />
           )}
 
           {accountsIn && (
