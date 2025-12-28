@@ -7,6 +7,8 @@ import {
   faMagnifyingGlass,
   faAngleLeft,
   faAngleRight,
+  faCircleInfo,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
 function ShowLog(props) {
@@ -15,6 +17,7 @@ function ShowLog(props) {
   const [entityName, setEntityName] = useState("");
   const [action, setAction] = useState("ALL");
   const [logPage, setLogPage] = useState(0);
+  const [selectedLog, setSelectedLog] = useState(null);
 
   const handlePrevLogPage = () => {
     setLogPage((prev) => Math.max(prev - 1, 0));
@@ -100,12 +103,6 @@ function ShowLog(props) {
     typeof logData?.totalElements === "number"
       ? logData.totalElements
       : logs.length;
-
-  const truncate = (text, max = 80) => {
-    if (!text) return "-";
-    if (text.length <= max) return text;
-    return text.slice(0, max) + "...";
-  };
 
   const formatDateTime = (value) => {
     if (!value) return "-";
@@ -244,8 +241,7 @@ function ShowLog(props) {
                     <th className="px-3 py-2 text-left">Entity ID</th>
                     <th className="px-3 py-2 text-left">Action</th>
                     <th className="px-3 py-2 text-left">Performed By</th>
-                    <th className="px-3 py-2 text-left">Old Value</th>
-                    <th className="px-3 py-2 text-left">New Value</th>
+                    <th className="px-3 py-2 text-left">Change</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -295,15 +291,15 @@ function ShowLog(props) {
                           </span>
                         </div>
                       </td>
-                      <td className="px-3 py-2 align-top max-w-xs">
-                        <span className="wrap-break-word">
-                          {truncate(log.oldValue)}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2 align-top max-w-xs">
-                        <span className="wrap-break-word">
-                          {truncate(log.newValue)}
-                        </span>
+                      <td className="px-3 py-2 align-top whitespace-nowrap">
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-1 px-2 py-1 border border-[#227B05] text-[#227B05] rounded text-[0.7rem] hover:bg-[#227B05]/5"
+                          onClick={() => setSelectedLog(log)}
+                        >
+                          <FontAwesomeIcon icon={faCircleInfo} />
+                          <span>What changed</span>
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -313,6 +309,64 @@ function ShowLog(props) {
           )}
         </div>
       </div>
+      {selectedLog && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between px-4 py-3 border-b bg-[#48BF56]/5">
+              <div className="flex flex-col gap-0.5 text-sm">
+                <span className="font-semibold flex items-center gap-2">
+                  <FontAwesomeIcon
+                    icon={faCircleInfo}
+                    className="text-[#227B05]"
+                  />
+                  <span>Change details</span>
+                </span>
+                <span className="text-xs text-gray-600">
+                  {selectedLog.entityName || "-"} · ID{" "}
+                  {selectedLog.entityId ?? "-"}
+                  {" · "}
+                  {selectedLog.action || "-"} at{" "}
+                  {formatDateTime(selectedLog.timestamp)}
+                </span>
+              </div>
+              <button
+                type="button"
+                className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500"
+                onClick={() => setSelectedLog(null)}
+              >
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+              <div className="border border-gray-200 rounded-md p-3 bg-gray-50 flex flex-col gap-2">
+                <span className="font-semibold text-xs uppercase text-gray-600">
+                  Old Value
+                </span>
+                <pre className="whitespace-pre-wrap wrap-break-word text-[0.7rem] md:text-xs text-gray-800 max-h-60 overflow-auto bg-white rounded p-2 border border-gray-200">
+                  {selectedLog.oldValue || "-"}
+                </pre>
+              </div>
+              <div className="border border-gray-200 rounded-md p-3 bg-gray-50 flex flex-col gap-2">
+                <span className="font-semibold text-xs uppercase text-gray-600">
+                  New Value
+                </span>
+                <pre className="whitespace-pre-wrap wrap-break-word text-[0.7rem] md:text-xs text-gray-800 max-h-60 overflow-auto bg-white rounded p-2 border border-gray-200">
+                  {selectedLog.newValue || "-"}
+                </pre>
+              </div>
+            </div>
+            <div className="px-4 py-3 border-t flex justify-end bg-gray-50">
+              <button
+                type="button"
+                className="px-4 py-1.5 rounded-md border border-gray-300 text-sm hover:bg-gray-100"
+                onClick={() => setSelectedLog(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
