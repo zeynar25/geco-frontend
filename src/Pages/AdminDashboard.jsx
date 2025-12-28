@@ -12,6 +12,9 @@ import ShowFeedback from "../Components/Admin/Feedback/ShowFeedback";
 import EditFeedbackCategory from "../Components/Admin/Feedback/EditFeedbackCategory";
 import EditFeedback from "../Components/Admin/Feedback/EditFeedback";
 import ShowTourPackage from "../Components/Admin/TourPackage/ShowTourPackage";
+import ShowPackageInclusion from "../Components/Admin/TourPackage/ShowPackageInclusion";
+import AddTourPackageInclusion from "../Components/Admin/TourPackage/AddTourPackageInclusion";
+import EditTourPackageInclusion from "../Components/Admin/TourPackage/EditTourPackageInclusion";
 import AddTourPackage from "../Components/Admin/TourPackage/AddTourPackage";
 import EditTourPackage from "../Components/Admin/TourPackage/EditTourPackage";
 import ShowFaq from "../Components/Admin/Faq/ShowFaq";
@@ -62,6 +65,9 @@ function AdminDashboard() {
   const [editingBooking, setEditingBooking] = useState(null);
   const [editingFeedbackCategory, setEditingFeedbackCategory] = useState(null);
   const [editingFeedback, setEditingFeedback] = useState(null);
+
+  const [addingPackageInclusion, setAddingPackageInclusion] = useState(null);
+  const [editingPackageInclusion, setEditingPackageInclusion] = useState(null);
   const [addingPackage, setAddingPackage] = useState(null);
   const [editingPackage, setEditingPackage] = useState(null);
 
@@ -496,6 +502,15 @@ function AdminDashboard() {
             />
           )}
 
+          {packagesIn && (
+            <ShowPackageInclusion
+              canViewDashboard={canViewDashboard}
+              packagesIn={packagesIn}
+              onAddInclusion={() => setAddingPackageInclusion(true)}
+              onEditInclusion={setEditingPackageInclusion}
+            />
+          )}
+
           {faqsIn && <ShowFaq />}
 
           {attractionsIn && (
@@ -554,6 +569,20 @@ function AdminDashboard() {
         <EditFeedback
           feedback={editingFeedback}
           onClose={() => setEditingFeedback(null)}
+        />
+      )}
+
+      {addingPackageInclusion && (
+        <AddTourPackageInclusion
+          package={addingPackageInclusion}
+          onClose={() => setAddingPackageInclusion(null)}
+        />
+      )}
+
+      {editingPackageInclusion && (
+        <EditTourPackageInclusion
+          package={editingPackageInclusion}
+          onClose={() => setEditingPackageInclusion(null)}
         />
       )}
 
