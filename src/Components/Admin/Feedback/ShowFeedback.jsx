@@ -19,6 +19,8 @@ function ShowFeedback(props) {
   const [feedbackCategoryFilter, setFeedbackCategoryFilter] = useState("ALL");
   const [feedbackActivityFilter, setFeedbackActivityFilter] = useState("ALL");
   const [feedbackStatusFilter, setFeedbackStatusFilter] = useState("ALL");
+  const [startDateFilter, setStartDateFilter] = useState("");
+  const [endDateFilter, setEndDateFilter] = useState("");
   const [feedbackPage, setFeedbackPage] = useState(0);
 
   const isActive = (something) => {
@@ -153,7 +155,13 @@ function ShowFeedback(props) {
     error: feedbackError,
     isPending: feedbackPending,
   } = useQuery({
-    queryKey: ["Feedback", feedbackPage, feedbackStatusFilter],
+    queryKey: [
+      "Feedback",
+      feedbackPage,
+      feedbackStatusFilter,
+      startDateFilter,
+      endDateFilter,
+    ],
     enabled:
       props.canViewDashboard &&
       props.feedbackIn &&
@@ -166,6 +174,14 @@ function ShowFeedback(props) {
 
       if (feedbackStatusFilter !== "ALL") {
         params.append("feedbackStatus", feedbackStatusFilter);
+      }
+
+      if (startDateFilter) {
+        params.append("startDate", startDateFilter);
+      }
+
+      if (endDateFilter) {
+        params.append("endDate", endDateFilter);
       }
 
       const endpoint = `http://localhost:8080/feedback?${params.toString()}`;
@@ -192,7 +208,13 @@ function ShowFeedback(props) {
     error: activeFeedbackError,
     isPending: activeFeedbackPending,
   } = useQuery({
-    queryKey: ["activeFeedback", feedbackPage, feedbackStatusFilter],
+    queryKey: [
+      "activeFeedback",
+      feedbackPage,
+      feedbackStatusFilter,
+      startDateFilter,
+      endDateFilter,
+    ],
     enabled:
       props.canViewDashboard &&
       props.feedbackIn &&
@@ -205,6 +227,14 @@ function ShowFeedback(props) {
 
       if (feedbackStatusFilter !== "ALL") {
         params.append("feedbackStatus", feedbackStatusFilter);
+      }
+
+      if (startDateFilter) {
+        params.append("startDate", startDateFilter);
+      }
+
+      if (endDateFilter) {
+        params.append("endDate", endDateFilter);
       }
 
       const activeFeedback = await fetch(
@@ -232,7 +262,13 @@ function ShowFeedback(props) {
     error: inactiveFeedbackError,
     isPending: inactiveFeedbackPending,
   } = useQuery({
-    queryKey: ["inactiveFeedback", feedbackPage, feedbackStatusFilter],
+    queryKey: [
+      "inactiveFeedback",
+      feedbackPage,
+      feedbackStatusFilter,
+      startDateFilter,
+      endDateFilter,
+    ],
     enabled:
       props.canViewDashboard &&
       props.feedbackIn &&
@@ -245,6 +281,14 @@ function ShowFeedback(props) {
 
       if (feedbackStatusFilter !== "ALL") {
         params.append("feedbackStatus", feedbackStatusFilter);
+      }
+
+      if (startDateFilter) {
+        params.append("startDate", startDateFilter);
+      }
+
+      if (endDateFilter) {
+        params.append("endDate", endDateFilter);
       }
 
       const inactiveFeedbacks = await fetch(
@@ -466,6 +510,30 @@ function ShowFeedback(props) {
                 <option value="NEW">New</option>
                 <option value="VIEWED">Viewed</option>
               </select>
+            </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 ml-0 sm:ml-4 mt-2 sm:mt-0">
+              <span className="font-semibold">Date:</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={startDateFilter}
+                  onChange={(e) => {
+                    setStartDateFilter(e.target.value);
+                    setFeedbackPage(0);
+                  }}
+                  className="border border-[#227B05] px-1 py-0.5 text-sm rounded"
+                />
+                <span className="text-sm">to</span>
+                <input
+                  type="date"
+                  value={endDateFilter}
+                  onChange={(e) => {
+                    setEndDateFilter(e.target.value);
+                    setFeedbackPage(0);
+                  }}
+                  className="border border-[#227B05] px-1 py-0.5 text-sm rounded"
+                />
+              </div>
             </div>
           </form>
           <div className="px-5 md:px-10 py-5 flex flex-col gap-5">
