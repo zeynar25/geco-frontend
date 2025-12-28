@@ -255,7 +255,7 @@ function ShowFaq(props) {
             <p className="text-gray-600">Loading FAQs...</p>
           </div>
         ) : displayedFaqs && displayedFaqs.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             {displayedFaqs.map((faq, index) => {
               const active = isFaqActive(faq);
 
