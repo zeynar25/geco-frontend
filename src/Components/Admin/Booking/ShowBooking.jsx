@@ -19,6 +19,8 @@ function ShowBooking(props) {
   const [bookingFilter, setBookingFilter] = useState("ALL");
   const [paymentFilter, setPaymentFilter] = useState("ALL");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("ALL");
+  const [startDateFilter, setStartDateFilter] = useState("");
+  const [endDateFilter, setEndDateFilter] = useState("");
   const [bookingPage, setBookingPage] = useState(0);
 
   const handlePrevBookingPage = () => {
@@ -40,6 +42,8 @@ function ShowBooking(props) {
       bookingFilter,
       paymentFilter,
       paymentMethodFilter,
+      startDateFilter,
+      endDateFilter,
     ],
     enabled: props.canViewDashboard && props.bookingIn,
     queryFn: async () => {
@@ -57,6 +61,14 @@ function ShowBooking(props) {
       }
       if (paymentMethodFilter !== "ALL") {
         params.append("paymentMethod", paymentMethodFilter.toUpperCase());
+      }
+
+      if (startDateFilter) {
+        params.append("startDate", startDateFilter);
+      }
+
+      if (endDateFilter) {
+        params.append("endDate", endDateFilter);
       }
 
       const queryString = params.toString();
@@ -135,6 +147,31 @@ function ShowBooking(props) {
               <option value="PARK">On-park</option>
               <option value="ONLINE">Online</option>
             </select>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+            <span className="font-semibold">Visit Date:</span>
+            <div className="flex items-center gap-2">
+              <input
+                type="date"
+                value={startDateFilter}
+                onChange={(e) => {
+                  setStartDateFilter(e.target.value);
+                  setBookingPage(0);
+                }}
+                className="border border-[#227B05] px-1 py-0.5 text-sm rounded"
+              />
+              <span className="text-sm">to</span>
+              <input
+                type="date"
+                value={endDateFilter}
+                onChange={(e) => {
+                  setEndDateFilter(e.target.value);
+                  setBookingPage(0);
+                }}
+                className="border border-[#227B05] px-1 py-0.5 text-sm rounded"
+              />
+            </div>
           </div>
         </form>
 
