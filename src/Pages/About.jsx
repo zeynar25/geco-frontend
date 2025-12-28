@@ -4,6 +4,8 @@ import ValueCard from "../Components/ValueCard.jsx";
 import HeaderCard from "../Components/HeaderCard.jsx";
 import Faq from "../Components/Faq";
 
+import { useQuery } from "@tanstack/react-query";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAward,
@@ -24,6 +26,26 @@ import { useLocation, Link } from "react-router-dom";
 export default function About() {
   const location = useLocation();
   const backTo = location.state?.from || "/";
+
+  const {
+    data: faqData,
+    error: faqError,
+    isPending: faqPending,
+  } = useQuery({
+    queryKey: ["faqs"],
+    queryFn: async () => {
+      const response = await fetch("http://localhost:8080/faq/active");
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Getting active FAQs failed");
+      }
+      return await response.json();
+    },
+  });
+
+  if (faqError) {
+    alert("something went wrong in retrieving FAQs");
+  }
 
   return (
     <>
@@ -135,26 +157,28 @@ export default function About() {
               </p>
             </header>
 
-            {/* FAQ Items */}
-            <div className="flex flex-col gap-5 p-5">
-              <Faq
-                number={1}
-                question="What is Agri-Eco Tourism Park?"
-                answer="Agri-Eco Tourism Park is a sustainable tourism destination that combines agriculture and ecological conservation."
-              />
-              <Faq
-                number={2}
-                question="What is Agri-Eco Tourism Park?"
-                answer="Agri-Eco Tourism Park is a sustainable tourism destination that combines agriculture and ecological conservation."
-              />
-              <Faq
-                number={3}
-                question="What is Agri-Eco Tourism Park?"
-                answer="Agri-Eco Tourism Park is a sustainable tourism destination that combines agriculture and ecological conservation."
-              />
-            </div>
+            {faqPending ? (
+              <div className="flex flex-col items-center justify-center gap-4 h-32">
+                <div className="h-10 w-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
+                <p className="text-gray-600">Loading FAQs...</p>
+              </div>
+            ) : faqData && faqData.length > 0 ? (
+              <div className="flex flex-col gap-5 p-5">
+                {faqData.map((faq, index) => (
+                  <Faq
+                    key={faq.faqId}
+                    number={index + 1}
+                    question={faq.question}
+                    answer={faq.answer}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="p-5 text-center text-gray-500">
+                No FAQs available at the moment.
+              </div>
+            )}
           </div>
-
           <div className="col-span-2 grid grid-cols-3 gap-5">
             <Link
               to="/operating-hours"
