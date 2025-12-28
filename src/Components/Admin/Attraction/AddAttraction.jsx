@@ -123,13 +123,30 @@ function AddAttraction({ onClose }) {
 
           <div className="flex flex-col gap-1">
             <label className="text-sm font-semibold">Image (optional)</label>
-            <input
-              type="file"
-              accept="image/*"
-              className="text-sm"
-              onChange={handleFileChange}
-              disabled={isBusy}
-            />
+            <div className="flex items-center gap-3">
+              <label
+                className={`px-3 py-1.5 rounded border text-sm cursor-pointer transition-colors ${
+                  isBusy
+                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                <span>Choose image</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  disabled={isBusy}
+                />
+              </label>
+              <span className="text-xs text-gray-500 truncate">
+                {image ? image.name : "No file chosen"}
+              </span>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">
+              JPG, PNG, or GIF. A clear 2D image works best.
+            </p>
           </div>
 
           <div className="flex justify-end gap-2 mt-4">
