@@ -5,6 +5,8 @@ import {
   faClockRotateLeft,
   faFilter,
   faMagnifyingGlass,
+  faAngleLeft,
+  faAngleRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 function ShowLog(props) {
@@ -12,6 +14,15 @@ function ShowLog(props) {
   const [endDate, setEndDate] = useState(""); // yyyy-MM-dd
   const [entityName, setEntityName] = useState("");
   const [action, setAction] = useState("ALL");
+  const [logPage, setLogPage] = useState(0);
+
+  const handlePrevLogPage = () => {
+    setLogPage((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleNextLogPage = () => {
+    setLogPage((prev) => prev + 1);
+  };
 
   const {
     data: logData,
@@ -20,6 +31,7 @@ function ShowLog(props) {
   } = useQuery({
     queryKey: [
       "auditLogs",
+      logPage,
       {
         startDate,
         endDate,
@@ -45,6 +57,9 @@ function ShowLog(props) {
         params.append("action", action);
       }
 
+      params.append("page", logPage.toString());
+      params.append("size", "20");
+
       const endpoint = params.toString()
         ? `http://localhost:8080/dashboard/logs?${params.toString()}`
         : "http://localhost:8080/dashboard/logs";
@@ -68,12 +83,23 @@ function ShowLog(props) {
     alert("something went wrong in retrieving audit logs");
   }
 
-  const logs = Array.isArray(logData)
-    ? [...logData].sort((a, b) => {
-        if (!a.timestamp || !b.timestamp) return 0;
-        return new Date(b.timestamp) - new Date(a.timestamp);
-      })
+  const logs = Array.isArray(logData?.content)
+    ? logData.content
+    : Array.isArray(logData)
+    ? logData
     : [];
+
+  const totalLogPages =
+    typeof logData?.totalPages === "number"
+      ? logData.totalPages
+      : logs.length > 0
+      ? 1
+      : 0;
+
+  const totalLogCount =
+    typeof logData?.totalElements === "number"
+      ? logData.totalElements
+      : logs.length;
 
   const truncate = (text, max = 80) => {
     if (!text) return "-";
@@ -110,7 +136,10 @@ function ShowLog(props) {
             <input
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => {
+                setStartDate(e.target.value);
+                setLogPage(0);
+              }}
               className="border border-gray-300 rounded px-2 py-1 text-sm"
             />
           </div>
@@ -120,7 +149,10 @@ function ShowLog(props) {
             <input
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => {
+                setEndDate(e.target.value);
+                setLogPage(0);
+              }}
               className="border border-gray-300 rounded px-2 py-1 text-sm"
             />
           </div>
@@ -134,7 +166,10 @@ function ShowLog(props) {
               <input
                 type="text"
                 value={entityName}
-                onChange={(e) => setEntityName(e.target.value)}
+                onChange={(e) => {
+                  setEntityName(e.target.value);
+                  setLogPage(0);
+                }}
                 placeholder="e.g. Account, TourPackage, Faq"
                 className="border border-gray-300 rounded px-7 py-1 text-sm w-full"
               />
@@ -145,7 +180,10 @@ function ShowLog(props) {
             <label className="font-medium mb-1">Action</label>
             <select
               value={action}
-              onChange={(e) => setAction(e.target.value)}
+              onChange={(e) => {
+                setAction(e.target.value);
+                setLogPage(0);
+              }}
               className="border border-gray-300 rounded px-2 py-1 text-sm min-w-[130px]"
             >
               <option value="ALL">All</option>
@@ -171,7 +209,34 @@ function ShowLog(props) {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full text-xs md:text-sm">
+              <div className="flex justify-between items-center text-sm text-gray-600 px-3 pt-3">
+                <span>
+                  Page {logPage + 1} of {Math.max(totalLogPages, 1)} ·
+                  <span className="ml-1">{totalLogCount} log(s)</span>
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    className="px-2 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handlePrevLogPage}
+                    disabled={logPage === 0}
+                  >
+                    <FontAwesomeIcon icon={faAngleLeft} />
+                  </button>
+                  <button
+                    type="button"
+                    className="px-2 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handleNextLogPage}
+                    disabled={
+                      totalLogPages === 0 || logPage + 1 >= totalLogPages
+                    }
+                  >
+                    <FontAwesomeIcon icon={faAngleRight} />
+                  </button>
+                </div>
+              </div>
+
+              <table className="min-w-full text-xs md:text-sm mt-2">
                 <thead className="bg-gray-100 text-gray-700 border-b text-xs uppercase tracking-wide">
                   <tr>
                     <th className="px-3 py-2 text-left">Timestamp</th>
