@@ -23,12 +23,30 @@ function ShowBooking(props) {
   const [endDateFilter, setEndDateFilter] = useState("");
   const [bookingPage, setBookingPage] = useState(0);
 
+  const [isProofModalOpen, setIsProofModalOpen] = useState(false);
+  const [selectedProofUrl, setSelectedProofUrl] = useState(null);
+
   const handlePrevBookingPage = () => {
     setBookingPage((prev) => Math.max(prev - 1, 0));
   };
 
   const handleNextBookingPage = () => {
     setBookingPage((prev) => prev + 1);
+  };
+
+  const openProofModal = (booking) => {
+    if (!booking.proofOfPaymentPhoto) {
+      alert("No proof of payment uploaded for this booking.");
+      return;
+    }
+
+    setSelectedProofUrl(booking.proofOfPaymentPhoto);
+    setIsProofModalOpen(true);
+  };
+
+  const closeProofModal = () => {
+    setIsProofModalOpen(false);
+    setSelectedProofUrl(null);
   };
   const {
     data: bookingData,
@@ -409,9 +427,13 @@ function ShowBooking(props) {
                           </div>
                           <div className="flex flex-col gap-1 text-center">
                             <span>Proof of Payment:</span>
-                            <span className="underline font-semibold">
+                            <button
+                              type="button"
+                              className="underline font-semibold text-[#227B05] hover:text-[#125003]"
+                              onClick={() => openProofModal(booking)}
+                            >
                               View Screenshot
-                            </span>
+                            </button>
                           </div>
                         </div>
                       )}
@@ -434,6 +456,39 @@ function ShowBooking(props) {
             ))}
         </div>
       </div>
+      {isProofModalOpen && selectedProofUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          onClick={closeProofModal}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 p-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="absolute top-3 right-3 text-gray-500 hover:text-black text-lg"
+              onClick={closeProofModal}
+            >
+              ✕
+            </button>
+            <h2 className="text-lg font-semibold mb-3 text-[#227B05]">
+              Proof of Payment
+            </h2>
+            <div className="flex justify-center items-center">
+              <img
+                src={
+                  selectedProofUrl.startsWith("http")
+                    ? selectedProofUrl
+                    : `http://localhost:8080${selectedProofUrl}`
+                }
+                alt="Proof of payment"
+                className="max-h-[70vh] w-auto object-contain border rounded-md"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
