@@ -6,6 +6,7 @@ import { ClipLoader } from "react-spinners";
 import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer.jsx";
 import ValueCard from "../Components/ValueCard.jsx";
+import ParkMap3D from "../Components/ParkMap3D.jsx";
 import "../index.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -236,11 +237,7 @@ export default function Home() {
               {mapMode === "2D" ? (
                 <img src="/images/park-map-2d.jpg" alt="2D-park-map" />
               ) : (
-                <img
-                  src="/images/park-map-2d.jpg"
-                  alt="3D-park-map"
-                  className="cover"
-                />
+                <ParkMap3D modelPath="/models/gate.glb" />
               )}
             </div>
           </div>
