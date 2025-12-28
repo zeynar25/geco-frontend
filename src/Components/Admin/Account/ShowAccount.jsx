@@ -8,6 +8,7 @@ import {
   faAngleLeft,
   faAngleRight,
   faPlus,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 
 function ShowAccount(props) {
@@ -226,9 +227,7 @@ function ShowAccount(props) {
                     <th className="px-4 py-2 font-semibold">Email</th>
                     <th className="px-4 py-2 font-semibold">Role</th>
                     <th className="px-4 py-2 font-semibold">Status</th>
-                    <th className="px-4 py-2 font-semibold text-right">
-                      Actions
-                    </th>
+                    <th className="px-4 py-2 font-semibold text-right"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -279,7 +278,7 @@ function ShowAccount(props) {
                             className="text-gray-600 hover:text-[#227B05] text-sm"
                             onClick={() => props.onEditAccount?.(account)}
                           >
-                            Manage
+                            <FontAwesomeIcon icon={faEdit} />
                           </button>
                         </td>
                       </tr>
