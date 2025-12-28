@@ -233,7 +233,7 @@ function AdminDashboard() {
                 <div className="flex items-center gap-2 justify-between">
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm">
-                      Pending Booking{" "}
+                      Pending Booking
                       {adminDashboardData.pendingBookings > 1 ? "s" : ""}
                     </span>
                     <span className="font-bold text-lg">
