@@ -12,6 +12,7 @@ import {
   faThumbsUp,
   faAngleLeft,
   faAngleRight,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 function ShowFeedback(props) {
@@ -301,9 +302,19 @@ function ShowFeedback(props) {
   return (
     <div className="flex flex-col gap-10">
       <div className="bg-white rounded-lg overflow-hidden shadow-xl">
-        <div className="text-white bg-[#48BF56] p-4 font-bold text-2xl">
-          <FontAwesomeIcon icon={faLayerGroup} className="mr-3 text-2xl" />
-          <span>Feedback Categories</span>
+        <div className="flex gap-3 flex-wrap justify-between text-white bg-[#48BF56] p-4 font-bold text-2xl">
+          <div className="text-2xl flex items-center">
+            <FontAwesomeIcon icon={faLayerGroup} className="mr-3" />
+            <span>Feedback Categories</span>
+          </div>
+          <button
+            type="button"
+            className="text-lg text-[#FDDB3C] bg-[#227B05] px-3 py-2 rounded-lg flex items-center hover:bg-[#227B05]/90"
+            onClick={() => props.onAddFeedbackCategory?.()}
+          >
+            <FontAwesomeIcon icon={faPlus} className="mr-3" />
+            <span>Add Feedback Category</span>
+          </button>
         </div>
         <div>
           <form className="flex justify-end mt-5 mx-5 my-3 flex-wrap gap-2">

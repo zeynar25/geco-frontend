@@ -9,6 +9,7 @@ import EditBooking from "../Components/Admin/Booking/EditBooking";
 import ShowFinance from "../Components/Admin/ShowFinance";
 import ShowTrend from "../Components/Admin/ShowTrend";
 import ShowFeedback from "../Components/Admin/Feedback/ShowFeedback";
+import AddFeedbackCategory from "../Components/Admin/Feedback/AddFeedbackCategory";
 import EditFeedbackCategory from "../Components/Admin/Feedback/EditFeedbackCategory";
 import EditFeedback from "../Components/Admin/Feedback/EditFeedback";
 import ShowTourPackage from "../Components/Admin/TourPackage/ShowTourPackage";
@@ -18,6 +19,8 @@ import EditTourPackageInclusion from "../Components/Admin/TourPackage/EditTourPa
 import AddTourPackage from "../Components/Admin/TourPackage/AddTourPackage";
 import EditTourPackage from "../Components/Admin/TourPackage/EditTourPackage";
 import ShowFaq from "../Components/Admin/Faq/ShowFaq";
+import AddFaq from "../Components/Admin/Faq/AddFaq";
+import EditFaq from "../Components/Admin/Faq/EditFaq";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -63,6 +66,8 @@ function AdminDashboard() {
   const [logsIn, setLogsIn] = useState(false);
 
   const [editingBooking, setEditingBooking] = useState(null);
+
+  const [addingFeedbackCategory, setAddingFeedbackCategory] = useState(null);
   const [editingFeedbackCategory, setEditingFeedbackCategory] = useState(null);
   const [editingFeedback, setEditingFeedback] = useState(null);
 
@@ -70,6 +75,9 @@ function AdminDashboard() {
   const [editingPackageInclusion, setEditingPackageInclusion] = useState(null);
   const [addingPackage, setAddingPackage] = useState(null);
   const [editingPackage, setEditingPackage] = useState(null);
+
+  const [addingFaq, setAddingFaq] = useState(null);
+  const [editingFaq, setEditingFaq] = useState(null);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -488,6 +496,7 @@ function AdminDashboard() {
             <ShowFeedback
               canViewDashboard={canViewDashboard}
               feedbackIn={feedbackIn}
+              onAddFeedbackCategory={() => setAddingFeedbackCategory(true)}
               onEditFeedbackCategory={setEditingFeedbackCategory}
               onEditFeedback={setEditingFeedback}
             />
@@ -558,6 +567,13 @@ function AdminDashboard() {
         />
       )}
 
+      {addingFeedbackCategory && (
+        <AddFeedbackCategory
+          feedbackCategory={addingFeedbackCategory}
+          onClose={() => setAddingFeedbackCategory(null)}
+        />
+      )}
+
       {editingFeedbackCategory && (
         <EditFeedbackCategory
           feedbackCategory={editingFeedbackCategory}
@@ -598,6 +614,14 @@ function AdminDashboard() {
           package={editingPackage}
           onClose={() => setEditingPackage(null)}
         />
+      )}
+
+      {addingFaq && (
+        <AddFaq faq={addingFaq} onClose={() => setAddingFaq(null)} />
+      )}
+
+      {editingFaq && (
+        <EditFaq faq={editingFaq} onClose={() => setEditingFaq(null)} />
       )}
 
       <Footer />
