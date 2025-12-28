@@ -23,6 +23,9 @@ import AddFaq from "../Components/Admin/Faq/AddFaq";
 import EditFaq from "../Components/Admin/Faq/EditFaq";
 import ShowCalendar from "../Components/Admin/ShowCalendar";
 import ShowLog from "../Components/Admin/ShowLog";
+import ShowAccount from "../Components/Admin/Account/ShowAccount";
+import AddAccount from "../Components/Admin/Account/AddAccount";
+import EditAccount from "../Components/Admin/Account/EditAccount";
 
 import { useQuery } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
@@ -80,6 +83,9 @@ function AdminDashboard() {
 
   const [addingFaq, setAddingFaq] = useState(null);
   const [editingFaq, setEditingFaq] = useState(null);
+
+  const [addingAccount, setAddingAccount] = useState(null);
+  const [editingAccount, setEditingAccount] = useState(null);
 
   useEffect(() => {
     if (!loggedIn) {
@@ -548,12 +554,13 @@ function AdminDashboard() {
           )}
 
           {accountsIn && (
-            <div className="bg-white rounded shadow p-6 mt-6">
-              <h2 className="text-lg font-semibold mb-2">Accounts</h2>
-              <p className="text-sm text-gray-600">
-                Accounts administration section coming soon.
-              </p>
-            </div>
+            <ShowAccount
+              canViewDashboard={canViewDashboard}
+              accountsIn={accountsIn}
+              isAdmin={isAdmin}
+              onAddAccount={() => setAddingAccount(true)}
+              onEditAccount={setEditingAccount}
+            />
           )}
 
           {logsIn && isAdmin && (
@@ -629,6 +636,18 @@ function AdminDashboard() {
         <EditFaq
           faq={editingFaq}
           onClose={() => setEditingFaq(null)}
+          isAdmin={isAdmin}
+        />
+      )}
+
+      {addingAccount && (
+        <AddAccount onClose={() => setAddingAccount(null)} isAdmin={isAdmin} />
+      )}
+
+      {editingAccount && (
+        <EditAccount
+          account={editingAccount}
+          onClose={() => setEditingAccount(null)}
           isAdmin={isAdmin}
         />
       )}
