@@ -47,16 +47,18 @@ function BookingSuccess() {
     <>
       <Header />
 
-      <div className="bg-green-50 px-5 sm:px-10 md:px-15 lg:px-20 py-10 flex flex-col gap-5">
+      <div className="bg-green-50 px-3 sm:px-6 lg:px-10 py-4 flex flex-col items-center">
         {booking && (
-          <div className="bg-white text-[#227B05] flex flex-col gap-10 py-10 rounded-xl px-5 xs:px-10 sm:px-20 mx-5 xs:mx-10 sm:mx-15 md:mx-20 lg:mx-30">
-            <div className="rounded-xl p-3 flex flex-col text-center justify-center gap-5 mt-10">
+          <div className="bg-white text-[#227B05] flex flex-col gap-4 py-4 rounded-xl px-4 xs:px-5 sm:px-6 max-w-xl w-full shadow-sm">
+            <div className="rounded-xl p-2 flex flex-col text-center justify-center gap-2 mt-1">
               <FontAwesomeIcon
                 icon={faCircleCheck}
-                className="bg-[#227B05]/20 rounded-full px-4 py-5 text-6xl mx-auto mb-4"
+                className="bg-[#227B05]/20 rounded-full px-3 py-3 text-3xl mx-auto mb-2"
               />
-              <h1 className="text-2xl">Reservation Confirmed!</h1>
-              <h3>
+              <h1 className="text-lg sm:text-xl font-semibold">
+                Reservation Confirmed!
+              </h1>
+              <h3 className="text-xs sm:text-sm">
                 Thank you for booking your visit with CvSU Agri-Eco Tourism
                 Park. We're excited to welcome you!
               </h3>
@@ -67,78 +69,90 @@ function BookingSuccess() {
               icon={<FontAwesomeIcon icon={faCalendarCheck} />}
               title="Your Booking Details"
               descriptionContent={
-                <div className="grid grid-cols-2 p-10 gap-5">
+                <div className="grid grid-cols-2 p-4 sm:p-5 gap-3 text-xs sm:text-sm">
                   <div className="flex flex-col col-span-2 lg:col-span-1">
-                    <span className="text-lg text-gray-400">Visitor Name</span>
-                    <span className="font-bold text-xl">
+                    <span className="text-[11px] sm:text-xs text-gray-400">
+                      Visitor Name
+                    </span>
+                    <span className="font-semibold text-sm sm:text-base">
                       {booking.account.detail.firstName}{" "}
                       {booking.account.detail.surname}
                     </span>
                   </div>
                   <div className="flex flex-col col-span-2 lg:col-span-1">
-                    <span className="text-lg text-gray-400">Email</span>
-                    <span className="font-bold text-xl">
+                    <span className="text-[11px] sm:text-xs text-gray-400">
+                      Email
+                    </span>
+                    <span className="font-semibold text-sm sm:text-base break-words">
                       {booking.account.detail.email}
                     </span>
                   </div>
                   <div className="flex flex-col col-span-2 md:col-span-1">
-                    <span className="text-lg text-gray-400">Visitor Date</span>
-                    <span className="font-bold text-xl">
+                    <span className="text-[11px] sm:text-xs text-gray-400">
+                      Visitor Date
+                    </span>
+                    <span className="font-semibold text-sm sm:text-base">
                       {booking.visitDate}
                     </span>
                   </div>
                   <div className="flex flex-col col-span-2 md:col-span-1">
-                    <span className="text-lg text-gray-400">Visitor Time</span>
-                    <span className="font-bold text-xl">
+                    <span className="text-[11px] sm:text-xs text-gray-400">
+                      Visitor Time
+                    </span>
+                    <span className="font-semibold text-sm sm:text-base">
                       {booking.visitTime}
                     </span>
                   </div>
                   <div className="flex flex-col col-span-2 md:col-span-1">
-                    <span className="text-lg text-gray-400">Group Size</span>
-                    <span className="font-bold text-xl">
+                    <span className="text-[11px] sm:text-xs text-gray-400">
+                      Group Size
+                    </span>
+                    <span className="font-semibold text-sm sm:text-base">
                       {booking.groupSize} visitor(s)
                     </span>
                   </div>
                   <div className="flex flex-col col-span-2 md:col-span-1">
-                    <span className="text-lg text-gray-400">Booking Price</span>
-                    <span className="font-bold text-xl">
+                    <span className="text-[11px] sm:text-xs text-gray-400">
+                      Booking Price
+                    </span>
+                    <span className="font-semibold text-sm sm:text-base">
                       <FontAwesomeIcon icon={faPesoSign} />
                       {booking.totalPrice}
                     </span>
                   </div>
                   {booking.paymentMethod === "ONLINE" && (
                     <div className="flex flex-col col-span-2 md:col-span-1">
-                      <span className="text-lg text-gray-400">
+                      <span className="text-[11px] sm:text-xs text-gray-400">
                         Down Payment (50%)
                       </span>
-                      <span className="font-bold text-xl">
+                      <span className="font-semibold text-sm sm:text-base">
                         {booking.totalPrice / 2}
                       </span>
                     </div>
                   )}
                   {booking.paymentMethod === "PARK" && (
                     <div className="flex flex-col col-span-2 lg:col-span-1">
-                      <span className="text-lg text-gray-400">
+                      <span className="text-[11px] sm:text-xs text-gray-400">
                         Payment Method
                       </span>
-                      <span className="font-bold text-xl">
+                      <span className="font-semibold text-sm sm:text-base">
                         Cash Payment at the Park
                       </span>
                     </div>
                   )}
                   <div className="flex flex-col col-span-2 md:col-span-1">
-                    <span className="text-lg text-gray-400">
+                    <span className="text-[11px] sm:text-xs text-gray-400">
                       Booking Status
                     </span>
-                    <span className="font-bold text-xl">
+                    <span className="font-semibold text-sm sm:text-base">
                       {booking.bookingStatus}
                     </span>
                   </div>
                   <div className="flex flex-col col-span-2 md:col-span-1">
-                    <span className="text-lg text-gray-400">
+                    <span className="text-[11px] sm:text-xs text-gray-400">
                       Payment Status
                     </span>
-                    <span className="font-bold text-xl">
+                    <span className="font-semibold text-sm sm:text-base">
                       {booking.paymentStatus}
                     </span>
                   </div>
@@ -153,7 +167,7 @@ function BookingSuccess() {
                 icon={<FontAwesomeIcon icon={faEnvelope} />}
                 title="What's next?"
                 descriptionContent={
-                  <ul className="list-disc pl-5 space-y-1 marker:text-[#222EDA] my-5 mx-10">
+                  <ul className="list-disc pl-5 space-y-1 marker:text-[#222EDA] my-2 mx-4 text-xs sm:text-sm">
                     <li>You will receive a confirmation email.</li>
                     <li>Check “My Schedule” to track your booking status.</li>
                     <li>
@@ -175,7 +189,7 @@ function BookingSuccess() {
                 icon={<FontAwesomeIcon icon={faEnvelope} />}
                 title="What's next?"
                 descriptionContent={
-                  <ul className="list-disc pl-5 space-y-1 marker:text-[#97750B] my-5 mx-10">
+                  <ul className="list-disc pl-5 space-y-1 marker:text-[#97750B] my-2 mx-4 text-xs sm:text-sm">
                     <li>Wait for admin to confirm your booking</li>
                     <li>Check “My Schedule” to track your booking status.</li>
                     <li>Once approved, your booking is complete!</li>
@@ -193,7 +207,7 @@ function BookingSuccess() {
               />
             )}
 
-            <div className="grid grid-cols-2 gap-10">
+            <div className="grid grid-cols-2 gap-3 mt-1 text-xs sm:text-sm">
               <Link
                 to="/"
                 className="border border-black rounded-lg text-center flex justify-center py-2 px-3 text-[#227B05] hover:text-black hover:bg-[#227B05]/30"
