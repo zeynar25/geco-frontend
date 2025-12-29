@@ -83,7 +83,7 @@ function BookingSuccess() {
                     <span className="text-[11px] sm:text-xs text-gray-400">
                       Email
                     </span>
-                    <span className="font-semibold text-sm sm:text-base break-words">
+                    <span className="font-semibold text-sm sm:text-base wrap-break-word">
                       {booking.account.detail.email}
                     </span>
                   </div>
