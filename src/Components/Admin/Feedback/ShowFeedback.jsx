@@ -23,6 +23,8 @@ function ShowFeedback(props) {
   const [endDateFilter, setEndDateFilter] = useState("");
   const [feedbackPage, setFeedbackPage] = useState(0);
 
+  const [searchEmail, setSearchEmail] = useState("");
+
   const isActive = (something) => {
     if (!something) return true;
     if (typeof something.active === "boolean") return something.active;
@@ -161,6 +163,7 @@ function ShowFeedback(props) {
       feedbackStatusFilter,
       startDateFilter,
       endDateFilter,
+      searchEmail,
     ],
     enabled:
       props.canViewDashboard &&
@@ -172,6 +175,8 @@ function ShowFeedback(props) {
       params.append("page", feedbackPage.toString());
       params.append("size", "10");
 
+      const trimmedEmail = searchEmail.trim();
+
       if (feedbackStatusFilter !== "ALL") {
         params.append("feedbackStatus", feedbackStatusFilter);
       }
@@ -182,6 +187,10 @@ function ShowFeedback(props) {
 
       if (endDateFilter) {
         params.append("endDate", endDateFilter);
+      }
+
+      if (trimmedEmail) {
+        params.append("email", trimmedEmail);
       }
 
       const endpoint = `http://localhost:8080/feedback?${params.toString()}`;
@@ -214,6 +223,7 @@ function ShowFeedback(props) {
       feedbackStatusFilter,
       startDateFilter,
       endDateFilter,
+      searchEmail,
     ],
     enabled:
       props.canViewDashboard &&
@@ -225,6 +235,8 @@ function ShowFeedback(props) {
       params.append("page", feedbackPage.toString());
       params.append("size", "10");
 
+      const trimmedEmail = searchEmail.trim();
+
       if (feedbackStatusFilter !== "ALL") {
         params.append("feedbackStatus", feedbackStatusFilter);
       }
@@ -235,6 +247,10 @@ function ShowFeedback(props) {
 
       if (endDateFilter) {
         params.append("endDate", endDateFilter);
+      }
+
+      if (trimmedEmail) {
+        params.append("email", trimmedEmail);
       }
 
       const activeFeedback = await fetch(
@@ -268,6 +284,7 @@ function ShowFeedback(props) {
       feedbackStatusFilter,
       startDateFilter,
       endDateFilter,
+      searchEmail,
     ],
     enabled:
       props.canViewDashboard &&
@@ -279,6 +296,8 @@ function ShowFeedback(props) {
       params.append("page", feedbackPage.toString());
       params.append("size", "10");
 
+      const trimmedEmail = searchEmail.trim();
+
       if (feedbackStatusFilter !== "ALL") {
         params.append("feedbackStatus", feedbackStatusFilter);
       }
@@ -289,6 +308,10 @@ function ShowFeedback(props) {
 
       if (endDateFilter) {
         params.append("endDate", endDateFilter);
+      }
+
+      if (trimmedEmail) {
+        params.append("email", trimmedEmail);
       }
 
       const inactiveFeedbacks = await fetch(
@@ -487,6 +510,21 @@ function ShowFeedback(props) {
         </div>
         <div>
           <form className="flex flex-wrap items-end gap-4 px-5 py-4 border-b border-gray-100 bg-white text-sm justify-between">
+            <div className="flex flex-col min-w-[200px]">
+              <span className="text-xs font-semibold text-gray-600 mb-1">
+                Search by Email
+              </span>
+              <input
+                type="text"
+                value={searchEmail}
+                onChange={(e) => {
+                  setSearchEmail(e.target.value);
+                  setFeedbackPage(0);
+                }}
+                placeholder="Enter email or part of it"
+                className="border border-[#227B05] rounded-md px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#227B05]"
+              />
+            </div>
             <div className="flex flex-col min-w-[150px]">
               <span className="text-xs font-semibold text-gray-600 mb-1">
                 Feedback Activity
