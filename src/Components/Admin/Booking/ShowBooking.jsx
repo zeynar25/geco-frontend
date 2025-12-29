@@ -23,6 +23,8 @@ function ShowBooking(props) {
   const [endDateFilter, setEndDateFilter] = useState("");
   const [bookingPage, setBookingPage] = useState(0);
 
+  const [searchEmail, setSearchEmail] = useState("");
+
   const [isProofModalOpen, setIsProofModalOpen] = useState(false);
   const [selectedProofUrl, setSelectedProofUrl] = useState(null);
 
@@ -61,6 +63,7 @@ function ShowBooking(props) {
       paymentMethodFilter,
       startDateFilter,
       endDateFilter,
+      searchEmail,
     ],
     enabled: props.canViewDashboard && props.bookingIn,
     queryFn: async () => {
@@ -70,6 +73,7 @@ function ShowBooking(props) {
       const params = new URLSearchParams();
       params.append("page", bookingPage.toString());
       params.append("size", "10");
+      const trimmedEmail = searchEmail.trim();
       if (bookingFilter !== "ALL") {
         params.append("bookingStatus", bookingFilter.toUpperCase());
       }
@@ -78,6 +82,10 @@ function ShowBooking(props) {
       }
       if (paymentMethodFilter !== "ALL") {
         params.append("paymentMethod", paymentMethodFilter.toUpperCase());
+      }
+
+      if (trimmedEmail) {
+        params.append("email", trimmedEmail);
       }
 
       if (startDateFilter) {
@@ -122,6 +130,21 @@ function ShowBooking(props) {
       <div>
         <div className="border-b border-gray-100 bg-white">
           <form className="flex flex-wrap items-end gap-4 px-5 py-4 text-sm justify-between">
+            <div className="flex flex-col min-w-[200px]">
+              <span className="text-xs font-semibold text-gray-600 mb-1">
+                Search by Email
+              </span>
+              <input
+                type="text"
+                value={searchEmail}
+                onChange={(e) => {
+                  setSearchEmail(e.target.value);
+                  setBookingPage(0);
+                }}
+                placeholder="Enter email or part of it"
+                className="border border-[#227B05] rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#227B05] bg-white"
+              />
+            </div>
             <div className="flex flex-col min-w-[150px]">
               <span className="text-xs font-semibold text-gray-600 mb-1">
                 Booking Status
