@@ -60,6 +60,11 @@ function Account() {
     useState(null);
   const [paymentFile, setPaymentFile] = useState(null);
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
+  const [isResubmittingPayment, setIsResubmittingPayment] = useState(false);
+
+  const [isProofModalOpen, setIsProofModalOpen] = useState(false);
+  const [selectedProofUrl, setSelectedProofUrl] = useState(null);
+  const [isProofLoading, setIsProofLoading] = useState(false);
 
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
@@ -336,6 +341,7 @@ function Account() {
   const openPaymentModal = (booking) => {
     setSelectedBookingForPayment(booking);
     setPaymentFile(null);
+    setIsResubmittingPayment(booking.paymentStatus === "REJECTED");
     setIsPaymentModalOpen(true);
   };
 
@@ -343,11 +349,29 @@ function Account() {
     setIsPaymentModalOpen(false);
     setSelectedBookingForPayment(null);
     setPaymentFile(null);
+    setIsResubmittingPayment(false);
   };
 
   const handlePaymentFileChange = (event) => {
     const file = event.target.files?.[0] || null;
     setPaymentFile(file);
+  };
+
+  const openProofModal = (booking) => {
+    if (!booking.proofOfPaymentPhoto) {
+      alert("No proof of payment uploaded for this booking.");
+      return;
+    }
+
+    setSelectedProofUrl(booking.proofOfPaymentPhoto);
+    setIsProofLoading(true);
+    setIsProofModalOpen(true);
+  };
+
+  const closeProofModal = () => {
+    setIsProofModalOpen(false);
+    setSelectedProofUrl(null);
+    setIsProofLoading(false);
   };
 
   const handleSubmitPayment = async () => {
@@ -375,6 +399,8 @@ function Account() {
         "data",
         new Blob([JSON.stringify(payload)], { type: "application/json" })
       );
+      // Indicate whether this is a resubmission after rejection
+      formData.append("resubmit", isResubmittingPayment ? "true" : "false");
       formData.append("proofOfPayment", paymentFile);
 
       const response = await fetch(
@@ -898,6 +924,24 @@ function Account() {
                         {/* Payment Status: {booking.paymentStatus} */}
                       </div>
                     </div>
+                    {booking.paymentMethod === "ONLINE" &&
+                      booking.proofOfPaymentPhoto && (
+                        <div className="bg-[#222EDA]/10 flex gap-3 justify-around rounded-lg p-3 mt-4 mb-1">
+                          <div className="flex flex-col gap-1 text-center">
+                            <span className="text-sm text-gray-700">
+                              Proof of Payment
+                            </span>
+                            <button
+                              type="button"
+                              className="underline font-semibold text-[#227B05] hover:text-[#125003]"
+                              onClick={() => openProofModal(booking)}
+                            >
+                              View Screenshot
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
                     {booking.bookingStatus === "PENDING" ? (
                       <div className="text-sm text-gray-600 text-center mt-5">
                         Waiting for staff confirmation
@@ -933,6 +977,25 @@ function Account() {
                       <div className="text-sm text-gray-600 text-center mt-5">
                         Payment verified! You’re all set for your visit. See you
                         there!
+                      </div>
+                    ) : booking.bookingStatus === "APPROVED" &&
+                      booking.paymentMethod === "ONLINE" &&
+                      booking.paymentStatus == "REJECTED" ? (
+                      <div className="bg-red-50 text-red-700 px-6 py-3 rounded-md border border-red-300 mt-5 mx-auto flex flex-col items-center gap-3 mb-1 text-sm">
+                        <div className="font-semibold">
+                          Your previous payment proof was rejected.
+                        </div>
+                        <div>
+                          Please review the payment details and resubmit a clear
+                          screenshot of your transaction.
+                        </div>
+                        <button
+                          type="button"
+                          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                          onClick={() => openPaymentModal(booking)}
+                        >
+                          Resubmit payment
+                        </button>
                       </div>
                     ) : booking.bookingStatus === "APPROVED" &&
                       booking.paymentMethod === "PARK" ? (
@@ -1337,6 +1400,54 @@ function Account() {
               >
                 {isSubmittingPayment ? "Submitting..." : "Submit"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isProofModalOpen && selectedProofUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          onClick={closeProofModal}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 p-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="absolute top-3 right-3 text-gray-500 hover:text-black text-lg"
+              onClick={closeProofModal}
+            >
+              <FontAwesomeIcon icon={faX} />
+            </button>
+            <h2 className="text-lg font-semibold mb-3 text-[#227B05]">
+              Proof of Payment
+            </h2>
+            <div className="flex justify-center items-center min-h-[200px]">
+              {isProofLoading && (
+                <div className="flex flex-col items-center gap-2 text-gray-600">
+                  <ClipLoader color="#227B05" size={32} />
+                  <span className="text-sm">Loading image...</span>
+                </div>
+              )}
+              <img
+                src={
+                  selectedProofUrl.startsWith("http")
+                    ? selectedProofUrl
+                    : `http://localhost:8080${selectedProofUrl}`
+                }
+                alt="Proof of payment"
+                className={`max-h-[70vh] w-auto object-contain border rounded-md ${
+                  isProofLoading ? "hidden" : ""
+                }`}
+                onLoad={() => setIsProofLoading(false)}
+                onError={() => {
+                  setIsProofLoading(false);
+                  alert(
+                    "Failed to load proof of payment image. Please try again."
+                  );
+                }}
+              />
             </div>
           </div>
         </div>
