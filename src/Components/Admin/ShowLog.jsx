@@ -119,6 +119,31 @@ function ShowLog(props) {
     return date.toLocaleString();
   };
 
+  const formatJson = (value) => {
+    if (!value) return "-";
+
+    if (typeof value === "string") {
+      // Strip possible JSON_ERROR prefix from backend
+      const trimmed = value.trim();
+      if (trimmed.startsWith("JSON_ERROR")) {
+        return trimmed;
+      }
+
+      try {
+        const parsed = JSON.parse(trimmed);
+        return JSON.stringify(parsed, null, 2);
+      } catch {
+        return value;
+      }
+    }
+
+    try {
+      return JSON.stringify(value, null, 2);
+    } catch {
+      return String(value);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-xl">
       <div className="flex gap-3 flex-wrap justify-between text-white bg-[#48BF56] p-4 font-bold text-2xl">
@@ -363,20 +388,20 @@ function ShowLog(props) {
               </button>
             </div>
             <div className="flex-1 overflow-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
-              <div className="border border-gray-200 rounded-md p-3 bg-gray-50 flex flex-col gap-2">
-                <span className="font-semibold text-xs uppercase text-gray-600">
+              <div className="border border-red-100 rounded-md p-3 bg-red-50/40 flex flex-col gap-2">
+                <span className="font-semibold text-xs uppercase text-red-700">
                   Old Value
                 </span>
-                <pre className="whitespace-pre-wrap wrap-break-word text-[0.7rem] md:text-xs text-gray-800 max-h-60 overflow-auto bg-white rounded p-2 border border-gray-200">
-                  {selectedLog.oldValue || "-"}
+                <pre className="whitespace-pre-wrap wrap-break-word text-[0.7rem] md:text-xs text-gray-800 max-h-60 overflow-auto bg-white rounded p-2 border border-red-100 font-mono">
+                  {formatJson(selectedLog.oldValue)}
                 </pre>
               </div>
-              <div className="border border-gray-200 rounded-md p-3 bg-gray-50 flex flex-col gap-2">
-                <span className="font-semibold text-xs uppercase text-gray-600">
+              <div className="border border-emerald-100 rounded-md p-3 bg-emerald-50/40 flex flex-col gap-2">
+                <span className="font-semibold text-xs uppercase text-emerald-700">
                   New Value
                 </span>
-                <pre className="whitespace-pre-wrap wrap-break-word text-[0.7rem] md:text-xs text-gray-800 max-h-60 overflow-auto bg-white rounded p-2 border border-gray-200">
-                  {selectedLog.newValue || "-"}
+                <pre className="whitespace-pre-wrap wrap-break-word text-[0.7rem] md:text-xs text-gray-800 max-h-60 overflow-auto bg-white rounded p-2 border border-emerald-100 font-mono">
+                  {formatJson(selectedLog.newValue)}
                 </pre>
               </div>
             </div>
