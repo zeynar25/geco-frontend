@@ -151,7 +151,9 @@ function ShowBooking(props) {
               >
                 <option value="ALL">All</option>
                 <option value="UNPAID">Unpaid</option>
-                <option value="PAYMENT_VERIFICATION">Payment Verified</option>
+                <option value="PAYMENT_VERIFICATION">
+                  Payment Verification
+                </option>
                 <option value="VERIFIED">Verified</option>
                 <option value="REJECTED">Rejected</option>
                 <option value="REFUNDED">Refunded</option>
