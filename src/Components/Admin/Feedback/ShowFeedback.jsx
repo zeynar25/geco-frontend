@@ -646,6 +646,11 @@ function ShowFeedback(props) {
                               >
                                 {feedback.feedbackStatus?.toLowerCase()}
                               </div>
+                              {!isActive(feedback) && (
+                                <div className="px-2 py-0.5 rounded-full text-[0.65rem] font-semibold bg-gray-300 text-gray-700">
+                                  Hidden
+                                </div>
+                              )}
                               <button
                                 type="button"
                                 className="text-gray-600 hover:text-[#227B05]"
