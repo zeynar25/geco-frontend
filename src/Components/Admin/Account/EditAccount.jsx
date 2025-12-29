@@ -5,6 +5,7 @@ import { faX } from "@fortawesome/free-solid-svg-icons";
 
 function EditAccount({ account, onClose, isAdmin }) {
   const [role, setRole] = useState(account?.role || "USER");
+  const [showRoleConfirm, setShowRoleConfirm] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -175,6 +176,13 @@ function EditAccount({ account, onClose, isAdmin }) {
       return;
     }
 
+    // If promoting someone to ADMIN, show a confirmation modal because
+    // this may transfer admin rights and demote the current admin.
+    if (role === "ADMIN") {
+      setShowRoleConfirm(true);
+      return;
+    }
+
     updateRoleMutation.mutate({ accountId: account.accountId, role });
   };
 
@@ -338,6 +346,47 @@ function EditAccount({ account, onClose, isAdmin }) {
           </div>
         </form>
       </div>
+
+      {showRoleConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <h3 className="font-semibold text-lg mb-2">
+              Transfer admin rights?
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              You are about to assign the ADMIN role to this account. This may
+              transfer admin rights and demote your current account to STAFF.
+              Are you sure you want to continue?
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                className="px-4 py-2 rounded border border-gray-300 text-sm hover:bg-gray-100"
+                onClick={() => setShowRoleConfirm(false)}
+                disabled={isBusy}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="px-4 py-2 rounded bg-[#227B05]/80 text-white text-sm hover:bg-[#227B05] disabled:opacity-60 disabled:cursor-not-allowed"
+                onClick={() => {
+                  setShowRoleConfirm(false);
+                  updateRoleMutation.mutate({
+                    accountId: account.accountId,
+                    role,
+                  });
+                }}
+                disabled={isBusy}
+              >
+                {updateRoleMutation.isPending
+                  ? "Saving..."
+                  : "Yes, transfer admin"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
