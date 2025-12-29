@@ -4,13 +4,14 @@ import {
   faCalendarDays,
   faTree,
   faBook,
+  faCommentDots,
   faArrowRightToBracket,
   faArrowRightFromBracket,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 import { jwtDecode } from "jwt-decode";
 
@@ -55,24 +56,6 @@ function Header() {
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  const { data, isPending } = useQuery({
-    queryKey: ["account-details"],
-    enabled: loggedIn,
-    queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const details = await fetch("http://localhost:8080/account/my-account", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!details.ok) {
-        const error = await details.json();
-        throw new Error(error?.error || "Getting account details failed");
-      }
-      return await details.json();
-    },
-  });
 
   const logoutMutation = useMutation({
     mutationFn: logoutAccount,
@@ -125,7 +108,7 @@ function Header() {
 
           {/* Desktop nav */}
           <nav id="main-nav" aria-label="Primary" className="hidden lg:block">
-            <ul className="flex items-center gap-5">
+            <ul className="flex items-center gap-2">
               <li>
                 <Link
                   to="/"
@@ -176,6 +159,19 @@ function Header() {
                     className="text-[#227B05] group-hover:text-black"
                   />
                   <span>Book Visit</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/feedback"
+                  state={{ from: location.pathname }}
+                  className="group inline-flex items-center gap-1 rounded-md px-2 py-2.5 text-sm font-semibold text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
+                >
+                  <FontAwesomeIcon
+                    icon={faCommentDots}
+                    className="text-[#227B05] group-hover:text-black"
+                  />
+                  <span>Feedback</span>
                 </Link>
               </li>
             </ul>
@@ -323,6 +319,20 @@ function Header() {
                 <span>Book Visit</span>
               </Link>
             </li>
+            <li>
+              <Link
+                to="/feedback"
+                state={{ from: location.pathname }}
+                className="group flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
+                onClick={() => setOpen(false)}
+              >
+                <FontAwesomeIcon
+                  icon={faCommentDots}
+                  className="text-[#227B05] group-hover:text-black"
+                />
+                <span>Feedback</span>
+              </Link>
+            </li>
             {/* Mobile CTA */}
             <li className="pt-2">
               {loggedIn ? (
@@ -332,13 +342,6 @@ function Header() {
                 >
                   <div className="leading-tight text-left flex flex-col gap-1">
                     <span className="block font-bold">Logout</span>
-                    <span className="block text-[11px] font-normal text-green-100">
-                      {isPending
-                        ? "Loading..."
-                        : `${data?.detail.firstName || ""} ${
-                            data?.detail.surname || ""
-                          }`}
-                    </span>
                   </div>
                   <FontAwesomeIcon
                     icon={faArrowRightFromBracket}
