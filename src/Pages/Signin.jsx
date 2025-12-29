@@ -173,7 +173,7 @@ function Signin() {
                         className="absolute text-xl left-5 top-1/2 -translate-y-1/2"
                       />
                       <input
-                        className="w-full border px-2 py-3 pl-15"
+                        className="w-full border px-2 py-3 pl-15 pr-10"
                         type={registerPasswordVisible ? "text" : "password"}
                         id="password"
                         name="password"
@@ -206,7 +206,7 @@ function Signin() {
                         className="absolute text-xl left-5 top-1/2 -translate-y-1/2"
                       />
                       <input
-                        className="w-full border px-2 py-3 pl-15"
+                        className="w-full border px-2 py-3 pl-15 pr-10"
                         type={registerConfirmVisible ? "text" : "password"}
                         id="confirm-password"
                         name="confirm-password"
@@ -268,7 +268,7 @@ function Signin() {
                         className="absolute text-xl left-5 top-1/2 -translate-y-1/2"
                       />
                       <input
-                        className="w-full border px-2 py-3 pl-15"
+                        className="w-full border px-2 py-3 pl-15 pr-10"
                         type={loginPasswordVisible ? "text" : "password"}
                         id="password"
                         name="password"
