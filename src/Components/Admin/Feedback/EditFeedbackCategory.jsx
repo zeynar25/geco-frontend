@@ -31,16 +31,9 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
       return response.json();
     },
     onSuccess: () => {
+      invalidateQueries();
       queryClient.invalidateQueries({
-        queryKey: ["FeedbackCategory"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["activeFeedbackCategory"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["inactiveFeedbackCategory"],
+        queryKey: ["dashboardStatistics"],
         exact: false,
       });
       alert("Feedback category updated successfully.");
@@ -70,16 +63,9 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
       }
     },
     onSuccess: () => {
+      invalidateQueries();
       queryClient.invalidateQueries({
-        queryKey: ["FeedbackCategory"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["activeFeedbackCategory"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["inactiveFeedbackCategory"],
+        queryKey: ["dashboardStatistics"],
         exact: false,
       });
       alert("Feedback category disabled successfully.");
@@ -109,16 +95,9 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
       }
     },
     onSuccess: () => {
+      invalidateQueries();
       queryClient.invalidateQueries({
-        queryKey: ["FeedbackCategory"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["activeFeedbackCategory"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["inactiveFeedbackCategory"],
+        queryKey: ["dashboardStatistics"],
         exact: false,
       });
       alert("Feedback category restored successfully.");

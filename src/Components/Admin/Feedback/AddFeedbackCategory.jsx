@@ -41,6 +41,10 @@ function AddFeedbackCategory({ onClose }) {
         queryKey: ["inactiveFeedbackCategory"],
         exact: false,
       });
+      queryClient.invalidateQueries({
+        queryKey: ["dashboardStatistics"],
+        exact: false,
+      });
 
       alert("Feedback category added successfully.");
       onClose?.();

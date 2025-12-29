@@ -35,6 +35,10 @@ function EditBooking({ booking, onClose }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bookings"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["dashboardStatistics"],
+        exact: false,
+      });
       onClose();
       alert("Booking updated successfully.");
     },

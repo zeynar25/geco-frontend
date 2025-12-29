@@ -30,7 +30,7 @@ import ShowAttraction from "../Components/Admin/Attraction/ShowAttraction";
 import AddAttraction from "../Components/Admin/Attraction/AddAttraction";
 import EditAttraction from "../Components/Admin/Attraction/EditAttraction";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { jwtDecode } from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -56,6 +56,14 @@ function isLoggedIn() {
 }
 
 function AdminDashboard() {
+  const queryClient = useQueryClient();
+
+  const refreshDashboardStatistics = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["dashboardStatistics"],
+      exact: false,
+    });
+  };
   const location = useLocation();
   const backTo = location.state?.from || "/";
   const navigate = useNavigate();

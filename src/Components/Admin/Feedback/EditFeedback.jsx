@@ -4,12 +4,37 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
 function EditFeedback({ feedback, onClose }) {
+  const isActive = (something) => {
+    if (!something) return true;
+    if (typeof something.active === "boolean") return something.active;
+    if (typeof something.enabled === "boolean") return something.enabled;
+    if (typeof something.status === "string")
+      return something.status.toUpperCase() === "ACTIVE";
+    return true;
+  };
+
   const [editForm, setEditForm] = useState(() => ({
     staffReply: feedback?.staffReply || "",
     feedbackStatus: feedback?.feedbackStatus || "NEW",
   }));
 
   const queryClient = useQueryClient();
+
+  const invalidateFeedbackQueries = () => {
+    queryClient.invalidateQueries({ queryKey: ["Feedback"], exact: false });
+    queryClient.invalidateQueries({
+      queryKey: ["activeFeedback"],
+      exact: false,
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["inactiveFeedback"],
+      exact: false,
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["dashboardStatistics"],
+      exact: false,
+    });
+  };
 
   const updateFeedbackMutation = useMutation({
     mutationFn: async ({ feedbackId, data }) => {
@@ -34,15 +59,7 @@ function EditFeedback({ feedback, onClose }) {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["Feedback"], exact: false });
-      queryClient.invalidateQueries({
-        queryKey: ["activeFeedback"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["inactiveFeedback"],
-        exact: false,
-      });
+      invalidateFeedbackQueries();
       alert("Feedback updated successfully.");
       onClose?.();
     },
@@ -50,6 +67,67 @@ function EditFeedback({ feedback, onClose }) {
       alert(error.message || "Updating feedback failed");
     },
   });
+
+  const disableFeedbackMutation = useMutation({
+    mutationFn: async (feedbackId) => {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:8080/feedback/${feedbackId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Disabling feedback failed");
+      }
+    },
+    onSuccess: () => {
+      invalidateFeedbackQueries();
+      alert("Feedback disabled successfully.");
+      onClose?.();
+    },
+    onError: (error) => {
+      alert(error.message || "Disabling feedback failed");
+    },
+  });
+
+  const restoreFeedbackMutation = useMutation({
+    mutationFn: async (feedbackId) => {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:8080/feedback/restore/${feedbackId}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Restoring feedback failed");
+      }
+    },
+    onSuccess: () => {
+      invalidateFeedbackQueries();
+      alert("Feedback restored successfully.");
+      onClose?.();
+    },
+    onError: (error) => {
+      alert(error.message || "Restoring feedback failed");
+    },
+  });
+
+  const isBusy =
+    updateFeedbackMutation.isPending ||
+    disableFeedbackMutation.isPending ||
+    restoreFeedbackMutation.isPending;
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -112,7 +190,7 @@ function EditFeedback({ feedback, onClose }) {
                   feedbackStatus: e.target.value,
                 }))
               }
-              disabled={updateFeedbackMutation.isPending}
+              disabled={isBusy}
             >
               <option value="NEW">NEW</option>
               <option value="VIEWED">VIEWED</option>
@@ -131,29 +209,60 @@ function EditFeedback({ feedback, onClose }) {
                 }))
               }
               placeholder="Write a reply to the guest..."
-              disabled={updateFeedbackMutation.isPending}
+              disabled={isBusy}
             />
             <span className="text-xs text-gray-500">
               At least 5 characters if provided.
             </span>
           </div>
 
-          <div className="flex justify-end gap-2 mt-2">
-            <button
-              type="button"
-              className="px-4 py-2 rounded border border-gray-300 text-sm hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
-              onClick={onClose}
-              disabled={updateFeedbackMutation.isPending}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 rounded bg-[#227B05]/80 text-white text-sm hover:bg-[#227B05] disabled:opacity-60 disabled:cursor-not-allowed"
-              disabled={updateFeedbackMutation.isPending}
-            >
-              {updateFeedbackMutation.isPending ? "Saving..." : "Save"}
-            </button>
+          <div className="flex justify-between items-center gap-2 mt-2">
+            <div>
+              {isActive(feedback) ? (
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded border border-red-300 text-sm text-red-700 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                  onClick={() =>
+                    disableFeedbackMutation.mutate(feedback.feedbackId)
+                  }
+                  disabled={isBusy}
+                >
+                  {disableFeedbackMutation.isPending
+                    ? "Disabling..."
+                    : "Disable"}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded border border-emerald-300 text-sm text-emerald-700 hover:bg-emerald-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                  onClick={() =>
+                    restoreFeedbackMutation.mutate(feedback.feedbackId)
+                  }
+                  disabled={isBusy}
+                >
+                  {restoreFeedbackMutation.isPending
+                    ? "Restoring..."
+                    : "Restore"}
+                </button>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                className="px-4 py-2 rounded border border-gray-300 text-sm hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                onClick={onClose}
+                disabled={isBusy}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded bg-[#227B05]/80 text-white text-sm hover:bg-[#227B05] disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={isBusy}
+              >
+                {updateFeedbackMutation.isPending ? "Saving..." : "Save"}
+              </button>
+            </div>
           </div>
         </form>
       </div>
