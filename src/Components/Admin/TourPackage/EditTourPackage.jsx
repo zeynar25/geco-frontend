@@ -303,7 +303,7 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
               </label>
               <input
                 type="number"
-                min="0"
+                min="-1"
                 className="border border-gray-300 rounded px-2 py-1"
                 value={form.duration}
                 onChange={handleChange("duration")}
