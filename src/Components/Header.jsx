@@ -333,6 +333,22 @@ function Header() {
                 <span>Feedback</span>
               </Link>
             </li>
+            {loggedIn && (
+              <li>
+                <Link
+                  to="/my-account"
+                  state={{ from: location.pathname }}
+                  className="group flex items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-[#48BF56] hover:text-black transition-colors"
+                  onClick={() => setOpen(false)}
+                >
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    className="text-[#227B05] group-hover:text-black"
+                  />
+                  <span>My Account</span>
+                </Link>
+              </li>
+            )}
             {/* Mobile CTA */}
             <li className="pt-2">
               {loggedIn ? (
