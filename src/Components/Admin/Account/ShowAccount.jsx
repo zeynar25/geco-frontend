@@ -71,6 +71,19 @@ function ShowAccount(props) {
 
       if (trimmedSearch) {
         params.append("email", trimmedSearch);
+        // Apply current filters to search so we only search within
+        // the selected role and/or activity (active/inactive)
+        if (accountRoleFilter !== "ALL") {
+          params.append("role", accountRoleFilter);
+        }
+
+        if (
+          accountActivityFilter === "ACTIVE" ||
+          accountActivityFilter === "INACTIVE"
+        ) {
+          params.append("status", accountActivityFilter);
+        }
+
         basePath = "account/staff/search";
       } else if (accountRoleFilter === "ALL") {
         if (accountActivityFilter === "ACTIVE") {
