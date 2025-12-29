@@ -12,9 +12,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 function ShowAccount(props) {
-  const [accountRoleFilter, setAccountRoleFilter] = useState("USER");
+  const [accountRoleFilter, setAccountRoleFilter] = useState("ALL");
   const [accountActivityFilter, setAccountActivityFilter] = useState("ALL");
   const [accountPage, setAccountPage] = useState(0);
+  const [searchEmail, setSearchEmail] = useState("");
 
   const isActive = (account) => {
     if (!account) return true;
@@ -54,6 +55,7 @@ function ShowAccount(props) {
       accountRoleFilter,
       accountActivityFilter,
       accountPage,
+      searchEmail,
     ],
     enabled: props.canViewDashboard && props.accountsIn,
     queryFn: async () => {
@@ -63,9 +65,22 @@ function ShowAccount(props) {
       params.append("page", accountPage.toString());
       params.append("size", "10");
 
+      const trimmedSearch = searchEmail.trim();
+
       let basePath = "";
 
-      if (accountRoleFilter === "ADMIN") {
+      if (trimmedSearch) {
+        params.append("email", trimmedSearch);
+        basePath = "account/staff/search";
+      } else if (accountRoleFilter === "ALL") {
+        if (accountActivityFilter === "ACTIVE") {
+          basePath = "account/staff/list/all/active";
+        } else if (accountActivityFilter === "INACTIVE") {
+          basePath = "account/staff/list/all/inactive";
+        } else {
+          basePath = "account/staff/list/all";
+        }
+      } else if (accountRoleFilter === "ADMIN") {
         basePath = "account/staff/list/admin";
       } else if (accountRoleFilter === "STAFF") {
         if (accountActivityFilter === "ACTIVE") {
@@ -154,7 +169,20 @@ function ShowAccount(props) {
       </div>
 
       <div className="p-5 flex flex-col gap-4">
-        <form className="flex justify-end flex-wrap gap-3 text-sm">
+        <form className="flex justify-between flex-wrap gap-3 text-sm">
+          <div className="flex items-center gap-2 flex-1 min-w-[220px]">
+            <span className="font-semibold">Search Email:</span>
+            <input
+              type="text"
+              value={searchEmail}
+              onChange={(e) => {
+                setSearchEmail(e.target.value);
+                setAccountPage(0);
+              }}
+              className="border border-[#227B05] rounded px-2 py-1 w-full max-w-xs"
+              placeholder="Enter email or part of it"
+            />
+          </div>
           <div className="flex items-center gap-2">
             <span className="font-semibold">Account Type:</span>
             <select
@@ -162,6 +190,7 @@ function ShowAccount(props) {
               onChange={handleRoleChange}
               className="border border-[#227B05] rounded px-2 py-1"
             >
+              <option value="ALL">All</option>
               <option value="USER">User</option>
               <option value="STAFF">Staff</option>
               <option value="ADMIN">Admin</option>
