@@ -6,7 +6,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEnvelope,
+  faLock,
+  faEye,
+  faEyeSlash,
+} from "@fortawesome/free-solid-svg-icons";
 
 async function registerAccount({ email, password, confirmPassword, role }) {
   const res = await fetch("http://localhost:8080/account", {
@@ -39,6 +44,9 @@ async function loginAccount({ email, password }) {
 function Signin() {
   const [formMode, setFormMode] = useState("login");
   const [show, setShow] = useState(true);
+  const [loginPasswordVisible, setLoginPasswordVisible] = useState(false);
+  const [registerPasswordVisible, setRegisterPasswordVisible] = useState(false);
+  const [registerConfirmVisible, setRegisterConfirmVisible] = useState(false);
   const navigate = useNavigate();
 
   function handleSwitch(mode) {
@@ -166,12 +174,31 @@ function Signin() {
                       />
                       <input
                         className="w-full border px-2 py-3 pl-15"
-                        type="password"
+                        type={registerPasswordVisible ? "text" : "password"}
                         id="password"
                         name="password"
                         placeholder="Password"
                         required
                       />
+                      <button
+                        type="button"
+                        className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 transition-colors duration-150"
+                        onClick={() =>
+                          setRegisterPasswordVisible((prev) => !prev)
+                        }
+                        aria-label={
+                          registerPasswordVisible
+                            ? "Hide password"
+                            : "Show password"
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={registerPasswordVisible ? faEyeSlash : faEye}
+                          className={`transition-transform duration-200 ${
+                            registerPasswordVisible ? "rotate-180" : "rotate-0"
+                          }`}
+                        />
+                      </button>
                     </div>
                     <div className="w-full relative">
                       <FontAwesomeIcon
@@ -180,12 +207,31 @@ function Signin() {
                       />
                       <input
                         className="w-full border px-2 py-3 pl-15"
-                        type="password"
+                        type={registerConfirmVisible ? "text" : "password"}
                         id="confirm-password"
                         name="confirm-password"
                         placeholder="Confirm Password"
                         required
                       />
+                      <button
+                        type="button"
+                        className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 transition-colors duration-150"
+                        onClick={() =>
+                          setRegisterConfirmVisible((prev) => !prev)
+                        }
+                        aria-label={
+                          registerConfirmVisible
+                            ? "Hide password"
+                            : "Show password"
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={registerConfirmVisible ? faEyeSlash : faEye}
+                          className={`transition-transform duration-200 ${
+                            registerConfirmVisible ? "rotate-180" : "rotate-0"
+                          }`}
+                        />
+                      </button>
                     </div>
                     <button
                       type="submit"
@@ -223,12 +269,29 @@ function Signin() {
                       />
                       <input
                         className="w-full border px-2 py-3 pl-15"
-                        type="password"
+                        type={loginPasswordVisible ? "text" : "password"}
                         id="password"
                         name="password"
                         placeholder="Password"
                         required
                       />
+                      <button
+                        type="button"
+                        className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 transition-colors duration-150"
+                        onClick={() => setLoginPasswordVisible((prev) => !prev)}
+                        aria-label={
+                          loginPasswordVisible
+                            ? "Hide password"
+                            : "Show password"
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={loginPasswordVisible ? faEyeSlash : faEye}
+                          className={`transition-transform duration-200 ${
+                            loginPasswordVisible ? "rotate-180" : "rotate-0"
+                          }`}
+                        />
+                      </button>
                     </div>
                     <button
                       type="submit"
