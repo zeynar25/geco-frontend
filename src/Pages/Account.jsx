@@ -905,17 +905,17 @@ function Account() {
                     ) : booking.bookingStatus === "APPROVED" &&
                       booking.paymentMethod === "ONLINE" &&
                       booking.paymentStatus == "UNPAID" ? (
-                      <div className=" bg-[#222EDA]/15 text-[#222EDA] px-5 xs:px-10 sm:px-15 md:px-20 lg:px-25 py-3 rounded-md border border-[#222EDA] mt-5 w-fit mx-auto flex flex-col gap-3">
-                        <div className="flex font-semibold mb-2">
+                      <div className=" bg-[#222EDA]/15 text-[#222EDA] px-10 py-3 rounded-md border border-[#222EDA] mt-5 mx-auto flex flex-col gap-3 mb-1">
+                        <div className="flex justify-between items-center flex-wrap gap-3 font-semibold mb-1">
                           <span>Down payment: </span>
-                          <span>
+                          <span className="min-w-fit">
                             <FontAwesomeIcon icon={faPesoSign} />
                             {booking.totalPrice / 2}{" "}
                           </span>
                         </div>
                         <button
                           type="button"
-                          className="bg-[#222EDA] text-white px-5 py-2 rounded-lg self-center"
+                          className="bg-[#222EDA] text-white px-5 py-2 rounded-lg"
                           onClick={() => openPaymentModal(booking)}
                         >
                           Submit payment
