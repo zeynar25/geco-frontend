@@ -16,17 +16,15 @@ function ShowAccount(props) {
   const [accountActivityFilter, setAccountActivityFilter] = useState("ALL");
   const [accountPage, setAccountPage] = useState(0);
 
-  const isActive = (account) =>
-    account &&
-    (typeof account.isActive === "boolean"
-      ? account.isActive
-      : typeof account.active === "boolean"
-      ? account.active
-      : typeof account.enabled === "boolean"
-      ? account.enabled
-      : typeof account.status === "string"
-      ? account.status.toUpperCase() === "ACTIVE"
-      : true);
+  const isActive = (account) => {
+    if (!account) return true;
+    if (typeof account.isActive === "boolean") return account.isActive;
+    if (typeof account.active === "boolean") return account.active;
+    if (typeof account.enabled === "boolean") return account.enabled;
+    if (typeof account.status === "string")
+      return account.status.toUpperCase() === "ACTIVE";
+    return true;
+  };
 
   const handlePrevAccountPage = () => {
     setAccountPage((prev) => Math.max(prev - 1, 0));

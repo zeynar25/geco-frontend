@@ -8,6 +8,16 @@ function EditAccount({ account, onClose, isAdmin }) {
 
   const queryClient = useQueryClient();
 
+  const isActive = (acc) => {
+    if (!acc) return true;
+    if (typeof acc.isActive === "boolean") return acc.isActive;
+    if (typeof acc.active === "boolean") return acc.active;
+    if (typeof acc.enabled === "boolean") return acc.enabled;
+    if (typeof acc.status === "string")
+      return acc.status.toUpperCase() === "ACTIVE";
+    return true;
+  };
+
   const updateRoleMutation = useMutation({
     mutationFn: async ({ accountId, role }) => {
       const token = localStorage.getItem("token");
@@ -33,6 +43,10 @@ function EditAccount({ account, onClose, isAdmin }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["dashboardStatistics"],
+        exact: false,
+      });
       alert("Account role updated successfully.");
       onClose?.();
     },
@@ -64,6 +78,10 @@ function EditAccount({ account, onClose, isAdmin }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["dashboardStatistics"],
+        exact: false,
+      });
       alert("Password reset successfully.");
     },
     onError: (error) => {
@@ -71,8 +89,77 @@ function EditAccount({ account, onClose, isAdmin }) {
     },
   });
 
+  const disableAccountMutation = useMutation({
+    mutationFn: async ({ accountId }) => {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:8080/account/admin/${accountId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Disabling account failed");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accounts"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["dashboardStatistics"],
+        exact: false,
+      });
+      alert("Account disabled successfully.");
+      onClose?.();
+    },
+    onError: (error) => {
+      alert(error.message || "Disabling account failed");
+    },
+  });
+
+  const restoreAccountMutation = useMutation({
+    mutationFn: async ({ accountId }) => {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:8080/account/admin/restore/${accountId}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Restoring account failed");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accounts"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["dashboardStatistics"],
+        exact: false,
+      });
+      alert("Account restored successfully.");
+      onClose?.();
+    },
+    onError: (error) => {
+      alert(error.message || "Restoring account failed");
+    },
+  });
+
   const isBusy =
-    updateRoleMutation.isPending || resetPasswordMutation.isPending;
+    updateRoleMutation.isPending ||
+    resetPasswordMutation.isPending ||
+    disableAccountMutation.isPending ||
+    restoreAccountMutation.isPending;
 
   const isTargetAdmin = (account?.role || "").toUpperCase() === "ADMIN";
 
@@ -95,6 +182,28 @@ function EditAccount({ account, onClose, isAdmin }) {
     if (!account) return;
     if (!window.confirm("Reset password for this account?")) return;
     resetPasswordMutation.mutate({ accountId: account.accountId });
+  };
+
+  const handleDisableAccount = () => {
+    if (!account) return;
+    if (
+      !window.confirm(
+        "Disable this account? The user will no longer be able to sign in."
+      )
+    )
+      return;
+    disableAccountMutation.mutate({ accountId: account.accountId });
+  };
+
+  const handleRestoreAccount = () => {
+    if (!account) return;
+    if (
+      !window.confirm(
+        "Restore this account? The user will be able to sign in again."
+      )
+    )
+      return;
+    restoreAccountMutation.mutate({ accountId: account.accountId });
   };
 
   const email = account?.detail?.email || account?.email || "-";
@@ -180,6 +289,31 @@ function EditAccount({ account, onClose, isAdmin }) {
               >
                 Reset Password
               </button>
+              {isAdmin &&
+                !isTargetAdmin &&
+                (isActive(account) ? (
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded border border-red-500 text-red-600 text-sm hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={handleDisableAccount}
+                    disabled={isBusy}
+                  >
+                    {disableAccountMutation.isPending
+                      ? "Disabling..."
+                      : "Disable"}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded border border-emerald-500 text-emerald-600 text-sm hover:bg-emerald-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={handleRestoreAccount}
+                    disabled={isBusy}
+                  >
+                    {restoreAccountMutation.isPending
+                      ? "Restoring..."
+                      : "Restore"}
+                  </button>
+                ))}
             </div>
 
             <div className="flex gap-2">
