@@ -80,6 +80,8 @@ export default function Home() {
     alert("something went wrong in retrieving attractions");
   }
 
+  console.log("API_BASE_URL =", API_BASE_URL);
+
   return (
     <>
       <Header />
