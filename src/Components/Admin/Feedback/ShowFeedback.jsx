@@ -210,7 +210,12 @@ function ShowFeedback(props) {
   });
 
   if (feedbackError) {
-    alert("something went wrong in retrieving feedbacks");
+    console.error("Feedback error:", feedbackError);
+    alert(
+      "Error: " +
+        (feedbackError.message ||
+          "Something went wrong in retrieving feedbacks")
+    );
   }
 
   const {
