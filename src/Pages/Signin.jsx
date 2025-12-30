@@ -195,7 +195,7 @@ function Signin() {
                         }
                       >
                         <FontAwesomeIcon
-                          icon={registerPasswordVisible ? faEyeSlash : faEye}
+                          icon={registerPasswordVisible ? faEye : faEyeSlash}
                           className={`transition-transform duration-200 ${
                             registerPasswordVisible ? "rotate-180" : "rotate-0"
                           }`}
@@ -228,7 +228,7 @@ function Signin() {
                         }
                       >
                         <FontAwesomeIcon
-                          icon={registerConfirmVisible ? faEyeSlash : faEye}
+                          icon={registerConfirmVisible ? faEye : faEyeSlash}
                           className={`transition-transform duration-200 ${
                             registerConfirmVisible ? "rotate-180" : "rotate-0"
                           }`}
@@ -288,7 +288,7 @@ function Signin() {
                         }
                       >
                         <FontAwesomeIcon
-                          icon={loginPasswordVisible ? faEyeSlash : faEye}
+                          icon={loginPasswordVisible ? faEye : faEyeSlash}
                           className={`transition-transform duration-200 ${
                             loginPasswordVisible ? "rotate-180" : "rotate-0"
                           }`}
