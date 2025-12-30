@@ -442,7 +442,8 @@ function ShowBooking(props) {
 
                     {booking.paymentMethod === "ONLINE" &&
                       (booking.paymentStatus === "PAYMENT_VERIFICATION" ||
-                        booking.paymentStatus === "VERIFIED") && (
+                        booking.paymentStatus === "VERIFIED" ||
+                        booking.paymentStatus === "REJECTED") && (
                         <div className="bg-[#222EDA]/30 flex gap-3 justify-around rounded-lg p-3 mb-5">
                           <div className="flex flex-col gap-1 text-center">
                             <span>Down Payment:</span>
