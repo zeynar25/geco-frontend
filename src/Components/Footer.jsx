@@ -123,7 +123,7 @@ function Footer() {
             </div>
             <div className="flex items-center gap-4">
               <a
-                href="https://facebook.com/cvsuargriecopark"
+                href="https://facebook.com/cvsuagriecopark"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="CvSU Agri‑Eco Park on Facebook"
