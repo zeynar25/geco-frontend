@@ -62,6 +62,7 @@ function Signin() {
     mutationFn: registerAccount,
     onSuccess: () => {
       alert("Account registered!");
+      handleSwitch("login");
     },
     onError: (error) => {
       alert(error.message);
