@@ -130,17 +130,19 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Cards grid */}
           <div className="grid place-items-center sm:place-items-stretch grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <ValueCard
-              title={homePending ? "..." : homeData?.attractionNumber}
-              titleClasses="text-gray-900"
-              description="Attractions"
-              descriptionClasses="text-gray-500"
-              icon={
-                <FontAwesomeIcon icon={faLocationDot} className="text-2xl" />
-              }
-              iconClasses="bg-blue-900 text-white"
-              className="w-80 sm:w-auto border-0 shadow-sm"
-            />
+            <Link to="#map">
+              <ValueCard
+                title={homePending ? "..." : homeData?.attractionNumber}
+                titleClasses="text-gray-900"
+                description="Attractions"
+                descriptionClasses="text-gray-500"
+                icon={
+                  <FontAwesomeIcon icon={faLocationDot} className="text-2xl" />
+                }
+                iconClasses="bg-blue-900 text-white"
+                className="w-80 sm:w-auto border-0 shadow-sm"
+              />
+            </Link>
             <Link to="/packages-promos" state={{ from: location.pathname }}>
               <ValueCard
                 title={homePending ? "..." : homeData?.tourPackageNumber}
