@@ -12,6 +12,7 @@ import Account from "./Pages/Account.jsx";
 import Attraction from "./Pages/Attraction.jsx";
 import Feedback from "./Pages/Feedback.jsx";
 import AdminDashboard from "./Pages/AdminDashboard.jsx";
+import AppLayout from "./Components/AppLayout.jsx";
 
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -19,23 +20,27 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { setupCustomDialogs } from "./customDialogs";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Home /> },
-  { path: "/about", element: <About /> },
-  { path: "/signin", element: <Signin /> },
-  { path: "/book", element: <Book /> },
-  { path: "/operating-hours", element: <OperatingHours /> },
-  { path: "/packages-promos", element: <PackagesPromos /> },
-  { path: "/park-calendar", element: <ParkCalendar /> },
-  { path: "/booking-success", element: <BookingSuccess /> },
-  { path: "/my-account", element: <Account /> },
-  { path: "/attractions/:id", element: <Attraction /> },
-  { path: "/feedback", element: <Feedback /> },
-  { path: "/admin", element: <AdminDashboard /> },
+  {
+    element: <AppLayout />,
+    children: [
+      { path: "/", element: <Home /> },
+      { path: "/about", element: <About /> },
+      { path: "/signin", element: <Signin /> },
+      { path: "/book", element: <Book /> },
+      { path: "/operating-hours", element: <OperatingHours /> },
+      { path: "/packages-promos", element: <PackagesPromos /> },
+      { path: "/park-calendar", element: <ParkCalendar /> },
+      { path: "/booking-success", element: <BookingSuccess /> },
+      { path: "/my-account", element: <Account /> },
+      { path: "/attractions/:id", element: <Attraction /> },
+      { path: "/feedback", element: <Feedback /> },
+      { path: "/admin", element: <AdminDashboard /> },
+    ],
+  },
 ]);
 
 const queryClient = new QueryClient();
 
-// Initialize global custom alert dialog behavior before the app renders.
 setupCustomDialogs();
 
 createRoot(document.getElementById("root")).render(
