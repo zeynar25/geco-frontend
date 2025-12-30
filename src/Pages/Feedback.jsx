@@ -5,6 +5,7 @@ import { useState } from "react";
 import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer";
 import BackButton from "../Components/BackButton.jsx";
+import { API_BASE_URL } from "../apiConfig";
 import {
   faAngleLeft,
   faAngleRight,
@@ -28,7 +29,7 @@ function Feedback() {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/feedback/active?page=${feedbackPage}&size=10`,
+        `${API_BASE_URL}/feedback/active?page=${feedbackPage}&size=10`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

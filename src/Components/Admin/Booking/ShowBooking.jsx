@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClock,
@@ -68,7 +69,7 @@ function ShowBooking(props) {
     enabled: props.canViewDashboard && props.bookingIn,
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const baseUrl = "http://localhost:8080/booking";
+      const baseUrl = `${API_BASE_URL}/booking`;
 
       const params = new URLSearchParams();
       params.append("page", bookingPage.toString());
@@ -505,7 +506,7 @@ function ShowBooking(props) {
                 src={
                   selectedProofUrl.startsWith("http")
                     ? selectedProofUrl
-                    : `http://localhost:8080${selectedProofUrl}`
+                    : `${API_BASE_URL}${selectedProofUrl}`
                 }
                 alt="Proof of payment"
                 className="max-h-[70vh] w-auto object-contain border rounded-md"

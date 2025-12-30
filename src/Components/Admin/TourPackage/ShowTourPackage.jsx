@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 
+import { API_BASE_URL } from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBoxOpen,
@@ -35,7 +36,7 @@ function ShowTourPackage(props) {
       props.canViewDashboard && props.packagesIn && tourPackageFilter === "ALL",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const tourPackages = await fetch("http://localhost:8080/package", {
+      const tourPackages = await fetch(`${API_BASE_URL}/package`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -64,7 +65,7 @@ function ShowTourPackage(props) {
       tourPackageFilter === "ACTIVE",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const tourPackages = await fetch("http://localhost:8080/package/active", {
+      const tourPackages = await fetch(`${API_BASE_URL}/package/active`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -93,14 +94,11 @@ function ShowTourPackage(props) {
       tourPackageFilter === "INACTIVE",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const tourPackages = await fetch(
-        "http://localhost:8080/package/inactive",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const tourPackages = await fetch(`${API_BASE_URL}/package/inactive`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!tourPackages.ok) {
         const error = await tourPackages.json();
         throw new Error(

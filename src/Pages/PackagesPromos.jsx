@@ -2,6 +2,7 @@ import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import BackButton from "../Components/BackButton";
 import HeaderCard from "../Components/HeaderCard";
+import { API_BASE_URL } from "../apiConfig";
 
 import { useLocation, Link } from "react-router-dom";
 
@@ -27,7 +28,7 @@ function PackagesPromos() {
       // Simulate network delay
       // await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const tourPackages = await fetch("http://localhost:8080/package/active");
+      const tourPackages = await fetch(`${API_BASE_URL}/package/active`);
       if (!tourPackages.ok) {
         const error = await tourPackages.json();
         throw new Error(error?.error || "Getting tour packages failed");
@@ -51,7 +52,7 @@ function PackagesPromos() {
   //     // await new Promise((resolve) => setTimeout(resolve, 10000));
 
   //     const packageInclusions = await fetch(
-  //       "http://localhost:8080/package-inclusion/active"
+  //       `${API_BASE_URL}/package-inclusion/active`
   //     );
   //     if (!packageInclusions.ok) {
   //       const error = await packageInclusions.json();

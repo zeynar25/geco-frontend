@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
+import { API_BASE_URL } from "../../../apiConfig";
 
 function AddAttraction({ onClose }) {
   const [name, setName] = useState("");
@@ -25,7 +26,7 @@ function AddAttraction({ onClose }) {
         formData.append("image", image);
       }
 
-      const response = await fetch("http://localhost:8080/attraction", {
+      const response = await fetch(`${API_BASE_URL}/attraction`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

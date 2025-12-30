@@ -14,6 +14,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
 import { jwtDecode } from "jwt-decode";
+import { API_BASE_URL } from "../apiConfig";
 
 function isLoggedIn() {
   const token = localStorage.getItem("token");
@@ -36,7 +37,7 @@ async function logoutAccount() {
   }
 
   const token = localStorage.getItem("token");
-  const res = await fetch("http://localhost:8080/account/logout", {
+  const res = await fetch(`${API_BASE_URL}/account/logout`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

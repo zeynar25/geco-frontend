@@ -5,6 +5,7 @@ import HeaderCard from "../Components/HeaderCard.jsx";
 import Faq from "../Components/Faq";
 
 import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL } from "../apiConfig";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -34,7 +35,7 @@ export default function About() {
   } = useQuery({
     queryKey: ["faqs"],
     queryFn: async () => {
-      const response = await fetch("http://localhost:8080/faq/active");
+      const response = await fetch(`${API_BASE_URL}/faq/active`);
       if (!response.ok) {
         const error = await response.json().catch(() => null);
         throw new Error(error?.error || "Getting active FAQs failed");

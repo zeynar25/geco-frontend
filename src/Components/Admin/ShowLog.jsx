@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClockRotateLeft,
@@ -72,8 +73,8 @@ function ShowLog(props) {
       params.append("size", "20");
 
       const endpoint = params.toString()
-        ? `http://localhost:8080/dashboard/logs?${params.toString()}`
-        : "http://localhost:8080/dashboard/logs";
+        ? `${API_BASE_URL}/dashboard/logs?${params.toString()}`
+        : `${API_BASE_URL}/dashboard/logs`;
 
       const response = await fetch(endpoint, {
         headers: {

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
+import { API_BASE_URL } from "../../../apiConfig";
 
 function AddAccount({ onClose, isAdmin }) {
   const [email, setEmail] = useState("");
@@ -16,8 +17,8 @@ function AddAccount({ onClose, isAdmin }) {
       const token = localStorage.getItem("token");
 
       const url = isAdmin
-        ? "http://localhost:8080/account/admin"
-        : "http://localhost:8080/account";
+        ? `${API_BASE_URL}/account/admin`
+        : `${API_BASE_URL}/account`;
 
       const payload = {
         email: email.trim(),

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -40,7 +41,7 @@ function EditFeedback({ feedback, onClose }) {
     mutationFn: async ({ feedbackId, data }) => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/feedback/staff/${feedbackId}`,
+        `${API_BASE_URL}/feedback/staff/${feedbackId}`,
         {
           method: "PATCH",
           headers: {
@@ -71,15 +72,12 @@ function EditFeedback({ feedback, onClose }) {
   const disableFeedbackMutation = useMutation({
     mutationFn: async (feedbackId) => {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:8080/feedback/${feedbackId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/feedback/${feedbackId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -100,7 +98,7 @@ function EditFeedback({ feedback, onClose }) {
     mutationFn: async (feedbackId) => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/feedback/restore/${feedbackId}`,
+        `${API_BASE_URL}/feedback/restore/${feedbackId}`,
         {
           method: "PATCH",
           headers: {

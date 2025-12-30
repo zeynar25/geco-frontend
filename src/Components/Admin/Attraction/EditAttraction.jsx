@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
+import { API_BASE_URL } from "../../../apiConfig";
 
 function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
   const [name, setName] = useState(attraction?.name || "");
@@ -16,7 +17,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://localhost:8080/attraction/${attractionId}`,
+        `${API_BASE_URL}/attraction/${attractionId}`,
         {
           method: "PATCH",
           headers: {
@@ -56,7 +57,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://localhost:8080/attraction/${attractionId}`,
+        `${API_BASE_URL}/attraction/${attractionId}`,
         {
           method: "DELETE",
           headers: {
@@ -93,7 +94,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://localhost:8080/attraction/restore/${attractionId}`,
+        `${API_BASE_URL}/attraction/restore/${attractionId}`,
         {
           method: "PATCH",
           headers: {
@@ -223,7 +224,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
               <label className="text-sm font-semibold">Current Image</label>
               <div className="aspect-video rounded-md overflow-hidden bg-gray-100 flex items-center justify-center">
                 <img
-                  src={`http://localhost:8080${attraction.photo2dUrl}`}
+                  src={`${API_BASE_URL}${attraction.photo2dUrl}`}
                   alt={attraction.name || "Attraction image"}
                   className="h-full w-full object-cover"
                 />

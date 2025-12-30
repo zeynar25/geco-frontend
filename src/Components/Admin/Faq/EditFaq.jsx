@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
+import { API_BASE_URL } from "../../../apiConfig";
 
 function EditFaq({ faq, onClose, isAdmin }) {
   const [question, setQuestion] = useState(faq?.question || "");
@@ -12,7 +13,7 @@ function EditFaq({ faq, onClose, isAdmin }) {
   const updateFaqMutation = useMutation({
     mutationFn: async ({ faqId, data }) => {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/faq/${faqId}`, {
+      const response = await fetch(`${API_BASE_URL}/faq/${faqId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +42,7 @@ function EditFaq({ faq, onClose, isAdmin }) {
   const disableFaqMutation = useMutation({
     mutationFn: async ({ faqId }) => {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/faq/${faqId}`, {
+      const response = await fetch(`${API_BASE_URL}/faq/${faqId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -67,7 +68,7 @@ function EditFaq({ faq, onClose, isAdmin }) {
     mutationFn: async ({ faqId }) => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/faq/admin/restore/${faqId}`,
+        `${API_BASE_URL}/faq/admin/restore/${faqId}`,
         {
           method: "PATCH",
           headers: {

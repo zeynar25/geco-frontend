@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -11,7 +12,7 @@ function AddFeedbackCategory({ onClose }) {
   const addCategoryMutation = useMutation({
     mutationFn: async (payload) => {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/feedback-category", {
+      const response = await fetch(`${API_BASE_URL}/feedback-category`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

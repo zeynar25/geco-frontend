@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
+import { API_BASE_URL } from "../../../apiConfig";
 
 function EditAccount({ account, onClose, isAdmin }) {
   const [role, setRole] = useState(account?.role || "USER");
@@ -24,7 +25,7 @@ function EditAccount({ account, onClose, isAdmin }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://localhost:8080/account/admin/update-role/${accountId}`,
+        `${API_BASE_URL}/account/admin/update-role/${accountId}`,
         {
           method: "PATCH",
           headers: {
@@ -61,7 +62,7 @@ function EditAccount({ account, onClose, isAdmin }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://localhost:8080/account/staff/reset-password/${accountId}`,
+        `${API_BASE_URL}/account/staff/reset-password/${accountId}`,
         {
           method: "PATCH",
           headers: {
@@ -95,7 +96,7 @@ function EditAccount({ account, onClose, isAdmin }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://localhost:8080/account/admin/${accountId}`,
+        `${API_BASE_URL}/account/admin/${accountId}`,
         {
           method: "DELETE",
           headers: {
@@ -128,7 +129,7 @@ function EditAccount({ account, onClose, isAdmin }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://localhost:8080/account/admin/restore/${accountId}`,
+        `${API_BASE_URL}/account/admin/restore/${accountId}`,
         {
           method: "PATCH",
           headers: {

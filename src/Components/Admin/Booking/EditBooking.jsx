@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../../apiConfig";
 
 function EditBooking({ booking, onClose }) {
   const [editForm, setEditForm] = useState(() => ({
@@ -15,7 +16,7 @@ function EditBooking({ booking, onClose }) {
     mutationFn: async ({ bookingId, data }) => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/booking/staff/${bookingId}`,
+        `${API_BASE_URL}/booking/staff/${bookingId}`,
         {
           method: "PATCH",
           headers: {

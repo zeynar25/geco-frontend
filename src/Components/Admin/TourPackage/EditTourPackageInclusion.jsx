@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -19,7 +20,7 @@ function EditTourPackageInclusion(props) {
     mutationFn: async ({ inclusionId, data }) => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/package-inclusion/staff/${inclusionId}`,
+        `${API_BASE_URL}/package-inclusion/staff/${inclusionId}`,
         {
           method: "PATCH",
           headers: {
@@ -58,7 +59,7 @@ function EditTourPackageInclusion(props) {
     mutationFn: async ({ inclusionId }) => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/package-inclusion/admin/${inclusionId}`,
+        `${API_BASE_URL}/package-inclusion/admin/${inclusionId}`,
         {
           method: "DELETE",
           headers: {
@@ -93,7 +94,7 @@ function EditTourPackageInclusion(props) {
     mutationFn: async ({ inclusionId }) => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/package-inclusion/admin/restore/${inclusionId}`,
+        `${API_BASE_URL}/package-inclusion/admin/restore/${inclusionId}`,
         {
           method: "PATCH",
           headers: {

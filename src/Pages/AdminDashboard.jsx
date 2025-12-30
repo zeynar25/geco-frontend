@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import BackButton from "../Components/BackButton";
+import { API_BASE_URL } from "../apiConfig";
 import ShowBooking from "../Components/Admin/Booking/ShowBooking";
 import EditBooking from "../Components/Admin/Booking/EditBooking";
 import ShowFinance from "../Components/Admin/ShowFinance";
@@ -110,14 +111,11 @@ function AdminDashboard() {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const decoded = jwtDecode(token);
-      const account = await fetch(
-        `http://localhost:8080/account/${decoded.sub}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const account = await fetch(`${API_BASE_URL}/account/${decoded.sub}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!account.ok) {
         const error = await account.json();
         throw new Error(error?.error || "Getting account failed");
@@ -149,7 +147,7 @@ function AdminDashboard() {
     enabled: canViewDashboard,
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const stats = await fetch("http://localhost:8080/dashboard", {
+      const stats = await fetch(`${API_BASE_URL}/dashboard`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

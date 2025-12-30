@@ -8,6 +8,7 @@ import {
   faArrowUp,
   faArrowDown,
 } from "@fortawesome/free-solid-svg-icons";
+import { API_BASE_URL } from "../../../apiConfig";
 
 function ShowFaq(props) {
   const [faqFilter, setFaqFilter] = useState("ALL");
@@ -27,7 +28,7 @@ function ShowFaq(props) {
       faqFilter === "ALL",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/faq", {
+      const response = await fetch(`${API_BASE_URL}/faq`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -56,7 +57,7 @@ function ShowFaq(props) {
       faqFilter === "ACTIVE",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/faq/active", {
+      const response = await fetch(`${API_BASE_URL}/faq/active`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -85,7 +86,7 @@ function ShowFaq(props) {
       faqFilter === "INACTIVE",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/faq/inactive", {
+      const response = await fetch(`${API_BASE_URL}/faq/inactive`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -153,7 +154,7 @@ function ShowFaq(props) {
   const reorderMutation = useMutation({
     mutationFn: async (orderList) => {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/faq/reorder", {
+      const response = await fetch(`${API_BASE_URL}/faq/reorder`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

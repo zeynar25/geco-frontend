@@ -7,6 +7,7 @@ import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer.jsx";
 import ValueCard from "../Components/ValueCard.jsx";
 import ParkMap3D from "../Components/ParkMap3D.jsx";
+import { API_BASE_URL } from "../apiConfig";
 import "../index.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,7 +46,7 @@ export default function Home() {
     queryKey: ["home-stats"],
     // runs whenever we run the query with this key.
     queryFn: async () => {
-      const homestats = await fetch("http://localhost:8080/home");
+      const homestats = await fetch(`${API_BASE_URL}/home`);
       if (!homestats.ok) {
         const error = await homestats.json();
         throw new Error(error?.error || "Getting home statistics failed");
@@ -66,9 +67,7 @@ export default function Home() {
     queryKey: ["attractions"],
     // runs whenever we run the query with this key.
     queryFn: async () => {
-      const attractions = await fetch(
-        "http://localhost:8080/attraction/active"
-      );
+      const attractions = await fetch(`${API_BASE_URL}/attraction/active`);
       if (!attractions.ok) {
         const error = await attractions.json();
         throw new Error(error?.error || "Getting attractions failed");

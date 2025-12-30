@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 
+import { API_BASE_URL } from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
@@ -33,14 +34,11 @@ function ShowPackageInclusion(props) {
       props.canViewDashboard && props.packagesIn && inclusionFilter === "ALL",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:8080/package-inclusion/staff",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/package-inclusion/staff`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!response.ok) {
         const error = await response.json().catch(() => null);
         throw new Error(
@@ -67,14 +65,11 @@ function ShowPackageInclusion(props) {
       inclusionFilter === "ACTIVE",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:8080/package-inclusion/active",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/package-inclusion/active`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!response.ok) {
         const error = await response.json().catch(() => null);
         throw new Error(
@@ -102,7 +97,7 @@ function ShowPackageInclusion(props) {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        "http://localhost:8080/package-inclusion/staff/inactive",
+        `${API_BASE_URL}/package-inclusion/staff/inactive`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

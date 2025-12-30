@@ -7,6 +7,7 @@ import BackButton from "../Components/BackButton";
 
 import { jwtDecode } from "jwt-decode";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "../apiConfig";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -99,14 +100,11 @@ function Account() {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const decoded = jwtDecode(token);
-      const account = await fetch(
-        `http://localhost:8080/account/${decoded.sub}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const account = await fetch(`${API_BASE_URL}/account/${decoded.sub}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!account.ok) {
         const error = await account.json();
         throw new Error(error?.error || "Getting account failed");
@@ -152,7 +150,7 @@ function Account() {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/account/update-details/${accountData.accountId}`,
+        `${API_BASE_URL}/account/update-details/${accountData.accountId}`,
         {
           method: "PATCH",
           headers: {
@@ -197,7 +195,7 @@ function Account() {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/booking/me?page=${bookingPage}&size=5`,
+        `${API_BASE_URL}/booking/me?page=${bookingPage}&size=5`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -226,7 +224,7 @@ function Account() {
     queryKey: ["feedbacks"],
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8080/feedback/me`, {
+      const response = await fetch(`${API_BASE_URL}/feedback/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -253,14 +251,11 @@ function Account() {
     queryKey: ["feedbackCategories"],
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:8080/feedback-category/active",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/feedback-category/active`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error?.error || "Getting feedback categories failed");
@@ -404,7 +399,7 @@ function Account() {
       formData.append("proofOfPayment", paymentFile);
 
       const response = await fetch(
-        `http://localhost:8080/booking/${selectedBookingForPayment.bookingId}`,
+        `${API_BASE_URL}/booking/${selectedBookingForPayment.bookingId}`,
         {
           method: "PATCH",
           headers: {
@@ -497,7 +492,7 @@ function Account() {
       }
 
       const response = await fetch(
-        `http://localhost:8080/account/update-password/${accountData.accountId}`,
+        `${API_BASE_URL}/account/update-password/${accountData.accountId}`,
         {
           method: "PATCH",
           headers: {
@@ -576,7 +571,7 @@ function Account() {
             feedbackForm.suggestion !== "" ? feedbackForm.suggestion : null,
         };
 
-        const response = await fetch("http://localhost:8080/feedback", {
+        const response = await fetch(`${API_BASE_URL}/feedback`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -618,17 +613,14 @@ function Account() {
             feedbackForm.suggestion !== "" ? feedbackForm.suggestion : null,
         };
 
-        const response = await fetch(
-          `http://localhost:8080/feedback/${feedbackId}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(feedbackDetails),
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/feedback/${feedbackId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(feedbackDetails),
+        });
 
         if (!response.ok) {
           const error = await response.json().catch(() => null);
@@ -1434,7 +1426,7 @@ function Account() {
                 src={
                   selectedProofUrl.startsWith("http")
                     ? selectedProofUrl
-                    : `http://localhost:8080${selectedProofUrl}`
+                    : `${API_BASE_URL}${selectedProofUrl}`
                 }
                 alt="Proof of payment"
                 className={`max-h-[70vh] w-auto object-contain border rounded-md ${

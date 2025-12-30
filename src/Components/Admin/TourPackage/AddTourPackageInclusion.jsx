@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -15,17 +16,14 @@ function AddTourPackageInclusion({ onClose }) {
   const addInclusionMutation = useMutation({
     mutationFn: async (payload) => {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:8080/package-inclusion/staff",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/package-inclusion/staff`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
       if (!response.ok) {
         const error = await response.json().catch(() => null);

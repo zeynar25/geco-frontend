@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -11,17 +12,14 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
   const updateCategoryMutation = useMutation({
     mutationFn: async ({ id, label }) => {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:8080/feedback-category/${id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ label }),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/feedback-category/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ label }),
+      });
 
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -48,7 +46,7 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
     mutationFn: async ({ id }) => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/feedback-category/admin/${id}`,
+        `${API_BASE_URL}/feedback-category/admin/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -80,7 +78,7 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
     mutationFn: async ({ id }) => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/feedback-category/admin/restore/${id}`,
+        `${API_BASE_URL}/feedback-category/admin/restore/${id}`,
         {
           method: "PATCH",
           headers: {

@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartColumn,
@@ -37,7 +38,7 @@ function ShowFinance(props) {
     enabled: props.canViewDashboard && props.financesIn,
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const stats = await fetch("http://localhost:8080/dashboard/finances", {
+      const stats = await fetch(`${API_BASE_URL}/dashboard/finances`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -68,7 +69,7 @@ function ShowFinance(props) {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const stats = await fetch(
-        `http://localhost:8080/dashboard/finances/revenue/monthly?year=${selectedYear}`,
+        `${API_BASE_URL}/dashboard/finances/revenue/monthly?year=${selectedYear}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -102,7 +103,7 @@ function ShowFinance(props) {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const stats = await fetch(
-        `http://localhost:8080/dashboard/finances/revenue/yearly?startYear=${yearFrom}&endYear=${yearTo}`,
+        `${API_BASE_URL}/dashboard/finances/revenue/yearly?startYear=${yearFrom}&endYear=${yearTo}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

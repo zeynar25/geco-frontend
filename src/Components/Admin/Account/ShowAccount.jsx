@@ -10,6 +10,7 @@ import {
   faPlus,
   faEdit,
 } from "@fortawesome/free-solid-svg-icons";
+import { API_BASE_URL } from "../../../apiConfig";
 
 function ShowAccount(props) {
   const [accountRoleFilter, setAccountRoleFilter] = useState("ALL");
@@ -114,7 +115,7 @@ function ShowAccount(props) {
         }
       }
 
-      const endpoint = `http://localhost:8080/${basePath}?${params.toString()}`;
+      const endpoint = `${API_BASE_URL}/${basePath}?${params.toString()}`;
 
       const response = await fetch(endpoint, {
         headers: {

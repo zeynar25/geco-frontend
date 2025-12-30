@@ -1,5 +1,6 @@
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
+import { API_BASE_URL } from "../apiConfig";
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -14,7 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 async function registerAccount({ email, password, confirmPassword, role }) {
-  const res = await fetch("http://localhost:8080/account", {
+  const res = await fetch(`${API_BASE_URL}/account`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password, confirmPassword, role }),
@@ -28,7 +29,7 @@ async function registerAccount({ email, password, confirmPassword, role }) {
 }
 
 async function loginAccount({ email, password }) {
-  const res = await fetch("http://localhost:8080/account/login", {
+  const res = await fetch(`${API_BASE_URL}/account/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),

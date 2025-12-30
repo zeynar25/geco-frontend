@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEdit,
@@ -65,7 +66,7 @@ function ShowFeedback(props) {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const feedbackCategories = await fetch(
-        "http://localhost:8080/feedback-category",
+        `${API_BASE_URL}/feedback-category`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -97,7 +98,7 @@ function ShowFeedback(props) {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const feedbackCategories = await fetch(
-        "http://localhost:8080/feedback-category/active",
+        `${API_BASE_URL}/feedback-category/active`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -131,7 +132,7 @@ function ShowFeedback(props) {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const feedbackCategories = await fetch(
-        "http://localhost:8080/feedback-category/inactive",
+        `${API_BASE_URL}/feedback-category/inactive`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -193,7 +194,7 @@ function ShowFeedback(props) {
         params.append("email", trimmedEmail);
       }
 
-      const endpoint = `http://localhost:8080/feedback?${params.toString()}`;
+      const endpoint = `${API_BASE_URL}/feedback?${params.toString()}`;
 
       const feedbacks = await fetch(endpoint, {
         headers: {
@@ -254,7 +255,7 @@ function ShowFeedback(props) {
       }
 
       const activeFeedback = await fetch(
-        `http://localhost:8080/feedback/active?${params.toString()}`,
+        `${API_BASE_URL}/feedback/active?${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -315,7 +316,7 @@ function ShowFeedback(props) {
       }
 
       const inactiveFeedbacks = await fetch(
-        `http://localhost:8080/feedback/inactive?${params.toString()}`,
+        `${API_BASE_URL}/feedback/inactive?${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

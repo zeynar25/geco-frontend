@@ -6,6 +6,7 @@ import {
   faPlus,
   faEdit,
 } from "@fortawesome/free-solid-svg-icons";
+import { API_BASE_URL } from "../../../apiConfig";
 
 function ShowAttraction(props) {
   const [activityFilter, setActivityFilter] = useState("ALL");
@@ -30,7 +31,7 @@ function ShowAttraction(props) {
       props.canViewDashboard && props.attractionsIn && activityFilter === "ALL",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8080/attraction", {
+      const res = await fetch(`${API_BASE_URL}/attraction`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -59,7 +60,7 @@ function ShowAttraction(props) {
       activityFilter === "ACTIVE",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8080/attraction/active", {
+      const res = await fetch(`${API_BASE_URL}/attraction/active`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -88,7 +89,7 @@ function ShowAttraction(props) {
       activityFilter === "INACTIVE",
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8080/attraction/inactive", {
+      const res = await fetch(`${API_BASE_URL}/attraction/inactive`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -216,7 +217,7 @@ function ShowAttraction(props) {
                       <div className="aspect-video rounded-md overflow-hidden bg-gray-100 flex items-center justify-center">
                         {attraction.photo2dUrl ? (
                           <img
-                            src={`http://localhost:8080${attraction.photo2dUrl}`}
+                            src={`${API_BASE_URL}${attraction.photo2dUrl}`}
                             alt={attraction.name || "Attraction image"}
                             className="h-full w-full object-cover"
                           />

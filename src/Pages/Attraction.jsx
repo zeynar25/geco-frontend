@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer.jsx";
 import BackButton from "../Components/BackButton.jsx";
+import { API_BASE_URL } from "../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import { faLightbulb } from "@fortawesome/free-regular-svg-icons";
@@ -23,7 +24,7 @@ function Attraction() {
     queryFn: async () => {
       // await new Promise((resolve) => setTimeout(resolve, 10000));
 
-      const res = await fetch(`http://localhost:8080/attraction/${id}`);
+      const res = await fetch(`${API_BASE_URL}/attraction/${id}`);
       if (!res.ok) {
         const err = await res.json().catch(() => null);
         throw new Error(err?.error || "Getting attraction details failed");
@@ -59,7 +60,7 @@ function Attraction() {
               <div className="aspect-video flex">
                 {attractionData?.photo2dUrl ? (
                   <img
-                    src={`http://localhost:8080${attractionData.photo2dUrl}`}
+                    src={`${API_BASE_URL}${attractionData.photo2dUrl}`}
                     alt={attractionData?.name || "Attraction image"}
                     className="h-full w-full object-cover"
                   />
@@ -76,7 +77,7 @@ function Attraction() {
                 style={
                   attractionData?.photo2dUrl
                     ? {
-                        backgroundImage: `url(http://localhost:8080${attractionData.photo2dUrl})`,
+                        backgroundImage: `url(${API_BASE_URL}${attractionData.photo2dUrl})`,
                       }
                     : undefined
                 }

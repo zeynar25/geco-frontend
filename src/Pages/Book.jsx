@@ -2,6 +2,7 @@ import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import ValueCard from "../Components/ValueCard";
 import HeaderCard from "../Components/HeaderCard";
+import { API_BASE_URL } from "../apiConfig";
 
 import { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -169,14 +170,11 @@ function Book() {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const decoded = jwtDecode(token);
-      const account = await fetch(
-        `http://localhost:8080/account/${decoded.sub}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const account = await fetch(`${API_BASE_URL}/account/${decoded.sub}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!account.ok) {
         const error = await account.json();
         throw new Error(error?.error || "Getting account failed");
@@ -196,7 +194,7 @@ function Book() {
   } = useQuery({
     queryKey: ["packages"],
     queryFn: async () => {
-      const tourPackages = await fetch("http://localhost:8080/package/active");
+      const tourPackages = await fetch(`${API_BASE_URL}/package/active`);
       if (!tourPackages.ok) {
         const error = await tourPackages.json();
         throw new Error(error?.error || "Getting tour packages failed");
@@ -217,7 +215,7 @@ function Book() {
   //   queryKey: ["package-inclusions", selectedPackageId],
   //   queryFn: async () => {
   //     const packageInclusions = await fetch(
-  //       `http://localhost:8080/package/${selectedPackageId}/inclusions/available`
+  //       `${API_BASE_URL}/package/${selectedPackageId}/inclusions/available`
   //     );
   //     if (!packageInclusions.ok) {
   //       const error = await packageInclusions.json();
@@ -236,7 +234,7 @@ function Book() {
 
   const addBooking = async (bookingRequest) => {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:8080/booking", {
+    const response = await fetch(`${API_BASE_URL}/booking`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

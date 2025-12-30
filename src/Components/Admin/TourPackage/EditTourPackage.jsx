@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -33,7 +34,7 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/package/${pkg.packageId}/inclusions/available`,
+        `${API_BASE_URL}/package/${pkg.packageId}/inclusions/available`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -57,17 +58,14 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
   const updatePackageMutation = useMutation({
     mutationFn: async ({ packageId, data }) => {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:8080/package/${packageId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/package/${packageId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
 
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -92,15 +90,12 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
   const disablePackageMutation = useMutation({
     mutationFn: async ({ packageId }) => {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:8080/package/${packageId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/package/${packageId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -124,7 +119,7 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
     mutationFn: async ({ packageId }) => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/package/admin/restore/${packageId}`,
+        `${API_BASE_URL}/package/admin/restore/${packageId}`,
         {
           method: "PATCH",
           headers: {

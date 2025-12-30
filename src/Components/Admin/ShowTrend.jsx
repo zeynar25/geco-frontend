@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartColumn, faChartPie } from "@fortawesome/free-solid-svg-icons";
 
@@ -41,7 +42,7 @@ function ShowTrend(props) {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const stats = await fetch(
-        `http://localhost:8080/dashboard/trends/monthly?year=${selectedYear}`,
+        `${API_BASE_URL}/dashboard/trends/monthly?year=${selectedYear}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -75,7 +76,7 @@ function ShowTrend(props) {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const stats = await fetch(
-        `http://localhost:8080/dashboard/trends/yearly?startYear=${yearFrom}&endYear=${yearTo}`,
+        `${API_BASE_URL}/dashboard/trends/yearly?startYear=${yearFrom}&endYear=${yearTo}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -2,6 +2,7 @@ import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import BackButton from "../Components/BackButton";
 import HeaderCard from "../Components/HeaderCard";
+import { API_BASE_URL } from "../apiConfig";
 
 import { useLocation, Link } from "react-router-dom";
 
@@ -90,7 +91,7 @@ function ParkCalendar() {
     queryKey: ["calendar", year, month],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/calendar/${year}/${month + 1}`
+        `${API_BASE_URL}/calendar/${year}/${month + 1}`
       );
       if (!response.ok) {
         const error = await response.json();

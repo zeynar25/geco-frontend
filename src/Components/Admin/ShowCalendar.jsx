@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { API_BASE_URL } from "../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleLeft,
@@ -62,7 +63,7 @@ function ShowCalendar(props) {
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/calendar/${year}/${month + 1}`,
+        `${API_BASE_URL}/calendar/${year}/${month + 1}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -141,7 +142,7 @@ function ShowCalendar(props) {
   const updateStatusMutation = useMutation({
     mutationFn: async ({ date, status }) => {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/calendar-date", {
+      const response = await fetch(`${API_BASE_URL}/calendar-date`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
