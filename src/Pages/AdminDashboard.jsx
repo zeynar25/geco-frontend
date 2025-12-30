@@ -186,7 +186,7 @@ function AdminDashboard() {
 
         <div>
           {adminDashboardPending ? (
-            <div className="flex flex-col items-center justify-center gap-4 h-100">
+            <div className="flex flex-col items-center justify-center gap-4 h-50">
               <div className="h-10 w-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
               <p className="text-gray-600">Loading dashboard statistics...</p>
             </div>
