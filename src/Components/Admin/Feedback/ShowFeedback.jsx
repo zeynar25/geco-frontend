@@ -214,7 +214,7 @@ function ShowFeedback(props) {
     alert(
       "Error: " +
         (feedbackError.message ||
-          "Something went wrong in retrieving feedbacks")
+          "Something went wrong in retrieving feedbackss")
     );
   }
 
