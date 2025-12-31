@@ -21,14 +21,7 @@ export function isTokenExpired(token) {
 export function ensureTokenValidOrAlert() {
   const token = getToken();
   if (!token || isTokenExpired(token)) {
-    alert("Your session has expired. Please sign in again.");
     localStorage.removeItem("token");
-    // navigate to sign-in so user lands on login page after acknowledging
-    try {
-      redirectToSignIn();
-    } catch {
-      /* empty */
-    }
     throw new Error("TOKEN_EXPIRED");
   }
   return token;
@@ -37,14 +30,7 @@ export function ensureTokenValidOrAlert() {
 export async function safeFetch(url, options = {}) {
   const token = getToken();
   if (!token || isTokenExpired(token)) {
-    alert("Your session has expired. Please sign in again.");
     localStorage.removeItem("token");
-    // navigate to sign-in so user lands on login page after acknowledging
-    try {
-      redirectToSignIn();
-    } catch {
-      /* empty */
-    }
     throw new Error("TOKEN_EXPIRED");
   }
 
@@ -56,24 +42,6 @@ export async function safeFetch(url, options = {}) {
   return fetch(url, { ...options, headers });
 }
 
-export function redirectToSignIn(delay = 0) {
-  try {
-    if (typeof delay === "number" && delay > 0) {
-      setTimeout(() => {
-        try {
-          window.location.href = "/signin";
-        } catch {
-          /* empty */
-        }
-      }, delay);
-    } else {
-      try {
-        window.location.href = "/signin";
-      } catch {
-        /* empty */
-      }
-    }
-  } catch {
-    /* empty */
-  }
+export function ensureTokenValidOrThrow() {
+  return ensureTokenValidOrAlert();
 }
