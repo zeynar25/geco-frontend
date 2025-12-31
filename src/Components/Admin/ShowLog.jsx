@@ -57,7 +57,6 @@ function ShowLog(props) {
     ],
     enabled: props.canViewDashboard && props.logsIn,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
       const params = new URLSearchParams();
 
       if (startDate) {
