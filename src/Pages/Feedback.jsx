@@ -142,9 +142,6 @@ function Feedback() {
                     {feedback.comment && (
                       <div className="mb-2">"{feedback.comment}"</div>
                     )}
-                    {feedback.suggestion && (
-                      <div className="mb-4">"{feedback.suggestion}""</div>
-                    )}
                     {feedback.staffReply && (
                       <div className="mb-4 bg-[#48BF56]/20 flex flex-col py-2 px-4 rounded-lg">
                         <span className="text-[#0A7A28] font-semibold text-md">
