@@ -1059,7 +1059,7 @@ function Account() {
 
                     {booking.staffReply && (
                       <div className="text-sm text-gray-600 text-center mt-5">
-                        <span>Park Reply: </span>
+                        <span>Agri-Eco Park Management: </span>
 
                         <span className="ml-2 font-semibold">
                           {booking.staffReply}

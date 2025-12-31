@@ -145,7 +145,7 @@ function Feedback() {
                     {feedback.staffReply && (
                       <div className="mb-4 bg-[#48BF56]/20 flex flex-col py-2 px-4 rounded-lg">
                         <span className="text-[#0A7A28] font-semibold text-md">
-                          Park Management Response:
+                          Agri-Eco Park Management:
                         </span>
                         <span className="text-sm text-[#007B53]">
                           {feedback.staffReply}
