@@ -17,11 +17,13 @@ import {
   faClock,
   faPesoSign,
   faX,
+  faStar as faStarSolid,
 } from "@fortawesome/free-solid-svg-icons";
 import { ClipLoader } from "react-spinners";
 import {
   faCheckCircle,
   faCircleXmark,
+  faStar as faStarRegular,
 } from "@fortawesome/free-regular-svg-icons";
 
 function isLoggedIn() {
@@ -1183,17 +1185,39 @@ function Account() {
                     </div>
                   )}
                   <div className="mb-3">
-                    <label className="block font-semibold mb-1">
-                      Rating (1-5)
-                    </label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="5"
-                      className="w-full border px-3 py-2 rounded-md"
-                      value={feedbackForm.stars}
-                      onChange={handleFeedbackFieldChange("stars")}
-                    />
+                    <label className="block font-semibold mb-1">Rating</label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((n) => {
+                        const current =
+                          feedbackForm.stars !== "" &&
+                          feedbackForm.stars != null
+                            ? Number(feedbackForm.stars)
+                            : 0;
+                        return (
+                          <button
+                            key={n}
+                            type="button"
+                            onClick={() =>
+                              setFeedbackForm((prev) => ({
+                                ...prev,
+                                stars: String(n),
+                              }))
+                            }
+                            className="text-2xl focus:outline-none"
+                            aria-label={`${n} star${n > 1 ? "s" : ""}`}
+                          >
+                            <FontAwesomeIcon
+                              icon={n <= current ? faStarSolid : faStarRegular}
+                              className={
+                                n <= current
+                                  ? "text-yellow-400"
+                                  : "text-gray-300"
+                              }
+                            />
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                   <div className="mb-3">
                     <label className="block font-semibold mb-1">Comment</label>
