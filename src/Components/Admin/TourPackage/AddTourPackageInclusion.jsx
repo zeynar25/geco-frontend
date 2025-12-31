@@ -185,7 +185,7 @@ function AddTourPackageInclusion({ onClose }) {
               value={form.inclusionDescription}
               onChange={handleChange("inclusionDescription")}
               disabled={isBusy}
-              placeholder="Optional description for this inclusion"
+              placeholder="Description for this inclusion"
             />
           </div>
 
