@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -18,14 +22,13 @@ function EditTourPackageInclusion(props) {
 
   const updateInclusionMutation = useMutation({
     mutationFn: async ({ inclusionId, data }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/package-inclusion/staff/${inclusionId}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(data),
         }
@@ -57,14 +60,11 @@ function EditTourPackageInclusion(props) {
 
   const disableInclusionMutation = useMutation({
     mutationFn: async ({ inclusionId }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/package-inclusion/admin/${inclusionId}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 
@@ -92,14 +92,11 @@ function EditTourPackageInclusion(props) {
 
   const restoreInclusionMutation = useMutation({
     mutationFn: async ({ inclusionId }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/package-inclusion/admin/restore/${inclusionId}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 

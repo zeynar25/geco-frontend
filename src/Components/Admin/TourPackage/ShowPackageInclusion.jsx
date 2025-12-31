@@ -2,7 +2,11 @@ import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
@@ -33,12 +37,10 @@ function ShowPackageInclusion(props) {
     enabled:
       props.canViewDashboard && props.packagesIn && inclusionFilter === "ALL",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/package-inclusion/staff`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/package-inclusion/staff`
+      );
       if (!response.ok) {
         const error = await response.json().catch(() => null);
         throw new Error(
@@ -64,12 +66,10 @@ function ShowPackageInclusion(props) {
       props.packagesIn &&
       inclusionFilter === "ACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/package-inclusion/active`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/package-inclusion/active`
+      );
       if (!response.ok) {
         const error = await response.json().catch(() => null);
         throw new Error(
@@ -95,14 +95,9 @@ function ShowPackageInclusion(props) {
       props.packagesIn &&
       inclusionFilter === "INACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${API_BASE_URL}/package-inclusion/staff/inactive`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/package-inclusion/staff/inactive`
       );
       if (!response.ok) {
         const error = await response.json().catch(() => null);

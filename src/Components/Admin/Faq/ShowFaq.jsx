@@ -8,7 +8,11 @@ import {
   faArrowUp,
   faArrowDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 
 function ShowFaq(props) {
   const [faqFilter, setFaqFilter] = useState("ALL");
@@ -27,12 +31,8 @@ function ShowFaq(props) {
       (props.faqsIn ?? true) &&
       faqFilter === "ALL",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/faq`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/faq`);
       if (!response.ok) {
         const error = await response.json().catch(() => null);
         throw new Error(error?.error || "Getting FAQs failed");
@@ -56,12 +56,8 @@ function ShowFaq(props) {
       (props.faqsIn ?? true) &&
       faqFilter === "ACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/faq/active`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/faq/active`);
       if (!response.ok) {
         const error = await response.json().catch(() => null);
         throw new Error(error?.error || "Getting active FAQs failed");
@@ -85,12 +81,8 @@ function ShowFaq(props) {
       (props.faqsIn ?? true) &&
       faqFilter === "INACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/faq/inactive`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/faq/inactive`);
       if (!response.ok) {
         const error = await response.json().catch(() => null);
         throw new Error(error?.error || "Getting inactive FAQs failed");
@@ -153,12 +145,11 @@ function ShowFaq(props) {
 
   const reorderMutation = useMutation({
     mutationFn: async (orderList) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/faq/reorder`, {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/faq/reorder`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(orderList),
       });

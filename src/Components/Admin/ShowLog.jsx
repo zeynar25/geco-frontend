@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClockRotateLeft,
@@ -76,11 +80,8 @@ function ShowLog(props) {
         ? `${API_BASE_URL}/dashboard/logs?${params.toString()}`
         : `${API_BASE_URL}/dashboard/logs`;
 
-      const response = await fetch(endpoint, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(endpoint);
 
       if (!response.ok) {
         const error = await response.json().catch(() => null);

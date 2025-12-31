@@ -1,7 +1,11 @@
 import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClock,
@@ -100,15 +104,10 @@ function ShowBooking(props) {
       const queryString = params.toString();
       const endpoint = `${baseUrl}?${queryString}`;
 
-      console.log("Fetching bookings from:", endpoint);
-
-      const bookings = await fetch(endpoint, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const bookings = await safeFetch(endpoint);
       if (!bookings.ok) {
-        const error = await bookings.json();
+        const error = await bookings.json().catch(() => null);
         throw new Error(error?.error || "Getting bookings failed");
       }
       return await bookings.json();

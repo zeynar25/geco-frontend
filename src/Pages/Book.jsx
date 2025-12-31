@@ -2,7 +2,7 @@ import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import ValueCard from "../Components/ValueCard";
 import HeaderCard from "../Components/HeaderCard";
-import { API_BASE_URL } from "../apiConfig";
+import { API_BASE_URL, safeFetch, ensureTokenValidOrAlert } from "../apiConfig";
 
 import { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -168,13 +168,9 @@ function Book() {
   } = useQuery({
     queryKey: ["account"],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
+      const token = ensureTokenValidOrAlert();
       const decoded = jwtDecode(token);
-      const account = await fetch(`${API_BASE_URL}/account/${decoded.sub}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const account = await safeFetch(`${API_BASE_URL}/account/${decoded.sub}`);
       if (!account.ok) {
         const error = await account.json();
         throw new Error(error?.error || "Getting account failed");
@@ -233,12 +229,11 @@ function Book() {
   // }
 
   const addBooking = async (bookingRequest) => {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_BASE_URL}/booking`, {
+    ensureTokenValidOrAlert();
+    const response = await safeFetch(`${API_BASE_URL}/booking`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(bookingRequest),
     });

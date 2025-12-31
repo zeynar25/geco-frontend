@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -12,13 +16,10 @@ function AddFaq({ onClose }) {
 
   const addFaqMutation = useMutation({
     mutationFn: async (payload) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/faq`, {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/faq`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 

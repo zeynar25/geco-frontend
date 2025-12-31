@@ -64,14 +64,9 @@ function ShowFeedback(props) {
       props.feedbackIn &&
       feedbackCategoryFilter === "ALL",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const feedbackCategories = await fetch(
-        `${API_BASE_URL}/feedback-category`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const feedbackCategories = await safeFetch(
+        `${API_BASE_URL}/feedback-category`
       );
       if (!feedbackCategories.ok) {
         const error = await feedbackCategories.json();
@@ -96,14 +91,9 @@ function ShowFeedback(props) {
       props.feedbackIn &&
       feedbackCategoryFilter === "ACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const feedbackCategories = await fetch(
-        `${API_BASE_URL}/feedback-category/active`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const feedbackCategories = await safeFetch(
+        `${API_BASE_URL}/feedback-category/active`
       );
       if (!feedbackCategories.ok) {
         const error = await feedbackCategories.json();
@@ -130,14 +120,9 @@ function ShowFeedback(props) {
       props.feedbackIn &&
       feedbackCategoryFilter === "INACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const feedbackCategories = await fetch(
-        `${API_BASE_URL}/feedback-category/inactive`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const feedbackCategories = await safeFetch(
+        `${API_BASE_URL}/feedback-category/inactive`
       );
       if (!feedbackCategories.ok) {
         const error = await feedbackCategories.json();
@@ -171,7 +156,6 @@ function ShowFeedback(props) {
       props.feedbackIn &&
       feedbackActivityFilter === "ALL",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
       const params = new URLSearchParams();
       params.append("page", feedbackPage.toString());
       params.append("size", "10");
@@ -196,11 +180,8 @@ function ShowFeedback(props) {
 
       const endpoint = `${API_BASE_URL}/feedback?${params.toString()}`;
 
-      const feedbacks = await fetch(endpoint, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const feedbacks = await safeFetch(endpoint);
       if (!feedbacks.ok) {
         const error = await feedbacks.json();
         throw new Error(error?.error || "Getting feedback failed");
@@ -236,7 +217,6 @@ function ShowFeedback(props) {
       props.feedbackIn &&
       feedbackActivityFilter === "ACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
       const params = new URLSearchParams();
       params.append("page", feedbackPage.toString());
       params.append("size", "10");
@@ -259,13 +239,9 @@ function ShowFeedback(props) {
         params.append("email", trimmedEmail);
       }
 
-      const activeFeedback = await fetch(
-        `${API_BASE_URL}/feedback/active?${params.toString()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const activeFeedback = await safeFetch(
+        `${API_BASE_URL}/feedback/active?${params.toString()}`
       );
       if (!activeFeedback.ok) {
         const error = await activeFeedback.json();
@@ -297,7 +273,6 @@ function ShowFeedback(props) {
       props.feedbackIn &&
       feedbackActivityFilter === "INACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
       const params = new URLSearchParams();
       params.append("page", feedbackPage.toString());
       params.append("size", "10");
@@ -320,13 +295,9 @@ function ShowFeedback(props) {
         params.append("email", trimmedEmail);
       }
 
-      const inactiveFeedbacks = await fetch(
-        `${API_BASE_URL}/feedback/inactive?${params.toString()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const inactiveFeedbacks = await safeFetch(
+        `${API_BASE_URL}/feedback/inactive?${params.toString()}`
       );
       if (!inactiveFeedbacks.ok) {
         const error = await inactiveFeedbacks.json();

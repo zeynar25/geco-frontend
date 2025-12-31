@@ -5,7 +5,7 @@ import { useState } from "react";
 import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer";
 import BackButton from "../Components/BackButton.jsx";
-import { API_BASE_URL } from "../apiConfig";
+import { API_BASE_URL, safeFetch, ensureTokenValidOrAlert } from "../apiConfig";
 import {
   faAngleLeft,
   faAngleRight,
@@ -27,18 +27,13 @@ function Feedback() {
   } = useQuery({
     queryKey: ["feedbacks"],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${API_BASE_URL}/feedback/active?page=${feedbackPage}&size=10`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/feedback/active?page=${feedbackPage}&size=10`
       );
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error?.error || "Getting my bookings failed");
+        throw new Error(error?.error || "Getting feedbacks failed");
       }
       return await response.json();
     },

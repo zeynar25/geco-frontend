@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -39,14 +43,13 @@ function EditFeedback({ feedback, onClose }) {
 
   const updateFeedbackMutation = useMutation({
     mutationFn: async ({ feedbackId, data }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/feedback/staff/${feedbackId}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(data),
         }
@@ -71,13 +74,13 @@ function EditFeedback({ feedback, onClose }) {
 
   const disableFeedbackMutation = useMutation({
     mutationFn: async (feedbackId) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/feedback/${feedbackId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/feedback/${feedbackId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -96,14 +99,11 @@ function EditFeedback({ feedback, onClose }) {
 
   const restoreFeedbackMutation = useMutation({
     mutationFn: async (feedbackId) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/feedback/restore/${feedbackId}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 

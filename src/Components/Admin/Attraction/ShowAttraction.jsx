@@ -6,7 +6,11 @@ import {
   faPlus,
   faEdit,
 } from "@fortawesome/free-solid-svg-icons";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 
 function ShowAttraction(props) {
   const [activityFilter, setActivityFilter] = useState("ALL");
@@ -30,12 +34,8 @@ function ShowAttraction(props) {
     enabled:
       props.canViewDashboard && props.attractionsIn && activityFilter === "ALL",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/attraction`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const res = await safeFetch(`${API_BASE_URL}/attraction`);
       if (!res.ok) {
         const err = await res.json().catch(() => null);
         throw new Error(err?.error || "Getting attractions failed");
@@ -59,12 +59,8 @@ function ShowAttraction(props) {
       props.attractionsIn &&
       activityFilter === "ACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/attraction/active`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const res = await safeFetch(`${API_BASE_URL}/attraction/active`);
       if (!res.ok) {
         const err = await res.json().catch(() => null);
         throw new Error(err?.error || "Getting active attractions failed");
@@ -88,12 +84,8 @@ function ShowAttraction(props) {
       props.attractionsIn &&
       activityFilter === "INACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/attraction/inactive`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const res = await safeFetch(`${API_BASE_URL}/attraction/inactive`);
       if (!res.ok) {
         const err = await res.json().catch(() => null);
         throw new Error(err?.error || "Getting inactive attractions failed");

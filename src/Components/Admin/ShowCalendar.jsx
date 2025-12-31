@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleLeft,
@@ -61,14 +65,9 @@ function ShowCalendar(props) {
     queryKey: ["calendar", year, month],
     enabled: props.canViewDashboard && props.calendarIn,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${API_BASE_URL}/calendar/${year}/${month + 1}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/calendar/${year}/${month + 1}`
       );
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -141,12 +140,11 @@ function ShowCalendar(props) {
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ date, status }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/calendar-date`, {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/calendar-date`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ date, dateStatus: status }),
       });

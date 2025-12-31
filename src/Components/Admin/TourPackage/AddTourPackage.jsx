@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -27,12 +31,10 @@ function AddTourPackage({ onClose }) {
   } = useQuery({
     queryKey: ["package-inclusions", "active"],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/package-inclusion/active`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/package-inclusion/active`
+      );
       if (!response.ok) {
         const error = await response.json();
         throw new Error(
@@ -49,12 +51,11 @@ function AddTourPackage({ onClose }) {
 
   const addPackageMutation = useMutation({
     mutationFn: async (payload) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/package`, {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/package`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });

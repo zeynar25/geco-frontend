@@ -7,7 +7,7 @@ import BackButton from "../Components/BackButton";
 
 import { jwtDecode } from "jwt-decode";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "../apiConfig";
+import { API_BASE_URL, safeFetch, ensureTokenValidOrAlert } from "../apiConfig";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -100,15 +100,11 @@ function Account() {
   } = useQuery({
     queryKey: ["account"],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
+      const token = ensureTokenValidOrAlert();
       const decoded = jwtDecode(token);
-      const account = await fetch(`${API_BASE_URL}/account/${decoded.sub}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const account = await safeFetch(`${API_BASE_URL}/account/${decoded.sub}`);
       if (!account.ok) {
-        const error = await account.json();
+        const error = await account.json().catch(() => null);
         throw new Error(error?.error || "Getting account failed");
       }
       return await account.json();
@@ -150,14 +146,14 @@ function Account() {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+
+      const response = await safeFetch(
         `${API_BASE_URL}/account/update-details/${accountData.accountId}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             email: accountData?.detail?.email,
@@ -195,17 +191,12 @@ function Account() {
   } = useQuery({
     queryKey: ["bookings", bookingPage],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${API_BASE_URL}/booking/me?page=${bookingPage}&size=5`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/booking/me?page=${bookingPage}&size=5`
       );
       if (!response.ok) {
-        const error = await response.json();
+        const error = await response.json().catch(() => null);
         throw new Error(error?.error || "Getting my bookings failed");
       }
       return await response.json();
@@ -225,14 +216,10 @@ function Account() {
   } = useQuery({
     queryKey: ["feedbacks"],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/feedback/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/feedback/me`);
       if (!response.ok) {
-        const error = await response.json();
+        const error = await response.json().catch(() => null);
         throw new Error(error?.error || "Getting my feedbacks failed");
       }
       return await response.json();
@@ -252,14 +239,12 @@ function Account() {
   } = useQuery({
     queryKey: ["feedbackCategories"],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/feedback-category/active`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/feedback-category/active`
+      );
       if (!response.ok) {
-        const error = await response.json();
+        const error = await response.json().catch(() => null);
         throw new Error(error?.error || "Getting feedback categories failed");
       }
       return await response.json();
@@ -379,8 +364,7 @@ function Account() {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    if (!token) {
+    if (!localStorage.getItem("token")) {
       alert("Please log in again to submit your payment.");
       return;
     }
@@ -400,13 +384,11 @@ function Account() {
       formData.append("resubmit", isResubmittingPayment ? "true" : "false");
       formData.append("proofOfPayment", paymentFile);
 
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/booking/${selectedBookingForPayment.bookingId}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           body: formData,
         }
       );
@@ -487,19 +469,13 @@ function Account() {
     try {
       setIsUpdatingPassword(true);
 
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Please log in again to update your password.");
-        return;
-      }
-
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/account/update-password/${accountData.accountId}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             oldPassword: passwordForm.currentPassword,
@@ -534,11 +510,7 @@ function Account() {
   const handleSaveFeedback = async () => {
     if (!selectedFeedback) return;
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Please log in again to update your feedback.");
-      return;
-    }
+    ensureTokenValidOrAlert();
 
     const feedbackId = selectedFeedback.feedbackId ?? selectedFeedback.id;
 
@@ -573,11 +545,10 @@ function Account() {
             feedbackForm.suggestion !== "" ? feedbackForm.suggestion : null,
         };
 
-        const response = await fetch(`${API_BASE_URL}/feedback`, {
+        const response = await safeFetch(`${API_BASE_URL}/feedback`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(feedbackDetails),
         });
@@ -615,14 +586,16 @@ function Account() {
             feedbackForm.suggestion !== "" ? feedbackForm.suggestion : null,
         };
 
-        const response = await fetch(`${API_BASE_URL}/feedback/${feedbackId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(feedbackDetails),
-        });
+        const response = await safeFetch(
+          `${API_BASE_URL}/feedback/${feedbackId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(feedbackDetails),
+          }
+        );
 
         if (!response.ok) {
           const error = await response.json().catch(() => null);

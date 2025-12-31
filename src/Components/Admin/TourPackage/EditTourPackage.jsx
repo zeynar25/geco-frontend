@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -32,14 +36,9 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
     queryKey: ["package-inclusions", pkg?.packageId, "available"],
     enabled: !!pkg?.packageId,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${API_BASE_URL}/package/${pkg.packageId}/inclusions/available`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/package/${pkg.packageId}/inclusions/available`
       );
       if (!response.ok) {
         const error = await response.json();
@@ -57,12 +56,11 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
 
   const updatePackageMutation = useMutation({
     mutationFn: async ({ packageId, data }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/package/${packageId}`, {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/package/${packageId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });
@@ -89,12 +87,9 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
 
   const disablePackageMutation = useMutation({
     mutationFn: async ({ packageId }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/package/${packageId}`, {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/package/${packageId}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
       if (!response.ok) {
@@ -117,14 +112,11 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
 
   const restorePackageMutation = useMutation({
     mutationFn: async ({ packageId }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/package/admin/restore/${packageId}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 

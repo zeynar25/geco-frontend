@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 
 function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
   const [name, setName] = useState(attraction?.name || "");
@@ -14,15 +18,12 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
 
   const updateAttractionMutation = useMutation({
     mutationFn: async ({ attractionId, formData }) => {
-      const token = localStorage.getItem("token");
+      ensureTokenValidOrAlert();
 
-      const response = await fetch(
+      const response = await safeFetch(
         `${API_BASE_URL}/attraction/${attractionId}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           body: formData,
         }
       );
@@ -54,15 +55,12 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
 
   const disableAttractionMutation = useMutation({
     mutationFn: async ({ attractionId }) => {
-      const token = localStorage.getItem("token");
+      ensureTokenValidOrAlert();
 
-      const response = await fetch(
+      const response = await safeFetch(
         `${API_BASE_URL}/attraction/${attractionId}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 
@@ -91,15 +89,12 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
 
   const restoreAttractionMutation = useMutation({
     mutationFn: async ({ attractionId }) => {
-      const token = localStorage.getItem("token");
+      ensureTokenValidOrAlert();
 
-      const response = await fetch(
+      const response = await safeFetch(
         `${API_BASE_URL}/attraction/restore/${attractionId}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 

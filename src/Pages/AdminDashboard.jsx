@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import BackButton from "../Components/BackButton";
-import { API_BASE_URL } from "../apiConfig";
+import { API_BASE_URL, safeFetch, ensureTokenValidOrAlert } from "../apiConfig";
 import ShowBooking from "../Components/Admin/Booking/ShowBooking";
 import EditBooking from "../Components/Admin/Booking/EditBooking";
 import ShowFinance from "../Components/Admin/ShowFinance";
@@ -109,13 +109,9 @@ function AdminDashboard() {
   } = useQuery({
     queryKey: ["account"],
     queryFn: async () => {
-      const token = localStorage.getItem("token");
+      const token = ensureTokenValidOrAlert();
       const decoded = jwtDecode(token);
-      const account = await fetch(`${API_BASE_URL}/account/${decoded.sub}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const account = await safeFetch(`${API_BASE_URL}/account/${decoded.sub}`);
       if (!account.ok) {
         const error = await account.json();
         throw new Error(error?.error || "Getting account failed");
@@ -146,12 +142,8 @@ function AdminDashboard() {
     queryKey: ["dashboardStatistics"],
     enabled: canViewDashboard,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const stats = await fetch(`${API_BASE_URL}/dashboard`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const stats = await safeFetch(`${API_BASE_URL}/dashboard`);
       if (!stats.ok) {
         const error = await stats.json();
         throw new Error(error?.error || "Getting dashboard statistics failed");

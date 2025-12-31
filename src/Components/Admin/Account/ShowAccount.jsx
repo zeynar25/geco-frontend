@@ -10,7 +10,11 @@ import {
   faPlus,
   faEdit,
 } from "@fortawesome/free-solid-svg-icons";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 
 function ShowAccount(props) {
   const [accountRoleFilter, setAccountRoleFilter] = useState("ALL");
@@ -60,8 +64,6 @@ function ShowAccount(props) {
     ],
     enabled: props.canViewDashboard && props.accountsIn,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-
       const params = new URLSearchParams();
       params.append("page", accountPage.toString());
       params.append("size", "10");
@@ -117,11 +119,8 @@ function ShowAccount(props) {
 
       const endpoint = `${API_BASE_URL}/${basePath}?${params.toString()}`;
 
-      const response = await fetch(endpoint, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(endpoint);
 
       if (!response.ok) {
         const error = await response.json().catch(() => null);

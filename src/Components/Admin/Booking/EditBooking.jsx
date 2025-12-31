@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 
 function EditBooking({ booking, onClose }) {
   const [editForm, setEditForm] = useState(() => ({
@@ -14,14 +18,13 @@ function EditBooking({ booking, onClose }) {
 
   const bookingUpdateMutation = useMutation({
     mutationFn: async ({ bookingId, data }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/booking/staff/${bookingId}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(data),
         }

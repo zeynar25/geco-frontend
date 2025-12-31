@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
@@ -11,15 +15,17 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
 
   const updateCategoryMutation = useMutation({
     mutationFn: async ({ id, label }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/feedback-category/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ label }),
-      });
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/feedback-category/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ label }),
+        }
+      );
 
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -44,14 +50,11 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
 
   const disableCategoryMutation = useMutation({
     mutationFn: async ({ id }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/feedback-category/admin/${id}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 
@@ -76,14 +79,11 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
 
   const restoreCategoryMutation = useMutation({
     mutationFn: async ({ id }) => {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
         `${API_BASE_URL}/feedback-category/admin/restore/${id}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 

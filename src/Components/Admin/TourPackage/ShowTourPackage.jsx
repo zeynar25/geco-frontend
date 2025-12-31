@@ -2,7 +2,11 @@ import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBoxOpen,
@@ -35,12 +39,8 @@ function ShowTourPackage(props) {
     enabled:
       props.canViewDashboard && props.packagesIn && tourPackageFilter === "ALL",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const tourPackages = await fetch(`${API_BASE_URL}/package`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const tourPackages = await safeFetch(`${API_BASE_URL}/package`);
       if (!tourPackages.ok) {
         const error = await tourPackages.json();
         throw new Error(error?.error || "Getting tour packages failed");
@@ -64,12 +64,8 @@ function ShowTourPackage(props) {
       props.packagesIn &&
       tourPackageFilter === "ACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const tourPackages = await fetch(`${API_BASE_URL}/package/active`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const tourPackages = await safeFetch(`${API_BASE_URL}/package/active`);
       if (!tourPackages.ok) {
         const error = await tourPackages.json();
         throw new Error(error?.error || "Getting active tour packages failed");
@@ -93,12 +89,8 @@ function ShowTourPackage(props) {
       props.packagesIn &&
       tourPackageFilter === "INACTIVE",
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const tourPackages = await fetch(`${API_BASE_URL}/package/inactive`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const tourPackages = await safeFetch(`${API_BASE_URL}/package/inactive`);
       if (!tourPackages.ok) {
         const error = await tourPackages.json();
         throw new Error(

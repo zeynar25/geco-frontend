@@ -1,7 +1,11 @@
 import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartColumn, faChartPie } from "@fortawesome/free-solid-svg-icons";
 
@@ -40,14 +44,9 @@ function ShowTrend(props) {
       viewMode === "MONTHLY" &&
       !!selectedYear,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const stats = await fetch(
-        `${API_BASE_URL}/dashboard/trends/monthly?year=${selectedYear}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const stats = await safeFetch(
+        `${API_BASE_URL}/dashboard/trends/monthly?year=${selectedYear}`
       );
       if (!stats.ok) {
         const error = await stats.json();
@@ -74,14 +73,9 @@ function ShowTrend(props) {
       !!yearFrom &&
       !!yearTo,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const stats = await fetch(
-        `${API_BASE_URL}/dashboard/trends/yearly?startYear=${yearFrom}&endYear=${yearTo}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const stats = await safeFetch(
+        `${API_BASE_URL}/dashboard/trends/yearly?startYear=${yearFrom}&endYear=${yearTo}`
       );
       if (!stats.ok) {
         const error = await stats.json();

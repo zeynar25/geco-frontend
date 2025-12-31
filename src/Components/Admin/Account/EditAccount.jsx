@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 
 function EditAccount({ account, onClose, isAdmin }) {
   const [role, setRole] = useState(account?.role || "USER");
@@ -22,16 +26,13 @@ function EditAccount({ account, onClose, isAdmin }) {
 
   const updateRoleMutation = useMutation({
     mutationFn: async ({ accountId, role }) => {
-      const token = localStorage.getItem("token");
+      ensureTokenValidOrAlert();
 
-      const response = await fetch(
+      const response = await safeFetch(
         `${API_BASE_URL}/account/admin/update-role/${accountId}`,
         {
           method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ accountId, role }),
         }
       );
@@ -59,16 +60,11 @@ function EditAccount({ account, onClose, isAdmin }) {
 
   const resetPasswordMutation = useMutation({
     mutationFn: async ({ accountId }) => {
-      const token = localStorage.getItem("token");
+      ensureTokenValidOrAlert();
 
-      const response = await fetch(
+      const response = await safeFetch(
         `${API_BASE_URL}/account/staff/reset-password/${accountId}`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { method: "PATCH" }
       );
 
       if (!response.ok) {
@@ -93,15 +89,12 @@ function EditAccount({ account, onClose, isAdmin }) {
 
   const disableAccountMutation = useMutation({
     mutationFn: async ({ accountId }) => {
-      const token = localStorage.getItem("token");
+      ensureTokenValidOrAlert();
 
-      const response = await fetch(
+      const response = await safeFetch(
         `${API_BASE_URL}/account/admin/${accountId}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 
@@ -126,15 +119,12 @@ function EditAccount({ account, onClose, isAdmin }) {
 
   const restoreAccountMutation = useMutation({
     mutationFn: async ({ accountId }) => {
-      const token = localStorage.getItem("token");
+      ensureTokenValidOrAlert();
 
-      const response = await fetch(
+      const response = await safeFetch(
         `${API_BASE_URL}/account/admin/restore/${accountId}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 

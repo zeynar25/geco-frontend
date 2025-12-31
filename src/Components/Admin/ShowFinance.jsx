@@ -1,7 +1,11 @@
 import { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartColumn,
@@ -37,12 +41,8 @@ function ShowFinance(props) {
     queryKey: ["financeStatistics"],
     enabled: props.canViewDashboard && props.financesIn,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const stats = await fetch(`${API_BASE_URL}/dashboard/finances`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      ensureTokenValidOrAlert();
+      const stats = await safeFetch(`${API_BASE_URL}/dashboard/finances`);
       if (!stats.ok) {
         const error = await stats.json();
         throw new Error(error?.error || "Getting finance statistics failed");
@@ -67,14 +67,9 @@ function ShowFinance(props) {
       viewMode === "MONTHLY" &&
       !!selectedYear,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const stats = await fetch(
-        `${API_BASE_URL}/dashboard/finances/revenue/monthly?year=${selectedYear}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const stats = await safeFetch(
+        `${API_BASE_URL}/dashboard/finances/revenue/monthly?year=${selectedYear}`
       );
       if (!stats.ok) {
         const error = await stats.json();
@@ -101,14 +96,9 @@ function ShowFinance(props) {
       !!yearFrom &&
       !!yearTo,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
-      const stats = await fetch(
-        `${API_BASE_URL}/dashboard/finances/revenue/yearly?startYear=${yearFrom}&endYear=${yearTo}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      ensureTokenValidOrAlert();
+      const stats = await safeFetch(
+        `${API_BASE_URL}/dashboard/finances/revenue/yearly?startYear=${yearFrom}&endYear=${yearTo}`
       );
       if (!stats.ok) {
         const error = await stats.json();

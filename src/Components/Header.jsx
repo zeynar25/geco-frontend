@@ -14,7 +14,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
 import { jwtDecode } from "jwt-decode";
-import { API_BASE_URL } from "../apiConfig";
+import { API_BASE_URL, safeFetch, ensureTokenValidOrAlert } from "../apiConfig";
 
 function isLoggedIn() {
   const token = localStorage.getItem("token");
@@ -32,16 +32,10 @@ function isLoggedIn() {
 }
 
 async function logoutAccount() {
-  if (isLoggedIn() === false) {
-    throw new Error("Token has expired, please log in again");
-  }
+  ensureTokenValidOrAlert();
 
-  const token = localStorage.getItem("token");
-  const res = await fetch(`${API_BASE_URL}/account/logout`, {
+  const res = await safeFetch(`${API_BASE_URL}/account/logout`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 
   if (!res.ok) {

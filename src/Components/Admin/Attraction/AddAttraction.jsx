@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 
 function AddAttraction({ onClose }) {
   const [name, setName] = useState("");
@@ -14,7 +18,7 @@ function AddAttraction({ onClose }) {
 
   const addAttractionMutation = useMutation({
     mutationFn: async ({ name, description, funFact, image }) => {
-      const token = localStorage.getItem("token");
+      ensureTokenValidOrAlert();
 
       const formData = new FormData();
       formData.append("attractionName", name.trim());
@@ -26,11 +30,8 @@ function AddAttraction({ onClose }) {
         formData.append("image", image);
       }
 
-      const response = await fetch(`${API_BASE_URL}/attraction`, {
+      const response = await safeFetch(`${API_BASE_URL}/attraction`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: formData,
       });
 
