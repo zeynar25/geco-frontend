@@ -203,6 +203,8 @@ function AddTourPackage({ onClose }) {
       return;
     }
 
+    const notesTrimmed = form.notes.trim();
+
     const payload = {
       name: form.name.trim(),
       description: form.description.trim(),
@@ -212,9 +214,12 @@ function AddTourPackage({ onClose }) {
       basePrice: form.basePrice === "" ? 0 : Number(form.basePrice),
       pricePerPerson:
         form.pricePerPerson === "" ? 0 : Number(form.pricePerPerson),
-      notes: form.notes.trim(),
       inclusionIds: selectedInclusionIds,
     };
+
+    if (notesTrimmed) {
+      payload.notes = notesTrimmed;
+    }
 
     addPackageMutation.mutate(payload);
   };
