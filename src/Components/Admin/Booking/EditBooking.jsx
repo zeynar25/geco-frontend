@@ -72,9 +72,10 @@ function EditBooking({ booking, onClose }) {
     ) {
       payload.paymentMethod = editForm.paymentMethod;
     }
-    const trimmedReply = editForm.staffReply.trim();
+    const trimmedReply =
+      editForm.staffReply == null ? "" : editForm.staffReply.trim();
     const originalReply = booking.staffReply || "";
-    if (trimmedReply.length > 0 && trimmedReply !== originalReply) {
+    if (trimmedReply !== originalReply) {
       payload.staffReply = trimmedReply;
     }
 
