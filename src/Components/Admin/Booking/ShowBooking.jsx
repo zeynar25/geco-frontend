@@ -467,7 +467,7 @@ function ShowBooking(props) {
 
                     {booking.staffReply && (
                       <div className="bg-[#4D9C43]/30 rounded-lg py-3 px-5 mb-5 flex flex-col">
-                        <span>Staff Reply:</span>
+                        <span>Agri-Eco Park Management: </span>
                         <span className="font-semibold">
                           {booking.staffReply}
                         </span>
