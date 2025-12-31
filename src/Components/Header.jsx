@@ -55,14 +55,57 @@ function Header() {
   const logoutMutation = useMutation({
     mutationFn: logoutAccount,
     onSuccess: () => {
-      localStorage.removeItem("token");
-      setLoggedIn(false);
-
-      alert("You have been logged out.");
-      navigate("/");
+      (async () => {
+        localStorage.removeItem("token");
+        setLoggedIn(false);
+        const msg = "You have been logged out.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/");
+      })();
     },
-    onError: (error) => {
-      alert(error.message);
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert?.(msg) || alert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            window.__nativeAlert?.(msg) || alert(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const msg = error?.message || "Something went wrong";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
     },
   });
 

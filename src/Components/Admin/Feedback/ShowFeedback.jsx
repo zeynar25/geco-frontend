@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../apiConfig";
+import {
+  API_BASE_URL,
+  safeFetch,
+  ensureTokenValidOrAlert,
+} from "../../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEdit,
@@ -15,6 +19,8 @@ import {
   faAngleRight,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
+
+import { useNavigate } from "react-router-dom";
 
 function ShowFeedback(props) {
   const [feedbackCategoryFilter, setFeedbackCategoryFilter] = useState("ALL");
@@ -76,9 +82,24 @@ function ShowFeedback(props) {
     },
   });
 
-  if (feedbackCategoryError) {
-    alert("something went wrong in retrieving feedback categories");
-  }
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!feedbackCategoryError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (feedbackCategoryError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errorMsg = "something went wrong in retrieving feedback categories";
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [feedbackCategoryError, navigate]);
 
   const {
     data: activeFeedbackCategoryData,
@@ -105,9 +126,23 @@ function ShowFeedback(props) {
     },
   });
 
-  if (activeFeedbackCategoryError) {
-    alert("something went wrong in retrieving active feedback categories");
-  }
+  useEffect(() => {
+    if (!activeFeedbackCategoryError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (activeFeedbackCategoryError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errorMsg =
+        "something went wrong in retrieving active feedback categories";
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [activeFeedbackCategoryError, navigate]);
 
   const {
     data: inactiveFeedbackCategoryData,
@@ -134,9 +169,23 @@ function ShowFeedback(props) {
     },
   });
 
-  if (inactiveFeedbackCategoryError) {
-    alert("something went wrong in retrieving inactive feedback categories");
-  }
+  useEffect(() => {
+    if (!inactiveFeedbackCategoryError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (inactiveFeedbackCategoryError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errorMsg =
+        "something went wrong in retrieving inactive feedback categories";
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [inactiveFeedbackCategoryError, navigate]);
 
   const {
     data: feedbackData,
@@ -190,14 +239,26 @@ function ShowFeedback(props) {
     },
   });
 
-  if (feedbackError) {
-    console.error("Feedback error:", feedbackError);
-    alert(
-      "Error: " +
+  useEffect(() => {
+    if (!feedbackError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (feedbackError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      console.error("Feedback error:", feedbackError);
+      const errorMsg =
+        "Error: " +
         (feedbackError.message ||
-          "Something went wrong in retrieving feedbackss")
-    );
-  }
+          "Something went wrong in retrieving feedbacks");
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [feedbackError, navigate]);
 
   const {
     data: activeFeedbackData,
@@ -251,9 +312,22 @@ function ShowFeedback(props) {
     },
   });
 
-  if (activeFeedbackError) {
-    alert("something went wrong in retrieving active feedbacks");
-  }
+  useEffect(() => {
+    if (!activeFeedbackError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (activeFeedbackError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errorMsg = "something went wrong in retrieving active feedbacks";
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [activeFeedbackError, navigate]);
 
   const {
     data: inactiveFeedbackData,
@@ -307,9 +381,22 @@ function ShowFeedback(props) {
     },
   });
 
-  if (inactiveFeedbackError) {
-    alert("something went wrong in retrieving inactive feedbacks");
-  }
+  useEffect(() => {
+    if (!inactiveFeedbackError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (inactiveFeedbackError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errorMsg = "something went wrong in retrieving inactive feedbacks";
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [inactiveFeedbackError, navigate]);
 
   const currentFeedbackPageData =
     feedbackActivityFilter === "ALL"

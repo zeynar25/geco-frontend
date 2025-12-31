@@ -57,7 +57,11 @@ function ShowTrend(props) {
   });
 
   if (graphMonthlyError) {
-    alert("something went wrong in retrieving monthly statistics");
+    (async () => {
+      const msg = "something went wrong in retrieving monthly statistics";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    })();
   }
 
   const {
@@ -86,7 +90,11 @@ function ShowTrend(props) {
   });
 
   if (graphYearlyError) {
-    alert("something went wrong in retrieving yearly statistics");
+    (async () => {
+      const msg = "something went wrong in retrieving yearly statistics";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    })();
   }
 
   const PIE_COLORS = ["#7423E2", "#48BF56", "#F59E0B", "#EF4444"];

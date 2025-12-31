@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   API_BASE_URL,
@@ -15,6 +16,7 @@ function EditBooking({ booking, onClose }) {
   }));
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const bookingUpdateMutation = useMutation({
     mutationFn: async ({ bookingId, data }) => {
@@ -37,17 +39,35 @@ function EditBooking({ booking, onClose }) {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["bookings"], exact: false });
       queryClient.invalidateQueries({
         queryKey: ["dashboardStatistics"],
         exact: false,
       });
       onClose();
-      alert("Booking updated successfully.");
+      const msg = "Booking updated successfully.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     },
-    onError: (error) => {
-      alert(error.message || "Updating booking failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Updating booking failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
   });
 

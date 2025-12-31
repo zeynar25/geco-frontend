@@ -1,4 +1,5 @@
-import { useLocation, useParams, Link } from "react-router-dom";
+import { useLocation, useParams, Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import Header from "../Components/Header.jsx";
@@ -34,9 +35,24 @@ function Attraction() {
     enabled: !!id,
   });
 
-  if (error) {
-    alert("Something went wrong in retrieving attraction details");
-  }
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!error) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (error?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errMsg = "Something went wrong in retrieving attraction details";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
+    };
+    handle();
+  }, [error, navigate]);
 
   return (
     <>

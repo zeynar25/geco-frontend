@@ -97,8 +97,13 @@ function AdminDashboard() {
 
   useEffect(() => {
     if (!loggedIn) {
-      alert("Please log in to book a visit.");
-      navigate("/signin");
+      const handle = async () => {
+        const msg = "Please log in to book a visit.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+      };
+      handle();
     }
   }, [loggedIn, navigate]);
 
@@ -120,19 +125,44 @@ function AdminDashboard() {
     },
   });
 
-  if (accountError) {
-    alert("something went wrong in retrieving account");
-  }
+  useEffect(() => {
+    if (!accountError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (accountError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msgAccount = "something went wrong in retrieving account";
+      if (window.__showAlert) await window.__showAlert(msgAccount);
+      else window.__nativeAlert?.(msgAccount) || alert(msgAccount);
+    };
+    handle();
+  }, [accountError, navigate]);
 
   const isAuthorized =
     accountData?.role === "ADMIN" || accountData?.role === "STAFF";
   const isAdmin = accountData?.role === "ADMIN";
   const canViewDashboard = loggedIn && isAuthorized;
 
-  if (accountData && isAuthorized === false) {
-    alert("You do not have admin privileges to access this page.");
-    navigate("/");
-  }
+  useEffect(() => {
+    if (!accountData) return;
+    if (isAuthorized === false) {
+      const handle = async () => {
+        const msg = "You do not have admin privileges to access this page.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else {
+          const m = msg;
+          if (window.__showAlert) await window.__showAlert(m);
+          else window.__nativeAlert?.(m) || alert(m);
+        }
+        navigate("/");
+      };
+      handle();
+    }
+  }, [accountData, isAuthorized, navigate]);
 
   const {
     data: adminDashboardData,
@@ -153,8 +183,26 @@ function AdminDashboard() {
   });
 
   if (adminDashboardError) {
-    alert("something went wrong in retrieving dashboard statistics");
+    // handled in useEffect below
   }
+
+  useEffect(() => {
+    if (!adminDashboardError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (adminDashboardError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msgStats =
+        "something went wrong in retrieving dashboard statistics";
+      if (window.__showAlert) await window.__showAlert(msgStats);
+      else window.__nativeAlert?.(msgStats) || alert(msgStats);
+    };
+    handle();
+  }, [adminDashboardError, navigate]);
 
   if (accountPending) {
     return (

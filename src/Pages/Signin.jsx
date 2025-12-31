@@ -60,36 +60,45 @@ function Signin() {
 
   const registerMutation = useMutation({
     mutationFn: registerAccount,
-    onSuccess: () => {
-      alert("Account registered!");
+    onSuccess: async () => {
+      const msg = "Account registered!";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       handleSwitch("login");
     },
-    onError: (error) => {
-      alert(error.message);
+    onError: async (error) => {
+      const msg = error?.message || "Registration failed";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     },
   });
 
   const loginMutation = useMutation({
     mutationFn: loginAccount,
-    onSuccess: (token) => {
+    onSuccess: async (token) => {
       localStorage.setItem("token", token);
-
-      alert("Login successful!");
+      const msg = "Login successful!";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       navigate("/");
     },
-    onError: (error) => {
-      alert(error.message);
+    onError: async (error) => {
+      const msg = error?.message || "Login failed";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     },
   });
 
-  function handleRegister(e) {
+  async function handleRegister(e) {
     e.preventDefault();
     const form = e.target;
     const password = form.password.value;
     const confirmPassword = form["confirm-password"].value;
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      const msg = "Passwords do not match!";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 

@@ -45,7 +45,11 @@ export default function About() {
   });
 
   if (faqError) {
-    alert("something went wrong in retrieving FAQs");
+    (async () => {
+      const msg = "something went wrong in retrieving FAQs";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    })();
   }
 
   return (

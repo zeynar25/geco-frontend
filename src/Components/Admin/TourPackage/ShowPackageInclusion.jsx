@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 import {
   API_BASE_URL,
@@ -51,10 +52,6 @@ function ShowPackageInclusion(props) {
     },
   });
 
-  if (allError) {
-    alert("something went wrong in retrieving package inclusions");
-  }
-
   const {
     data: activeInclusions,
     error: activeError,
@@ -79,10 +76,6 @@ function ShowPackageInclusion(props) {
       return await response.json();
     },
   });
-
-  if (activeError) {
-    alert("something went wrong in retrieving active package inclusions");
-  }
 
   const {
     data: inactiveInclusions,
@@ -109,9 +102,29 @@ function ShowPackageInclusion(props) {
     },
   });
 
-  if (inactiveError) {
-    alert("something went wrong in retrieving inactive package inclusions");
-  }
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const err = allError || activeError || inactiveError;
+    if (!err) return;
+
+    (async () => {
+      const tokenExpired = err?.message === "TOKEN_EXPIRED";
+      const msg = tokenExpired
+        ? "Your session has expired. Please sign in again."
+        : "Something went wrong retrieving package inclusions.";
+
+      if (window.__showAlert) {
+        await window.__showAlert(msg);
+      } else if (window.__nativeAlert) {
+        window.__nativeAlert(msg);
+      } else {
+        alert(msg);
+      }
+
+      if (tokenExpired) navigate("/signin");
+    })();
+  }, [allError, activeError, inactiveError, navigate]);
 
   const isLoading =
     (inclusionFilter === "ALL" && allPending) ||

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   API_BASE_URL,
@@ -12,6 +13,7 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
   const [label, setLabel] = useState(feedbackCategory?.label || "");
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const updateCategoryMutation = useMutation({
     mutationFn: async ({ id, label }) => {
@@ -34,17 +36,50 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
 
       return response.json();
     },
-    onSuccess: () => {
-      invalidateQueries();
+    onSuccess: async () => {
+      queryClient.invalidateQueries();
       queryClient.invalidateQueries({
         queryKey: ["dashboardStatistics"],
         exact: false,
       });
-      alert("Feedback category updated successfully.");
+      const msg = "Feedback category updated successfully.";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {}
+      }
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Updating feedback category failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const msg = error.message || "Updating feedback category failed";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     },
   });
 
@@ -63,17 +98,50 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
         throw new Error(error?.error || "Disabling feedback category failed");
       }
     },
-    onSuccess: () => {
-      invalidateQueries();
+    onSuccess: async () => {
+      queryClient.invalidateQueries();
       queryClient.invalidateQueries({
         queryKey: ["dashboardStatistics"],
         exact: false,
       });
-      alert("Feedback category disabled successfully.");
+      const msg = "Feedback category disabled successfully.";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {}
+      }
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Disabling feedback category failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const msg = error.message || "Disabling feedback category failed";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     },
   });
 
@@ -92,17 +160,50 @@ function EditFeedbackCategory({ feedbackCategory, onClose, isAdmin }) {
         throw new Error(error?.error || "Restoring feedback category failed");
       }
     },
-    onSuccess: () => {
-      invalidateQueries();
+    onSuccess: async () => {
+      queryClient.invalidateQueries();
       queryClient.invalidateQueries({
         queryKey: ["dashboardStatistics"],
         exact: false,
       });
-      alert("Feedback category restored successfully.");
+      const msg = "Feedback category restored successfully.";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {}
+      }
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Restoring feedback category failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const msg = error.message || "Restoring feedback category failed";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     },
   });
 

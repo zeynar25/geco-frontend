@@ -39,7 +39,33 @@ const router = createBrowserRouter([
   },
 ]);
 
-const queryClient = new QueryClient();
+const handleGlobalQueryError = async (error) => {
+  if (!error) return;
+  console.log("Global query onError fired", error);
+  const message = error?.message || (error?.toString && error.toString());
+  if (message === "TOKEN_EXPIRED") {
+    const msg = "Your session has expired. Please sign in again.";
+    if (typeof window !== "undefined" && window.__showAlert) {
+      try {
+        await window.__showAlert(msg);
+      } catch {
+        // fallback to native alert if showAlert fails
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
+    } else {
+      window.__nativeAlert?.(msg) || alert(msg);
+    }
+
+    window.location.href = "/signin";
+  }
+};
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { onError: handleGlobalQueryError },
+    mutations: { onError: handleGlobalQueryError },
+  },
+});
 
 setupCustomDialogs();
 

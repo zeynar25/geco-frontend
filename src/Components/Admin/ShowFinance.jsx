@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -24,6 +24,8 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
+
+import { useNavigate } from "react-router-dom";
 
 function ShowFinance(props) {
   const [viewMode, setViewMode] = useState("MONTHLY");
@@ -51,9 +53,24 @@ function ShowFinance(props) {
     },
   });
 
-  if (financeError) {
-    alert("something went wrong in retrieving finance statistics");
-  }
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!financeError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (financeError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errorMsg = "something went wrong in retrieving finance statistics";
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [financeError, navigate]);
 
   const {
     data: graphMonthlyData,
@@ -79,9 +96,22 @@ function ShowFinance(props) {
     },
   });
 
-  if (graphMonthlyError) {
-    alert("something went wrong in retrieving monthly statistics");
-  }
+  useEffect(() => {
+    if (!graphMonthlyError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (graphMonthlyError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errorMsg = "something went wrong in retrieving monthly statistics";
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [graphMonthlyError, navigate]);
 
   const {
     data: graphYearlyData,
@@ -108,9 +138,22 @@ function ShowFinance(props) {
     },
   });
 
-  if (graphYearlyError) {
-    alert("something went wrong in retrieving yearly statistics");
-  }
+  useEffect(() => {
+    if (!graphYearlyError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (graphYearlyError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errorMsg = "something went wrong in retrieving yearly statistics";
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [graphYearlyError, navigate]);
 
   return (
     <>

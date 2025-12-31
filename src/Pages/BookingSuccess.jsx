@@ -35,8 +35,13 @@ function BookingSuccess() {
 
   useEffect(() => {
     if (!loggedIn) {
-      alert("Please log in to book a visit.");
-      navigate("/signin");
+      const handle = async () => {
+        const msg = "Please log in to book a visit.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+      };
+      handle();
     }
   }, [loggedIn, navigate]);
 

@@ -93,7 +93,11 @@ function ShowLog(props) {
   });
 
   if (logsError) {
-    alert("something went wrong in retrieving audit logs");
+    (async () => {
+      const msg = "something went wrong in retrieving audit logs";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    })();
   }
 
   const logs = Array.isArray(logData?.content)

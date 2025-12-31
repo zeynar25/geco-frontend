@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import {
   API_BASE_URL,
   safeFetch,
@@ -41,9 +42,11 @@ function ShowBooking(props) {
     setBookingPage((prev) => prev + 1);
   };
 
-  const openProofModal = (booking) => {
+  const openProofModal = async (booking) => {
     if (!booking.proofOfPaymentPhoto) {
-      alert("No proof of payment uploaded for this booking.");
+      const msg = "No proof of payment uploaded for this booking.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 
@@ -72,7 +75,6 @@ function ShowBooking(props) {
     ],
     enabled: props.canViewDashboard && props.bookingIn,
     queryFn: async () => {
-      const token = localStorage.getItem("token");
       const baseUrl = `${API_BASE_URL}/booking`;
 
       const params = new URLSearchParams();
@@ -115,8 +117,42 @@ function ShowBooking(props) {
   });
 
   if (bookingError) {
-    alert("something went wrong in retrieving bookings");
+    console.log("ShowBooking bookingError", bookingError);
+    if (bookingError?.message === "TOKEN_EXPIRED") {
+      // Fallback: if global handler didn't run for some reason, handle it here
+      console.log('inside bookingError?.message === "TOKEN_EXPIRED"');
+    } else {
+      const errMsg = "something went wrong in retrieving bookings";
+      if (window.__showAlert) window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
+    }
   }
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (bookingError?.message === "TOKEN_EXPIRED") {
+      (async () => {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+      })();
+    }
+  }, [bookingError, navigate]);
 
   const bookings = bookingData?.content ?? [];
   const totalBookingPages = bookingData?.totalPages ?? 0;

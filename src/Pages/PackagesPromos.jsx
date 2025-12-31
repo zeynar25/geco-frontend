@@ -4,7 +4,9 @@ import BackButton from "../Components/BackButton";
 import HeaderCard from "../Components/HeaderCard";
 import { API_BASE_URL } from "../apiConfig";
 
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+
+import { useEffect } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
@@ -38,8 +40,27 @@ function PackagesPromos() {
   });
 
   if (packageError) {
-    alert("something went wrong in retrieving tour packages");
+    // handled in useEffect below
   }
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!packageError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (packageError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errMsg = "something went wrong in retrieving tour packages";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
+    };
+    handle();
+  }, [packageError, navigate]);
 
   // const {
   //   data: inclusionData,

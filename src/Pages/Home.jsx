@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { ClipLoader } from "react-spinners";
 
@@ -55,9 +55,24 @@ export default function Home() {
     },
   });
 
-  if (homeError) {
-    alert("something went wrong in retrieving home statistics");
-  }
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!homeError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (homeError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msgHome = "something went wrong in retrieving home statistics";
+      if (window.__showAlert) await window.__showAlert(msgHome);
+      else window.__nativeAlert?.(msgHome) || alert(msgHome);
+    };
+    handle();
+  }, [homeError, navigate]);
 
   const {
     data: attractionData,
@@ -76,9 +91,22 @@ export default function Home() {
     },
   });
 
-  if (attractionError) {
-    alert("something went wrong in retrieving attractions");
-  }
+  useEffect(() => {
+    if (!attractionError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (attractionError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msgAttractions = "something went wrong in retrieving attractions";
+      if (window.__showAlert) await window.__showAlert(msgAttractions);
+      else window.__nativeAlert?.(msgAttractions) || alert(msgAttractions);
+    };
+    handle();
+  }, [attractionError, navigate]);
 
   return (
     <>

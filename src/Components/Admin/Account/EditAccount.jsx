@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +14,9 @@ function EditAccount({ account, onClose, isAdmin }) {
   const [showRoleConfirm, setShowRoleConfirm] = useState(false);
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const isTargetAdmin = account?.role === "ADMIN";
 
   const isActive = (acc) => {
     if (!acc) return true;
@@ -22,6 +26,41 @@ function EditAccount({ account, onClose, isAdmin }) {
     if (typeof acc.status === "string")
       return acc.status.toUpperCase() === "ACTIVE";
     return true;
+  };
+
+  const showAlert = (msg) => {
+    if (typeof window !== "undefined" && window.__showAlert) {
+      try {
+        window.__showAlert(msg);
+        return;
+      } catch {
+        /* ignore */
+      }
+    }
+    try {
+      (window.__nativeAlert || window.alert)(msg);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const handleExpiredToken = async (msg) => {
+    try {
+      if (typeof window !== "undefined" && window.__showAlert) {
+        await window.__showAlert(msg);
+      } else if (typeof window !== "undefined" && window.__nativeAlert) {
+        window.__nativeAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
+    } catch {
+      try {
+        (window.__nativeAlert || window.alert)(msg);
+      } catch {
+        /* empty */
+      }
+    }
+    navigate("/signin");
   };
 
   const updateRoleMutation = useMutation({
@@ -50,11 +89,15 @@ function EditAccount({ account, onClose, isAdmin }) {
         queryKey: ["dashboardStatistics"],
         exact: false,
       });
-      alert("Account role updated successfully.");
+      showAlert("Account role updated successfully.");
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Updating account role failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        await handleExpiredToken("Your session has expired. Please sign in again.");
+        return;
+      }
+      showAlert(error.message || "Updating account role failed");
     },
   });
 
@@ -80,10 +123,14 @@ function EditAccount({ account, onClose, isAdmin }) {
         queryKey: ["dashboardStatistics"],
         exact: false,
       });
-      alert("Password reset successfully.");
+      showAlert("Password reset successfully.");
     },
-    onError: (error) => {
-      alert(error.message || "Resetting password failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        await handleExpiredToken("Your session has expired. Please sign in again.");
+        return;
+      }
+      showAlert(error.message || "Resetting password failed");
     },
   });
 
@@ -102,6 +149,8 @@ function EditAccount({ account, onClose, isAdmin }) {
         const error = await response.json().catch(() => null);
         throw new Error(error?.error || "Disabling account failed");
       }
+
+      return await response.json().catch(() => null);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"], exact: false });
@@ -109,11 +158,15 @@ function EditAccount({ account, onClose, isAdmin }) {
         queryKey: ["dashboardStatistics"],
         exact: false,
       });
-      alert("Account disabled successfully.");
+      showAlert("Account disabled successfully.");
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Disabling account failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        await handleExpiredToken("Your session has expired. Please sign in again.");
+        return;
+      }
+      showAlert(error.message || "Disabling account failed");
     },
   });
 
@@ -132,6 +185,8 @@ function EditAccount({ account, onClose, isAdmin }) {
         const error = await response.json().catch(() => null);
         throw new Error(error?.error || "Restoring account failed");
       }
+
+      return await response.json().catch(() => null);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"], exact: false });
@@ -139,21 +194,23 @@ function EditAccount({ account, onClose, isAdmin }) {
         queryKey: ["dashboardStatistics"],
         exact: false,
       });
-      alert("Account restored successfully.");
+      showAlert("Account restored successfully.");
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Restoring account failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        await handleExpiredToken("Your session has expired. Please sign in again.");
+        return;
+      }
+      showAlert(error.message || "Restoring account failed");
     },
   });
 
   const isBusy =
-    updateRoleMutation.isPending ||
-    resetPasswordMutation.isPending ||
-    disableAccountMutation.isPending ||
-    restoreAccountMutation.isPending;
-
-  const isTargetAdmin = (account?.role || "").toUpperCase() === "ADMIN";
+    updateRoleMutation.isLoading ||
+    resetPasswordMutation.isLoading ||
+    disableAccountMutation.isLoading ||
+    restoreAccountMutation.isLoading;
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -177,31 +234,65 @@ function EditAccount({ account, onClose, isAdmin }) {
     updateRoleMutation.mutate({ accountId: account.accountId, role });
   };
 
-  const handleResetPassword = () => {
+  const handleResetPassword = async () => {
     if (!account) return;
-    if (!window.confirm("Reset password for this account?")) return;
+    let ok = false;
+    if (typeof window !== "undefined" && window.__showConfirm) {
+      try {
+        ok = await window.__showConfirm("Reset password for this account?");
+      } catch {
+        ok = window.__nativeConfirm ? window.__nativeConfirm("Reset password for this account?") : false;
+      }
+    } else {
+      try {
+        ok = window.confirm("Reset password for this account?");
+      } catch {
+        ok = false;
+      }
+    }
+    if (!ok) return;
     resetPasswordMutation.mutate({ accountId: account.accountId });
   };
 
-  const handleDisableAccount = () => {
+  const handleDisableAccount = async () => {
     if (!account) return;
-    if (
-      !window.confirm(
-        "Disable this account? The user will no longer be able to sign in."
-      )
-    )
-      return;
+    let ok = false;
+    const msg = "Disable this account? The user will no longer be able to sign in.";
+    if (typeof window !== "undefined" && window.__showConfirm) {
+      try {
+        ok = await window.__showConfirm(msg);
+      } catch {
+        ok = window.__nativeConfirm ? window.__nativeConfirm(msg) : false;
+      }
+    } else {
+      try {
+        ok = window.confirm(msg);
+      } catch {
+        ok = false;
+      }
+    }
+    if (!ok) return;
     disableAccountMutation.mutate({ accountId: account.accountId });
   };
 
-  const handleRestoreAccount = () => {
+  const handleRestoreAccount = async () => {
     if (!account) return;
-    if (
-      !window.confirm(
-        "Restore this account? The user will be able to sign in again."
-      )
-    )
-      return;
+    let ok = false;
+    const msg = "Restore this account? The user will be able to sign in again.";
+    if (typeof window !== "undefined" && window.__showConfirm) {
+      try {
+        ok = await window.__showConfirm(msg);
+      } catch {
+        ok = window.__nativeConfirm ? window.__nativeConfirm(msg) : false;
+      }
+    } else {
+      try {
+        ok = window.confirm(msg);
+      } catch {
+        ok = false;
+      }
+    }
+    if (!ok) return;
     restoreAccountMutation.mutate({ accountId: account.accountId });
   };
 
@@ -227,7 +318,6 @@ function EditAccount({ account, onClose, isAdmin }) {
             <label className="text-sm font-semibold">Account ID</label>
             <input
               type="text"
-              className="border border-gray-300 rounded px-2 py-1 text-sm bg-gray-100 text-gray-700"
               value={account?.accountId ?? "-"}
               readOnly
             />
@@ -297,9 +387,7 @@ function EditAccount({ account, onClose, isAdmin }) {
                     onClick={handleDisableAccount}
                     disabled={isBusy}
                   >
-                    {disableAccountMutation.isPending
-                      ? "Disabling..."
-                      : "Disable"}
+                    {disableAccountMutation.isLoading ? "Disabling..." : "Disable"}
                   </button>
                 ) : (
                   <button
@@ -308,9 +396,7 @@ function EditAccount({ account, onClose, isAdmin }) {
                     onClick={handleRestoreAccount}
                     disabled={isBusy}
                   >
-                    {restoreAccountMutation.isPending
-                      ? "Restoring..."
-                      : "Restore"}
+                    {restoreAccountMutation.isLoading ? "Restoring..." : "Restore"}
                   </button>
                 ))}
             </div>
@@ -330,7 +416,7 @@ function EditAccount({ account, onClose, isAdmin }) {
                   className="px-4 py-2 rounded bg-[#227B05]/80 text-white text-sm hover:bg-[#227B05] disabled:opacity-60 disabled:cursor-not-allowed"
                   disabled={isBusy}
                 >
-                  {updateRoleMutation.isPending ? "Saving..." : "Save Role"}
+                  {updateRoleMutation.isLoading ? "Saving..." : "Save Role"}
                 </button>
               )}
             </div>
@@ -370,9 +456,7 @@ function EditAccount({ account, onClose, isAdmin }) {
                 }}
                 disabled={isBusy}
               >
-                {updateRoleMutation.isPending
-                  ? "Saving..."
-                  : "Yes, transfer admin"}
+                {updateRoleMutation.isLoading ? "Saving..." : "Yes, transfer admin"}
               </button>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +16,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
   const [imageFile, setImageFile] = useState(null);
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const updateAttractionMutation = useMutation({
     mutationFn: async ({ attractionId, formData }) => {
@@ -35,7 +37,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
 
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: ["attractions"],
         exact: false,
@@ -44,12 +46,33 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
         queryKey: ["attractions"],
         exact: false,
       });
-      alert("Attraction updated successfully.");
+      const msg = "Attraction updated successfully.";
+      if (window.__showAlert) {
+        await window.__showAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
       onClose?.();
       onUpdated?.();
     },
-    onError: (error) => {
-      alert(error.message || "Updating attraction failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Updating attraction failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
   });
 
@@ -69,7 +92,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
         throw new Error(error?.error || "Disabling attraction failed");
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: ["attractions"],
         exact: false,
@@ -78,12 +101,30 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
         queryKey: ["attractions"],
         exact: false,
       });
-      alert("Attraction disabled successfully.");
+      const msg = "Attraction disabled successfully.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       onClose?.();
       onUpdated?.();
     },
-    onError: (error) => {
-      alert(error.message || "Disabling attraction failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Disabling attraction failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
   });
 
@@ -103,7 +144,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
         throw new Error(error?.error || "Restoring attraction failed");
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: ["attractions"],
         exact: false,
@@ -112,12 +153,30 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
         queryKey: ["attractions"],
         exact: false,
       });
-      alert("Attraction restored successfully.");
+      const msg = "Attraction restored successfully.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       onClose?.();
       onUpdated?.();
     },
-    onError: (error) => {
-      alert(error.message || "Restoring attraction failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Restoring attraction failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
   });
 

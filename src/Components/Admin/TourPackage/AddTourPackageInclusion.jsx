@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   API_BASE_URL,
@@ -16,6 +17,7 @@ function AddTourPackageInclusion({ onClose }) {
   });
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const addInclusionMutation = useMutation({
     mutationFn: async (payload) => {
@@ -47,11 +49,59 @@ function AddTourPackageInclusion({ onClose }) {
         queryKey: ["package-inclusions"],
         exact: false,
       });
-      alert("Package inclusion added successfully.");
-      onClose?.();
+      (async () => {
+        const msg = "Package inclusion added successfully.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            window.__nativeAlert?.(msg) || alert(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        onClose?.();
+      })();
     },
-    onError: (error) => {
-      alert(error.message || "Adding package inclusion failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const msg = error?.message || "Adding package inclusion failed";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
     },
   });
 
@@ -60,15 +110,19 @@ function AddTourPackageInclusion({ onClose }) {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!form.inclusionName.trim()) {
-      alert("Inclusion name is required.");
+      const msg = "Inclusion name is required.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
     if (!form.inclusionPricePerPerson) {
-      alert("Price per person is required.");
+      const msg = "Price per person is required.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 

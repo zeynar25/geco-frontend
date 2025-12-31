@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   API_BASE_URL,
@@ -28,6 +29,7 @@ function ShowCalendar(props) {
   const [show, setShow] = useState(true);
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const currentDate = new Date(year, month).toLocaleString("default", {
     month: "long",
@@ -78,8 +80,25 @@ function ShowCalendar(props) {
   });
 
   if (calendarError) {
-    alert("something went wrong in retrieving park calendar");
+    // handled in useEffect below
   }
+
+  useEffect(() => {
+    if (!calendarError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (calendarError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errorMsg = "something went wrong in retrieving park calendar";
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [calendarError, navigate]);
 
   // Determine stats: for selected day or whole month
   let displayLabel;
@@ -156,21 +175,48 @@ function ShowCalendar(props) {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: ["calendar"],
         exact: false,
       });
-      alert("Date status updated successfully.");
+      const successMsg = "Date status updated successfully.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        await window.__showAlert(successMsg);
+      } else {
+        window.__nativeAlert?.(successMsg) || alert(successMsg);
+      }
     },
-    onError: (error) => {
-      alert(error.message || "Updating date status failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {}
+        }
+        navigate("/signin");
+        return;
+      }
+      const msg = error.message || "Updating date status failed";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     },
   });
 
-  const handleSaveStatus = () => {
+  const handleSaveStatus = async () => {
     if (!selectedDay) {
-      alert("Please select a day to update its status.");
+      const msg = "Please select a day to update its status.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   API_BASE_URL,
@@ -13,6 +14,7 @@ function AddFaq({ onClose }) {
   const [answer, setAnswer] = useState("");
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const addFaqMutation = useMutation({
     mutationFn: async (payload) => {
@@ -30,28 +32,50 @@ function AddFaq({ onClose }) {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["faqs"], exact: false });
-      alert("FAQ added successfully.");
+      const msg = "FAQ added successfully.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Adding FAQ failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Adding FAQ failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
   });
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const q = question.trim();
     const a = answer.trim();
 
     if (!q) {
-      alert("Question is required.");
+      const msg = "Question is required.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
     if (!a) {
-      alert("Answer is required.");
+      const msg = "Answer is required.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 

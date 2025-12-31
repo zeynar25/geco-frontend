@@ -60,8 +60,13 @@ function Book() {
 
   useEffect(() => {
     if (!loggedIn) {
-      alert("Please log in to book a visit.");
-      navigate("/signin");
+      const handle = async () => {
+        const msg = "Please log in to book a visit.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+      };
+      handle();
     }
   }, [loggedIn, navigate]);
 
@@ -128,22 +133,28 @@ function Book() {
   //   );
   // }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     if (!paymentMethod) {
-      alert("Please select a payment method.");
+      const msg = "Please select a payment method.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 
     if (!selectedPackageId) {
-      alert("Please select a tour package.");
+      const msg = "Please select a tour package.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 
     // Validate group size before submit
     if (groupSizeError) {
-      alert(groupSizeError);
+      const msg = groupSizeError;
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 
@@ -180,8 +191,25 @@ function Book() {
   });
 
   if (accountError) {
-    alert("something went wrong in retrieving account");
+    // handled in useEffect below
   }
+
+  useEffect(() => {
+    if (!accountError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (accountError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msgAccount = "something went wrong in retrieving account";
+      if (window.__showAlert) await window.__showAlert(msgAccount);
+      else window.__nativeAlert?.(msgAccount) || alert(msgAccount);
+    };
+    handle();
+  }, [accountError, navigate]);
 
   const {
     data: packageData,
@@ -200,8 +228,25 @@ function Book() {
   });
 
   if (packageError) {
-    alert("something went wrong in retrieving tour packages");
+    // handled in useEffect below
   }
+
+  useEffect(() => {
+    if (!packageError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (packageError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msgPackages = "something went wrong in retrieving tour packages";
+      if (window.__showAlert) await window.__showAlert(msgPackages);
+      else window.__nativeAlert?.(msgPackages) || alert(msgPackages);
+    };
+    handle();
+  }, [packageError, navigate]);
 
   // const {
   //   data: inclusionData,
@@ -246,8 +291,28 @@ function Book() {
 
   const { mutate: createBooking } = useMutation({
     mutationFn: addBooking,
-    onError: (error) => {
-      alert(error.message || "Booking failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            window.__nativeAlert?.(msg) || alert(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Booking failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
 
     // Redirect to the confirmation page and pass booking data

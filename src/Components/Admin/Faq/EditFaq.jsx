@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +14,7 @@ function EditFaq({ faq, onClose, isAdmin }) {
   const [answer, setAnswer] = useState(faq?.answer || "");
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const updateFaqMutation = useMutation({
     mutationFn: async ({ faqId, data }) => {
@@ -30,13 +32,34 @@ function EditFaq({ faq, onClose, isAdmin }) {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["faqs"], exact: false });
-      alert("FAQ updated successfully.");
+      const msg = "FAQ updated successfully.";
+      if (window.__showAlert) {
+        await window.__showAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Updating FAQ failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Updating FAQ failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
   });
 
@@ -52,13 +75,31 @@ function EditFaq({ faq, onClose, isAdmin }) {
         throw new Error(error?.error || "Disabling FAQ failed");
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["faqs"], exact: false });
-      alert("FAQ disabled successfully.");
+      const msg = "FAQ disabled successfully.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Disabling FAQ failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Disabling FAQ failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
   });
 
@@ -77,13 +118,31 @@ function EditFaq({ faq, onClose, isAdmin }) {
         throw new Error(error?.error || "Restoring FAQ failed");
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["faqs"], exact: false });
-      alert("FAQ restored successfully.");
+      const msg = "FAQ restored successfully.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Restoring FAQ failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Restoring FAQ failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
   });
 

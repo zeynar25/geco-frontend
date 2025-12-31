@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,6 +20,7 @@ function ShowFaq(props) {
   const [isReordering, setIsReordering] = useState(false);
   const [localFaqs, setLocalFaqs] = useState(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     data: allFaqs,
@@ -42,7 +44,29 @@ function ShowFaq(props) {
   });
 
   if (allError) {
-    alert("something went wrong in retrieving FAQs");
+    if (allError?.message === "TOKEN_EXPIRED") {
+      (async () => {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+      })();
+    } else {
+      const errMsg = "something went wrong in retrieving FAQs";
+      (async () => {
+        (async () => {
+          if (window.__showAlert) await window.__showAlert(errMsg);
+          else window.__nativeAlert?.(errMsg) || alert(errMsg);
+        })();
+      })();
+    }
   }
 
   const {
@@ -67,7 +91,27 @@ function ShowFaq(props) {
   });
 
   if (activeError) {
-    alert("something went wrong in retrieving active FAQs");
+    if (activeError?.message === "TOKEN_EXPIRED") {
+      (async () => {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+      })();
+    } else {
+      const errMsg = "something went wrong in retrieving active FAQs";
+      (async () => {
+        if (window.__showAlert) await window.__showAlert(errMsg);
+        else window.__nativeAlert?.(errMsg) || alert(errMsg);
+      })();
+    }
   }
 
   const {
@@ -92,7 +136,27 @@ function ShowFaq(props) {
   });
 
   if (inactiveError) {
-    alert("something went wrong in retrieving inactive FAQs");
+    if (inactiveError?.message === "TOKEN_EXPIRED") {
+      (async () => {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+      })();
+    } else {
+      const errMsg = "something went wrong in retrieving inactive FAQs";
+      (async () => {
+        if (window.__showAlert) await window.__showAlert(errMsg);
+        else window.__nativeAlert?.(errMsg) || alert(errMsg);
+      })();
+    }
   }
 
   const isLoading =
@@ -164,12 +228,41 @@ function ShowFaq(props) {
     onSuccess: () => {
       // Let React Query refetch ordered list
       queryClient.invalidateQueries({ queryKey: ["faqs"], exact: false });
-      window.alert("FAQ order updated successfully.");
+      const successMsg = "FAQ order updated successfully.";
+      if (window.__showAlert) {
+        (async () => {
+          await window.__showAlert(successMsg);
+        })();
+      } else {
+        window.__nativeAlert?.(successMsg) || alert(successMsg);
+      }
       setIsReordering(false);
       setLocalFaqs(null);
     },
-    onError: (error) => {
-      window.alert(error.message || "Reordering FAQs failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert?.(msg) || alert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            window.__nativeAlert?.(msg) || alert(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Reordering FAQs failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
   });
 

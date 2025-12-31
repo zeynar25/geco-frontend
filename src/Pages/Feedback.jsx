@@ -1,6 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer";
@@ -13,6 +13,8 @@ import {
   faStarHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { useNavigate } from "react-router-dom";
 
 function Feedback() {
   const location = useLocation();
@@ -39,9 +41,24 @@ function Feedback() {
     },
   });
 
-  if (feedbackError) {
-    alert("Something went wrong in retrieving feedbacks");
-  }
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!feedbackError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (feedbackError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const genericMsg = "Something went wrong in retrieving feedbacks";
+      if (window.__showAlert) await window.__showAlert(genericMsg);
+      else window.__nativeAlert?.(genericMsg) || alert(genericMsg);
+    };
+    handle();
+  }, [feedbackError, navigate]);
 
   const feedbacks = feedbackData?.content ?? [];
   const totalFeedbackPages = feedbackData?.totalPages ?? 0;

@@ -88,8 +88,13 @@ function Account() {
 
   useEffect(() => {
     if (!loggedIn) {
-      alert("Please log in to book a visit.");
-      navigate("/signin");
+      const handle = async () => {
+        const msg = "Please log in to book a visit.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+      };
+      handle();
     }
   }, [loggedIn, navigate]);
 
@@ -112,8 +117,185 @@ function Account() {
   });
 
   if (accountError) {
-    alert("something went wrong in retrieving account");
+    if (accountError?.message === "TOKEN_EXPIRED") {
+      (async () => {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+      })();
+    } else {
+      const msg = "something went wrong in retrieving account";
+      (async () => {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+      })();
+    }
   }
+
+  const {
+    data: bookingData,
+    error: bookingError,
+    isPending: bookingPending,
+  } = useQuery({
+    queryKey: ["bookings", bookingPage],
+    queryFn: async () => {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/booking/me?page=${bookingPage}&size=5`
+      );
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Getting my bookings failed");
+      }
+      return await response.json();
+    },
+  });
+
+  if (bookingError) {
+    if (bookingError?.message === "TOKEN_EXPIRED") {
+      (async () => {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+      })();
+    } else {
+      const msg = "something went wrong in retrieving bookings";
+      (async () => {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+      })();
+    }
+  }
+  const bookings = bookingData?.content ?? [];
+  const totalBookingPages = bookingData?.totalPages ?? 0;
+
+  const {
+    data: feedbackData,
+    error: feedbackError,
+    isPending: feedbackPending,
+  } = useQuery({
+    queryKey: ["feedbacks"],
+    queryFn: async () => {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/feedback/me`);
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Getting my feedbacks failed");
+      }
+      return await response.json();
+    },
+  });
+
+  if (feedbackError) {
+    if (feedbackError?.message === "TOKEN_EXPIRED") {
+      (async () => {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+      })();
+    } else {
+      const msg = "something went wrong in retrieving feedbacks";
+      (async () => {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+      })();
+    }
+  }
+
+  const feedbacks = feedbackData?.content ?? [];
+
+  const {
+    data: feedbackCategoryData,
+    error: feedbackCategoryError,
+    isPending: feedbackCategoryPending,
+  } = useQuery({
+    queryKey: ["feedbackCategories"],
+    queryFn: async () => {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/feedback-category/active`
+      );
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Getting feedback categories failed");
+      }
+      return await response.json();
+    },
+  });
+
+  if (feedbackCategoryError) {
+    if (feedbackCategoryError?.message === "TOKEN_EXPIRED") {
+      (async () => {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+      })();
+    } else {
+      (async () => {
+        const msg = "something went wrong in retrieving feedback categories";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+      })();
+    }
+  }
+
+  const feedbackCategories = feedbackCategoryData ?? [];
 
   useEffect(() => {
     if (accountData?.detail) {
@@ -141,7 +323,9 @@ function Account() {
     if (!isEditing) return;
 
     if (!accountData?.accountId) {
-      alert("Account information not loaded. Please try again.");
+      const msg = "Account information not loaded. Please try again.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 
@@ -178,84 +362,23 @@ function Account() {
       }
 
       setIsEditing(false);
-      alert("Account details updated successfully.");
+      const successMsg = "Account details updated successfully.";
+      if (window.__showAlert) await window.__showAlert(successMsg);
+      else window.__nativeAlert?.(successMsg) || alert(successMsg);
     } catch (error) {
-      alert(error.message || "Something went wrong while updating details.");
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msg =
+        error.message || "Something went wrong while updating details.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     }
   };
-
-  const {
-    data: bookingData,
-    error: bookingError,
-    isPending: bookingPending,
-  } = useQuery({
-    queryKey: ["bookings", bookingPage],
-    queryFn: async () => {
-      ensureTokenValidOrAlert();
-      const response = await safeFetch(
-        `${API_BASE_URL}/booking/me?page=${bookingPage}&size=5`
-      );
-      if (!response.ok) {
-        const error = await response.json().catch(() => null);
-        throw new Error(error?.error || "Getting my bookings failed");
-      }
-      return await response.json();
-    },
-  });
-
-  if (bookingError) {
-    alert("something went wrong in retrieving bookings");
-  }
-  const bookings = bookingData?.content ?? [];
-  const totalBookingPages = bookingData?.totalPages ?? 0;
-
-  const {
-    data: feedbackData,
-    error: feedbackError,
-    isPending: feedbackPending,
-  } = useQuery({
-    queryKey: ["feedbacks"],
-    queryFn: async () => {
-      ensureTokenValidOrAlert();
-      const response = await safeFetch(`${API_BASE_URL}/feedback/me`);
-      if (!response.ok) {
-        const error = await response.json().catch(() => null);
-        throw new Error(error?.error || "Getting my feedbacks failed");
-      }
-      return await response.json();
-    },
-  });
-
-  if (feedbackError) {
-    alert("something went wrong in retrieving feedbacks");
-  }
-
-  const feedbacks = feedbackData?.content ?? [];
-
-  const {
-    data: feedbackCategoryData,
-    error: feedbackCategoryError,
-    isPending: feedbackCategoryPending,
-  } = useQuery({
-    queryKey: ["feedbackCategories"],
-    queryFn: async () => {
-      ensureTokenValidOrAlert();
-      const response = await safeFetch(
-        `${API_BASE_URL}/feedback-category/active`
-      );
-      if (!response.ok) {
-        const error = await response.json().catch(() => null);
-        throw new Error(error?.error || "Getting feedback categories failed");
-      }
-      return await response.json();
-    },
-  });
-
-  if (feedbackCategoryError) {
-    alert("something went wrong in retrieving feedback categories");
-  }
-
-  const feedbackCategories = feedbackCategoryData ?? [];
 
   const openFeedbackModal = (feedback) => {
     setSelectedFeedback(feedback);
@@ -339,9 +462,11 @@ function Account() {
     setPaymentFile(file);
   };
 
-  const openProofModal = (booking) => {
+  const openProofModal = async (booking) => {
     if (!booking.proofOfPaymentPhoto) {
-      alert("No proof of payment uploaded for this booking.");
+      const msg = "No proof of payment uploaded for this booking.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 
@@ -360,12 +485,16 @@ function Account() {
     if (!selectedBookingForPayment) return;
 
     if (!paymentFile) {
-      alert("Please select a file as proof of payment.");
+      const msg = "Please select a file as proof of payment.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 
     if (!localStorage.getItem("token")) {
-      alert("Please log in again to submit your payment.");
+      const msg = "Please log in again to submit your payment.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 
@@ -415,13 +544,26 @@ function Account() {
         };
       });
 
-      alert("Payment proof submitted successfully.\nWe'll verify it shortly.");
+      const msg =
+        "Payment proof submitted successfully.\nWe'll verify it shortly.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       closePaymentModal();
     } catch (error) {
-      alert(
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        setIsSubmittingPayment(false);
+        return;
+      }
+
+      const msg =
         error.message ||
-          "Something went wrong while submitting your payment proof."
-      );
+        "Something went wrong while submitting your payment proof.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     } finally {
       setIsSubmittingPayment(false);
     }
@@ -457,12 +599,16 @@ function Account() {
     }
 
     if (!passwordForm.currentPassword || !passwordForm.newPassword) {
-      alert("Please fill in your current and new password.");
+      const msg = "Please fill in your current and new password.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 
     if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
-      alert("New password and confirmation do not match.");
+      const msg = "New password and confirmation do not match.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
       return;
     }
 
@@ -498,10 +644,24 @@ function Account() {
         confirmNewPassword: "",
       });
 
-      alert("Password updated successfully.");
+      const successMsg = "Password updated successfully.";
+      if (window.__showAlert) await window.__showAlert(successMsg);
+      else window.__nativeAlert?.(successMsg) || alert(successMsg);
       closePasswordModal();
     } catch (error) {
-      alert(error.message || "Something went wrong while updating password.");
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        setIsUpdatingPassword(false);
+        return;
+      }
+
+      const msg =
+        error.message || "Something went wrong while updating password.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     } finally {
       setIsUpdatingPassword(false);
     }
@@ -524,12 +684,16 @@ function Account() {
           selectedFeedback.bookingId || selectedFeedback.booking?.bookingId;
 
         if (!bookingId) {
-          alert("Unable to identify the booking for this feedback.");
+          const msg = "Unable to identify the booking for this feedback.";
+          if (window.__showAlert) await window.__showAlert(msg);
+          else window.__nativeAlert?.(msg) || alert(msg);
           return;
         }
 
         if (!feedbackForm.categoryId) {
-          alert("Please choose a feedback category.");
+          const msg = "Please choose a feedback category.";
+          if (window.__showAlert) await window.__showAlert(msg);
+          else window.__nativeAlert?.(msg) || alert(msg);
           return;
         }
 
@@ -574,7 +738,9 @@ function Account() {
 
         setIsCreatingFeedback(false);
         setIsEditingFeedback(false);
-        alert("Feedback added successfully.");
+        const successMsg = "Feedback added successfully.";
+        if (window.__showAlert) await window.__showAlert(successMsg);
+        else window.__nativeAlert?.(successMsg) || alert(successMsg);
       } else {
         const feedbackDetails = {
           stars:
@@ -634,15 +800,26 @@ function Account() {
         });
 
         setIsEditingFeedback(false);
-        alert("Feedback updated successfully.");
+        const successMsg = "Feedback updated successfully.";
+        if (window.__showAlert) await window.__showAlert(successMsg);
+        else window.__nativeAlert?.(successMsg) || alert(successMsg);
       }
     } catch (error) {
-      alert(
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+
+      const msg =
         error.message ||
-          (isNewFeedback
-            ? "Something went wrong while adding feedback."
-            : "Something went wrong while updating feedback.")
-      );
+        (isNewFeedback
+          ? "Something went wrong while adding feedback."
+          : "Something went wrong while updating feedback.");
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
     }
   };
 
@@ -1455,9 +1632,13 @@ function Account() {
                 onLoad={() => setIsProofLoading(false)}
                 onError={() => {
                   setIsProofLoading(false);
-                  alert(
-                    "Failed to load proof of payment image. Please try again."
-                  );
+                  const msg =
+                    "Failed to load proof of payment image. Please try again.";
+                  if (typeof window !== "undefined" && window.__showAlert) {
+                    window.__showAlert(msg);
+                  } else {
+                    window.__nativeAlert?.(msg) || alert(msg);
+                  }
                 }}
               />
             </div>

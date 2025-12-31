@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   API_BASE_URL,
@@ -23,6 +24,7 @@ function AddTourPackage({ onClose }) {
   const [selectedInclusionIds, setSelectedInclusionIds] = useState([]);
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     data: inclusionData,
@@ -46,7 +48,11 @@ function AddTourPackage({ onClose }) {
   });
 
   if (inclusionError) {
-    alert("something went wrong in retrieving tour package inclusions");
+    (async () => {
+      const msg = "something went wrong in retrieving tour package inclusions";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    })();
   }
 
   const addPackageMutation = useMutation({
@@ -72,11 +78,59 @@ function AddTourPackage({ onClose }) {
         queryKey: ["tourPackages"],
         exact: false,
       });
-      alert("Tour package added successfully.");
-      onClose?.();
+      (async () => {
+        const msg = "Tour package added successfully.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            window.__nativeAlert?.(msg) || alert(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        onClose?.();
+      })();
     },
-    onError: (error) => {
-      alert(error.message || "Adding tour package failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const msg = error?.message || "Adding tour package failed";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
     },
   });
 
@@ -95,27 +149,57 @@ function AddTourPackage({ onClose }) {
     event.preventDefault();
 
     if (!form.name.trim()) {
-      alert("Name is required.");
+      const msg = "Name is required.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        window.__showAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
       return;
     }
     if (!form.description.trim()) {
-      alert("Description is required.");
+      const msg = "Description is required.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        window.__showAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
       return;
     }
     if (!form.duration) {
-      alert("Duration is required.");
+      const msg = "Duration is required.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        window.__showAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
       return;
     }
     if (!form.minPerson || !form.maxPerson) {
-      alert("Minimum and maximum persons are required.");
+      const msg = "Minimum and maximum persons are required.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        window.__showAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
       return;
     }
     if (!form.basePrice && !form.pricePerPerson) {
-      alert("Provide at least base price or price per person.");
+      const msg = "Provide at least base price or price per person.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        window.__showAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
       return;
     }
     if (selectedInclusionIds.length === 0) {
-      alert("Please select at least one inclusion.");
+      const msg = "Please select at least one inclusion.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        window.__showAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
       return;
     }
 

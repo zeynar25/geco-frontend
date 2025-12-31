@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   API_BASE_URL,
@@ -27,6 +28,7 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
     useState(initialInclusionIds);
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     data: availableInclusions,
@@ -51,7 +53,11 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
   });
 
   if (availableError) {
-    alert("something went wrong in retrieving available inclusions");
+    (async () => {
+      const msg = "something went wrong in retrieving available inclusions";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    })();
   }
 
   const updatePackageMutation = useMutation({
@@ -77,11 +83,59 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
         queryKey: ["tourPackages"],
         exact: false,
       });
-      alert("Tour package updated successfully.");
-      onClose?.();
+      (async () => {
+        const msg = "Tour package updated successfully.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            window.__nativeAlert?.(msg) || alert(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        onClose?.();
+      })();
     },
-    onError: (error) => {
-      alert(error.message || "Updating tour package failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const msg = error?.message || "Updating tour package failed";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
     },
   });
 
@@ -102,11 +156,59 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
         queryKey: ["tourPackages"],
         exact: false,
       });
-      alert("Tour package disabled successfully.");
-      onClose?.();
+      (async () => {
+        const msg = "Tour package disabled successfully.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            window.__nativeAlert?.(msg) || alert(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        onClose?.();
+      })();
     },
-    onError: (error) => {
-      alert(error.message || "Disabling tour package failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const msg = error?.message || "Disabling tour package failed";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
     },
   });
 
@@ -130,11 +232,59 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
         queryKey: ["tourPackages"],
         exact: false,
       });
-      alert("Tour package restored successfully.");
-      onClose?.();
+      (async () => {
+        const msg = "Tour package restored successfully.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            window.__nativeAlert?.(msg) || alert(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        onClose?.();
+      })();
     },
-    onError: (error) => {
-      alert(error.message || "Restoring tour package failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const msg = error?.message || "Restoring tour package failed";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
     },
   });
 

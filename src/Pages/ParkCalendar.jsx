@@ -4,7 +4,7 @@ import BackButton from "../Components/BackButton";
 import HeaderCard from "../Components/HeaderCard";
 import { API_BASE_URL } from "../apiConfig";
 
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -22,7 +22,7 @@ import {
 import { ClipLoader } from "react-spinners";
 
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function ParkCalendar() {
   const [show, setShow] = useState(true);
@@ -46,6 +46,8 @@ function ParkCalendar() {
   }
   const location = useLocation();
   const backTo = location.state?.from || "/";
+
+  const navigate = useNavigate();
 
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth());
@@ -102,8 +104,25 @@ function ParkCalendar() {
   });
 
   if (calendarError) {
-    alert("something went wrong in retrieving park calendar");
+    // handled in useEffect below
   }
+
+  useEffect(() => {
+    if (!calendarError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (calendarError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const errorMsg = "something went wrong in retrieving park calendar";
+      if (window.__showAlert) await window.__showAlert(errorMsg);
+      else window.__nativeAlert?.(errorMsg) || alert(errorMsg);
+    };
+    handle();
+  }, [calendarError, navigate]);
 
   // If a day is selected, show its stats, else show monthly stats
   let swappableDate, totalBookings, totalVisitors;

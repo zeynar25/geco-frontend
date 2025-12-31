@@ -89,9 +89,77 @@ export function setupCustomDialogs() {
     window.__nativeAlert = window.alert.bind(window);
   }
 
+  // Preserve native confirm for fallback and expose it if needed.
+  if (!window.__nativeConfirm) {
+    window.__nativeConfirm = window.confirm
+      ? window.confirm.bind(window)
+      : undefined;
+  }
+
   // Override window.alert to use our custom modal.
   window.alert = function (message) {
     // Fire and forget; callers typically don't rely on the blocking behavior.
     showAlert(message);
+  };
+  // Expose the async showAlert so callers can await user acknowledgement.
+  window.__showAlert = showAlert;
+
+  // Async confirm: returns a Promise<boolean> so callers can await user choice.
+  window.__showConfirm = function (message) {
+    const container = ensureContainer();
+
+    return new Promise((resolve) => {
+      const safeMessage = escapeHtml(message);
+
+      container.innerHTML = `
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div class="bg-white rounded-lg shadow-xl max-w-sm w-full mx-4 p-4">
+            <h2 class="text-lg font-semibold mb-2 text-gray-900">Confirm</h2>
+            <p class="text-sm text-gray-700 whitespace-pre-line">${safeMessage}</p>
+            <div class="mt-4 flex justify-end gap-2">
+              <button type="button" class="px-4 py-1.5 rounded-md bg-gray-200 text-gray-800 text-sm font-medium">Cancel</button>
+              <button type="button" class="px-4 py-1.5 rounded-md bg-green-600 text-white text-sm font-medium">OK</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const overlay = container.firstElementChild;
+      const buttons = overlay.querySelectorAll("button");
+      const cancelBtn = buttons[0];
+      const okBtn = buttons[1];
+
+      const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          close(true);
+        }
+        if (e.key === "Escape") {
+          e.preventDefault();
+          close(false);
+        }
+      };
+
+      const close = (result) => {
+        container.innerHTML = "";
+        document.removeEventListener("keydown", handleKeyDown);
+        resolve(Boolean(result));
+      };
+
+      okBtn.addEventListener("click", () => close(true), { once: true });
+      cancelBtn.addEventListener("click", () => close(false), { once: true });
+
+      overlay.addEventListener(
+        "click",
+        (e) => {
+          if (e.target === overlay) {
+            close(false);
+          }
+        },
+        { once: true }
+      );
+
+      document.addEventListener("keydown", handleKeyDown);
+    });
   };
 }

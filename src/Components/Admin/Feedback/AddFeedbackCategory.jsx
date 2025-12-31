@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   API_BASE_URL,
@@ -12,6 +13,7 @@ function AddFeedbackCategory({ onClose }) {
   const [label, setLabel] = useState("");
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const addCategoryMutation = useMutation({
     mutationFn: async (payload) => {
@@ -31,7 +33,7 @@ function AddFeedbackCategory({ onClose }) {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       // Refresh category lists used in ShowFeedback
       queryClient.invalidateQueries({
         queryKey: ["FeedbackCategory"],
@@ -50,20 +52,54 @@ function AddFeedbackCategory({ onClose }) {
         exact: false,
       });
 
-      alert("Feedback category added successfully.");
+      const msg = "Feedback category added successfully.";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Adding feedback category failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Adding feedback category failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
     },
   });
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const trimmed = label.trim();
     if (!trimmed) {
-      alert("Label is required.");
+      const msg = "Label is required.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        await window.__showAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
       return;
     }
 

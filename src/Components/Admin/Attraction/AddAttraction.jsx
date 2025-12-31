@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +16,7 @@ function AddAttraction({ onClose }) {
   const [image, setImage] = useState(null);
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const addAttractionMutation = useMutation({
     mutationFn: async ({ name, description, funFact, image }) => {
@@ -47,11 +49,41 @@ function AddAttraction({ onClose }) {
         queryKey: ["attractions"],
         exact: false,
       });
-      alert("Attraction added successfully.");
+      const successMsg = "Attraction added successfully.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        window.__showAlert(successMsg);
+      } else {
+        window.__nativeAlert?.(successMsg) || alert(successMsg);
+      }
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Adding attraction failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Adding attraction failed";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        window.__showAlert(errMsg);
+      } else {
+        window.__nativeAlert?.(errMsg) || alert(errMsg);
+      }
     },
   });
 
@@ -61,7 +93,12 @@ function AddAttraction({ onClose }) {
     event.preventDefault();
 
     if (!name.trim() || !description.trim()) {
-      alert("Name and description are required.");
+      const msg = "Name and description are required.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        window.__showAlert(msg);
+      } else {
+        window.__nativeAlert?.(msg) || alert(msg);
+      }
       return;
     }
 

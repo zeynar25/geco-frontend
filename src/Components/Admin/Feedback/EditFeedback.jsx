@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   API_BASE_URL,
@@ -24,6 +25,7 @@ function EditFeedback({ feedback, onClose }) {
   }));
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const invalidateFeedbackQueries = () => {
     queryClient.invalidateQueries({ queryKey: ["Feedback"], exact: false });
@@ -62,13 +64,60 @@ function EditFeedback({ feedback, onClose }) {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       invalidateFeedbackQueries();
-      alert("Feedback updated successfully.");
+      const msg = "Feedback updated successfully.";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Updating feedback failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+
+      const msg = error?.message || "Updating feedback failed";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
     },
   });
 
@@ -87,13 +136,60 @@ function EditFeedback({ feedback, onClose }) {
         throw new Error(error?.error || "Disabling feedback failed");
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       invalidateFeedbackQueries();
-      alert("Feedback disabled successfully.");
+      const msg = "Feedback disabled successfully.";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Disabling feedback failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+
+      const msg = error?.message || "Disabling feedback failed";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
     },
   });
 
@@ -112,13 +208,60 @@ function EditFeedback({ feedback, onClose }) {
         throw new Error(error?.error || "Restoring feedback failed");
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       invalidateFeedbackQueries();
-      alert("Feedback restored successfully.");
+      const msg = "Feedback restored successfully.";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
       onClose?.();
     },
-    onError: (error) => {
-      alert(error.message || "Restoring feedback failed");
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        try {
+          if (typeof window !== "undefined" && window.__showAlert) {
+            await window.__showAlert(msg);
+          } else if (typeof window !== "undefined" && window.__nativeAlert) {
+            window.__nativeAlert(msg);
+          } else {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } catch {
+          try {
+            (window.__nativeAlert || window.alert)(msg);
+          } catch {
+            /* empty */
+          }
+        }
+        navigate("/signin");
+        return;
+      }
+
+      const msg = error?.message || "Restoring feedback failed";
+      try {
+        if (typeof window !== "undefined" && window.__showAlert) {
+          await window.__showAlert(msg);
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+      } catch {
+        try {
+          window.__nativeAlert?.(msg) || alert(msg);
+        } catch {
+          /* empty */
+        }
+      }
     },
   });
 
@@ -137,7 +280,22 @@ function EditFeedback({ feedback, onClose }) {
     const originalReply = feedback.staffReply || "";
     if (trimmedReply.length > 0 && trimmedReply !== originalReply) {
       if (trimmedReply.length < 5) {
-        alert("Reply must be at least 5 characters");
+        (async () => {
+          const msg = "Reply must be at least 5 characters";
+          try {
+            if (typeof window !== "undefined" && window.__showAlert) {
+              await window.__showAlert(msg);
+            } else {
+              window.__nativeAlert?.(msg) || alert(msg);
+            }
+          } catch {
+            try {
+              window.__nativeAlert?.(msg) || alert(msg);
+            } catch {
+              /* empty */
+            }
+          }
+        })();
         return;
       }
       payload.staffReply = trimmedReply;

@@ -50,7 +50,11 @@ function ShowTourPackage(props) {
   });
 
   if (allPackagesError) {
-    alert("something went wrong in retrieving tour packages");
+    (async () => {
+      const msg = "something went wrong in retrieving tour packages";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    })();
   }
 
   const {
@@ -75,7 +79,11 @@ function ShowTourPackage(props) {
   });
 
   if (activePackagesError) {
-    alert("something went wrong in retrieving active tour packages");
+    (async () => {
+      const msg = "something went wrong in retrieving active tour packages";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    })();
   }
 
   const {
@@ -102,7 +110,11 @@ function ShowTourPackage(props) {
   });
 
   if (inactivePackagesError) {
-    alert("something went wrong in retrieving inactive tour packages");
+    (async () => {
+      const msg = "something went wrong in retrieving inactive tour packages";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    })();
   }
 
   const isLoading =
