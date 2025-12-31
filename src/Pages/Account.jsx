@@ -1396,12 +1396,27 @@ function Account() {
               <label className="block font-semibold mb-1">
                 Proof of payment
               </label>
-              <input
-                type="file"
-                accept="image/*"
-                className="w-full border px-3 py-2 rounded-md"
-                onChange={handlePaymentFileChange}
-              />
+              <div className="flex items-center gap-3">
+                <label
+                  className={`px-3 py-1.5 rounded border text-sm cursor-pointer transition-colors ${
+                    isSubmittingPayment
+                      ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  <span>Choose file</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePaymentFileChange}
+                    disabled={isSubmittingPayment}
+                  />
+                </label>
+                <span className="text-xs text-gray-500 truncate">
+                  {paymentFile ? paymentFile.name : "No file chosen"}
+                </span>
+              </div>
               <p className="text-xs text-gray-500 mt-1">
                 Accepted formats: JPG, PNG. Max size depends on your network and
                 server limits.
