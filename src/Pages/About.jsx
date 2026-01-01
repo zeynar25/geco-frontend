@@ -76,7 +76,7 @@ export default function About() {
             headerClass="bg-[#48BF56]/50 text-[#227B05]"
             icon={<FontAwesomeIcon icon={faBuilding} />}
             title="CvSU Mission"
-            description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            description="Cavite State University shall provide excellent, equitable and relevant educational opportunities in the arts, sciences and technology through quality instruction and responsive research and development activities. It shall produce professional, skilled and morally upright individuals for global competitiveness."
             className="bg-white col-span-2 md:col-span-1"
           />
 
@@ -84,7 +84,7 @@ export default function About() {
             headerClass="bg-[#BAD0F8] text-[#222EDA]"
             icon={<FontAwesomeIcon icon={faEye} />}
             title="CvSU Vision"
-            description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            description="The premier university in historic Cavite globally recognized for excellence in character development, academics, research, innovation and sustainable community engagement."
             className="bg-white col-span-2 md:col-span-1"
           />
 
@@ -101,11 +101,10 @@ export default function About() {
                   icon={faHandsHolding}
                   className=" bg-[#48BF56]/50 text-[#227B05] p-5 rounded-xl"
                 />
-                <h3 className="font-bold text-md">First Core Value</h3>
+                <h3 className="font-bold text-md">Truth</h3>
                 <p className="text-sm">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Mollitia illum minima tempora voluptatum, veniam vitae
-                  voluptates officiis, distinctio ea impedit facilis vel dolore.
+                  Being honest, objective, and truthful in all endeavors, from
+                  academics to community engagement.
                 </p>
               </div>
 
@@ -114,11 +113,10 @@ export default function About() {
                   icon={faUserGroup}
                   className=" bg-[#BAD0F8] text-[#222EDA] p-5 rounded-xl"
                 />
-                <h3 className="font-bold text-md">Second Core Value</h3>
+                <h3 className="font-bold text-md">Excellence</h3>
                 <p className="text-sm">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Mollitia illum minima tempora voluptatum, veniam vitae
-                  voluptates officiis, distinctio ea impedit facilis vel dolore.
+                  Striving for the highest standards in education, research, and
+                  development, showcasing diligence and commitment.
                 </p>
               </div>
 
@@ -127,11 +125,10 @@ export default function About() {
                   icon={faAward}
                   className=" bg-[#FDDB3C]/20 text-[#97750B] p-5 rounded-xl"
                 />
-                <h3 className="font-bold text-md">Third Core Value</h3>
+                <h3 className="font-bold text-md">Service</h3>
                 <p className="text-sm">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Mollitia illum minima tempora voluptatum, veniam vitae
-                  voluptates officiis, distinctio ea impedit facilis vel dolore.
+                  Showing respect, fairness, and cooperation, with a focus on
+                  community welfare, humanity, and love for nature.
                 </p>
               </div>
             </div>
@@ -141,7 +138,7 @@ export default function About() {
             headerClass="bg-[#FDDB3C]/20 text-[#97750B]"
             icon={<FontAwesomeIcon icon={faBook} />}
             title="History"
-            description="lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            description=" On July 15, 2021, Cavite State University (CvSU) created the Agri Eco Tourism Park (AETP) on a 5-hectare plot of land within its larger  70-hectare rustic and green landholding at the Don Severino delas  Alas Campus, which is located in Indang, Cavite.  According to CvSU former president Dr. Hernando D. Robles, “the  establishment of CvSU-AETP is one of the University’s ways in  bringing back the interest and appreciation of the people to  agriculture by providing them with attractions, activities, services,  amenities, and hands-on learning."
             className="bg-white col-span-2"
           />
 
@@ -193,8 +190,8 @@ export default function About() {
               <ValueCard
                 title="Operating Hours"
                 titleClasses="text-[#227B05] text-xl mb-3"
-                description="Monday-Thursday"
-                description2="8:00 AM - 5:00 PM"
+                description="Monday-Thursday (7:00 AM - 6:00 PM)"
+                description2="Friday (7:00 AM - 4:00 PM)"
                 icon={<FontAwesomeIcon icon={faClock} className="text-4xl" />}
                 iconClasses="text-[#227B05]"
                 className="col-span-3 md:col-span-1 border-0 shadow-2xl"
