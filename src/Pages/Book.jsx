@@ -342,8 +342,8 @@ function Book() {
               className="h-full border-0 shadow"
               title="Operating Hours"
               titleClasses="text-[#227B05] text-xl mb-3"
-              description="Monday-Thursday"
-              description2="8:00 AM - 5:00 PM"
+              description="Monday-Thursday (7:00 AM - 6:00 PM)"
+              description2="Friday (7:00 AM - 4:00 PM)"
               icon={<FontAwesomeIcon icon={faClock} className="text-4xl" />}
               iconClasses="text-[#48BF56]"
             />
