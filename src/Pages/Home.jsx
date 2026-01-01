@@ -131,12 +131,14 @@ export default function Home() {
             </h1>
 
             <p className="mx-auto mt-4 max-w-2xl text-base text-gray-200 sm:text-lg">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit
+              Mabuhay! Welcome to the Cavite State University Agri-Eco Tourism
+              Park — a growing hub of sustainable agriculture, education, and
+              rural tourism in Indang Cavite.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <a
-                href="#book"
+                href="/book"
                 className="inline-flex items-center justify-center gap-2 rounded-md bg-[#48BF56] px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-[#48BF56]/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17EB88]"
               >
                 <FontAwesomeIcon icon={faCalendarDays} />
