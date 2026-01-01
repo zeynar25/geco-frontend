@@ -393,7 +393,7 @@ function Book() {
                     <span className="font-bold text-xl text-[#48BF56]">
                       Payment Method
                     </span>
-                    <span>Choose how'd like to pay for your visit</span>
+                    <span>Choose how you would like to pay for your visit</span>
                   </header>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* Online Down Payment Card */}
@@ -499,7 +499,7 @@ function Book() {
                         After submitting this form, you’ll receive payment
                         instructions and a link to submit your proof of payment
                         within 24 hours of approval. You may track your booking
-                        status anytime in “My Schedule”
+                        status anytime in “My Account”
                       </p>
                     </div>
                   )}
