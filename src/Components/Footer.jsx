@@ -23,10 +23,10 @@ function Footer() {
               <p className="text-xs text-green-100">Tourism Park</p>
             </div>
             <p className="text-xs leading-6 text-green-100">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente
-              quas error accusamus, sunt similique ducimus. Laboriosam dicta eos
-              sint eligendi explicabo architecto, blanditiis possimus facilis
-              consequatur aut ipsum debitis repudiandae.
+              The establishment of the Agri-Eco Tourism Park is one of the
+              University’s ways in bringing back the interest and appreciation
+              of the people to agriculture by providing them with attractions,
+              activities, services, amenities, and hands-on learning.
             </p>
           </div>
 
@@ -54,7 +54,7 @@ function Footer() {
                   href="tel:0123456789"
                   className="text-sm text-green-100 hover:text-white hover:underline"
                 >
-                  (012) 345-6789
+                  1036
                 </a>
               </li>
               <li className="flex items-start gap-3">
@@ -77,15 +77,28 @@ function Footer() {
           {/* Hours */}
           <div>
             <h3 className="mb-4 text-base font-semibold">Operating Hours</h3>
-            <div className="flex items-start gap-3">
-              <FontAwesomeIcon
-                icon={faClock}
-                className="mt-1 text-white"
-                aria-hidden="true"
-              />
-              <div className="text-sm text-green-100">
-                <p>Monday – Thursday</p>
-                <p>7:00 AM – 5:00 PM</p>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-start gap-3">
+                <FontAwesomeIcon
+                  icon={faClock}
+                  className="mt-1 text-white"
+                  aria-hidden="true"
+                />
+                <div className="text-sm text-green-100">
+                  <p>Monday – Thursday</p>
+                  <p>7:00 AM – 6:00 PM</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <FontAwesomeIcon
+                  icon={faClock}
+                  className="mt-1 text-white"
+                  aria-hidden="true"
+                />
+                <div className="text-sm text-green-100">
+                  <p>Friday</p>
+                  <p>7:00 AM – 4:00 PM</p>
+                </div>
               </div>
             </div>
           </div>
@@ -116,7 +129,7 @@ function Footer() {
                 />
                 Explore our Attractions
               </Link>
-              <a href="#" className="text-sm">
+              <a href="/book" className="text-sm">
                 <FontAwesomeIcon icon={faBook} className="text-white mr-2" />
                 Solo or Group bookings
               </a>
