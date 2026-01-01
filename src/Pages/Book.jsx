@@ -359,7 +359,7 @@ function Book() {
               title="Packages & Promos"
               titleClasses="text-[#227B05] text-xl mb-3"
               description="Various packages available"
-              description2="Starting from P100"
+              description2="Starting from P200"
               icon={<FontAwesomeIcon icon={faBoxOpen} className="text-4xl" />}
               iconClasses="text-[#222EDA]"
             />
