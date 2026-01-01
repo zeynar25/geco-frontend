@@ -213,7 +213,7 @@ export default function About() {
             <ValueCard
               title="Contact"
               titleClasses="text-[#227B05] text-xl mb-3"
-              description="(012) 345-6789"
+              description="1306"
               description2="agri-ecopark@cvsu.edu.ph"
               icon={<FontAwesomeIcon icon={faPhone} className="text-4xl" />}
               iconClasses="text-[#A86CCB]"
