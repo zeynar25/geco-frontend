@@ -37,8 +37,8 @@ function OperatingHours() {
             title="Regular Hours"
             descriptionContent={
               <ul className="list-disc pl-5 space-y-1 marker:text-[#48BF56] my-5 mx-10">
-                <li>Monday - Friday: 8 AM - 5 PM</li>
-                <li>Last entry: 4 PM</li>
+                <li>Monday to Thursday: 7 AM - 6 PM</li>
+                <li>Friday: 7 AM - 4 PM</li>
                 <li>Gates close promptly at 5 PM</li>
               </ul>
             }
@@ -92,20 +92,6 @@ function OperatingHours() {
             title="Important Reminders"
             descriptionContent={
               <div className="grid grid-cols-2 gap-2 md:gap-5 my-5 mx-10">
-                <ul className="list-disc pl-5 space-y-1 col-span-2 md:col-span-1 grid gap-2">
-                  <li>
-                    Advance booking is highly recommended, especially for groups
-                  </li>
-                  <li>
-                    Last entry is at 4:00 PM to ensure you have enough time to
-                    explore
-                  </li>
-                  <li>
-                    During peak hours (10 AM - 2 PM), expect larger crowds
-                  </li>
-                  <li>Special events may affect regular operating hours</li>
-                  <li>Weather conditions may impact outdoor activities</li>
-                </ul>
                 <ul className="list-disc pl-5 space-y-1 col-span-2 md:col-span-1 grid gap-2">
                   <li>
                     Advance booking is highly recommended, especially for groups
