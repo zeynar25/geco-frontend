@@ -9,7 +9,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
-function EditFeedback({ feedback, onClose }) {
+function EditFeedback({ feedback, onClose, isAdmin }) {
   const isActive = (something) => {
     if (!something) return true;
     if (typeof something.active === "boolean") return something.active;
@@ -374,33 +374,34 @@ function EditFeedback({ feedback, onClose }) {
 
           <div className="flex justify-between items-center gap-2 mt-2">
             <div>
-              {isActive(feedback) ? (
-                <button
-                  type="button"
-                  className="px-4 py-2 rounded border border-red-300 text-sm text-red-700 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                  onClick={() =>
-                    disableFeedbackMutation.mutate(feedback.feedbackId)
-                  }
-                  disabled={isBusy}
-                >
-                  {disableFeedbackMutation.isPending
-                    ? "Disabling..."
-                    : "Disable"}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="px-4 py-2 rounded border border-emerald-300 text-sm text-emerald-700 hover:bg-emerald-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                  onClick={() =>
-                    restoreFeedbackMutation.mutate(feedback.feedbackId)
-                  }
-                  disabled={isBusy}
-                >
-                  {restoreFeedbackMutation.isPending
-                    ? "Restoring..."
-                    : "Restore"}
-                </button>
-              )}
+              {isAdmin &&
+                (isActive(feedback) ? (
+                  <button
+                    type="button"
+                    className="px-4 py-2 rounded border border-red-300 text-sm text-red-700 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={() =>
+                      disableFeedbackMutation.mutate(feedback.feedbackId)
+                    }
+                    disabled={isBusy}
+                  >
+                    {disableFeedbackMutation.isPending
+                      ? "Disabling..."
+                      : "Disable"}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="px-4 py-2 rounded border border-emerald-300 text-sm text-emerald-700 hover:bg-emerald-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={() =>
+                      restoreFeedbackMutation.mutate(feedback.feedbackId)
+                    }
+                    disabled={isBusy}
+                  >
+                    {restoreFeedbackMutation.isPending
+                      ? "Restoring..."
+                      : "Restore"}
+                  </button>
+                ))}
             </div>
             <div className="flex gap-2">
               <button

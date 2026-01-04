@@ -643,6 +643,7 @@ function AdminDashboard() {
         <EditFeedback
           feedback={editingFeedback}
           onClose={() => setEditingFeedback(null)}
+          isAdmin={isAdmin}
         />
       )}
 
