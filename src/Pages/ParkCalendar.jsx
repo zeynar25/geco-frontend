@@ -216,38 +216,52 @@ function ParkCalendar() {
                         )}
 
                         {/* days of the month */}
-                        {Array.from({ length: daysInMonth }).map((_, dayIdx) => {
-                          const dayNum = dayIdx + 1;
-                          const dayData = calendarData?.[dayNum];
-                          const weekday = new Date(year, month, dayNum).getDay();
-                          const weekend = weekday === 0 || weekday === 6;
+                        {Array.from({ length: daysInMonth }).map(
+                          (_, dayIdx) => {
+                            const dayNum = dayIdx + 1;
+                            const dayData = calendarData?.[dayNum];
+                            const weekday = new Date(
+                              year,
+                              month,
+                              dayNum
+                            ).getDay();
+                            const weekend = weekday === 0 || weekday === 6;
 
-                          // treat weekends as CLOSED if API doesn't specify
-                          const effectiveStatus = dayData?.status ?? (weekend ? "CLOSED" : null);
+                            // treat weekends as CLOSED if API doesn't specify
+                            const effectiveStatus =
+                              dayData?.status ?? (weekend ? "CLOSED" : null);
 
-                          let bgColor = "";
-                          if (effectiveStatus === "CLOSED") bgColor = "bg-[#020D00]/50";
-                          else if (effectiveStatus === "FULLY_BOOKED") bgColor = "bg-[#E32726]/50";
-                          else if (dayData) {
-                            bgColor = dayData.bookings > 0 ? "bg-[#FDDB3C]/50" : "bg-[#48BF56]";
+                            let bgColor = "";
+                            if (effectiveStatus === "CLOSED")
+                              bgColor = "bg-[#020D00]/50";
+                            else if (effectiveStatus === "FULLY_BOOKED")
+                              bgColor = "bg-[#E32726]/50";
+                            else if (dayData) {
+                              bgColor =
+                                dayData.bookings > 0
+                                  ? "bg-[#FDDB3C]/50"
+                                  : "bg-[#48BF56]";
+                            }
+
+                            const isSelected = selectedDay === dayNum;
+                            const border = isSelected
+                              ? "border-2"
+                              : "border-2 border-transparent";
+
+                            return (
+                              <div
+                                key={dayNum}
+                                className={`p-3 rounded cursor-pointer ${bgColor} ${border} hover:border-2 hover:border-[#020D00]`}
+                                onClick={() => (
+                                  setDay(dayNum),
+                                  setSelectedDayStatus(effectiveStatus)
+                                )}
+                              >
+                                <span className="font-bold">{dayNum}</span>
+                              </div>
+                            );
                           }
-
-                          const isSelected = selectedDay === dayNum;
-                          const border = isSelected ? "border-2" : "border-2 border-transparent";
-
-                          return (
-                            <div
-                              key={dayNum}
-                              className={`p-3 rounded cursor-pointer ${bgColor} ${border} hover:border-2 hover:border-[#020D00]`}
-                              onClick={() => (
-                                setDay(dayNum),
-                                setSelectedDayStatus(effectiveStatus)
-                              )}
-                            >
-                              <span className="font-bold">{dayNum}</span>
-                            </div>
-                          );
-                        })}
+                        )}
                       </div>
                     )}
                   </div>
