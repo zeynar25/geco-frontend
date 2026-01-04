@@ -27,6 +27,7 @@ import BackButton from "../Components/BackButton.jsx";
 import { ClipLoader } from "react-spinners";
 
 import VisitDateModal from "../Components/VisitDateModal";
+import VisitTimeModal from "../Components/VisitTimeModal";
 
 function isLoggedIn() {
   const token = localStorage.getItem("token");
@@ -61,6 +62,8 @@ function Book() {
     location.state?.selectedDate || ""
   );
   const [showDateModal, setShowDateModal] = useState(false);
+  const [selectedVisitTime, setSelectedVisitTime] = useState("");
+  const [showTimeModal, setShowTimeModal] = useState(false);
   const [groupSizeError, setGroupSizeError] = useState("");
   // const [selectedInclusions, setSelectedInclusions] = useState([]);
 
@@ -163,6 +166,13 @@ function Book() {
       return;
     }
 
+    if (!selectedVisitTime) {
+      const msg = "Please select a visit time.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+      return;
+    }
+
     // Validate group size before submit
     if (groupSizeError) {
       const msg = groupSizeError;
@@ -176,7 +186,7 @@ function Book() {
       tourPackageId: selectedPackageId,
       bookingInclusionRequests: [],
       visitDate: selectedVisitDate,
-      visitTime: document.getElementById("visitTime").value,
+      visitTime: selectedVisitTime,
       groupSize: selectedGroupSize,
       paymentMethod: paymentMethod,
     };
@@ -552,11 +562,37 @@ function Book() {
                     <div className="col-span-2 xs:col-span-1">
                       <label htmlFor="">Visit time</label>
                       <input
-                        className="w-full border px-5 py-3"
-                        type="time"
+                        className={`w-full border px-5 py-3 ${
+                          !selectedVisitDate
+                            ? "bg-gray-100 cursor-not-allowed"
+                            : "cursor-pointer"
+                        }`}
+                        type="text"
                         id="visitTime"
                         name="visitTime"
+                        value={selectedVisitTime}
+                        readOnly
+                        placeholder={
+                          selectedVisitDate
+                            ? "Select a visit time"
+                            : "Pick a date first"
+                        }
                         required
+                        onClick={() => {
+                          if (!selectedVisitDate) {
+                            const msg = "Please select a visit date first.";
+                            if (window.__showAlert) window.__showAlert(msg);
+                            else window.__nativeAlert?.(msg) || alert(msg);
+                            return;
+                          }
+                          setShowTimeModal(true);
+                        }}
+                      />
+                      <VisitTimeModal
+                        isOpen={showTimeModal}
+                        onClose={() => setShowTimeModal(false)}
+                        onSelect={(t) => setSelectedVisitTime(t)}
+                        selectedDate={selectedVisitDate}
                       />
                     </div>
                   </div>
