@@ -19,6 +19,9 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
     basePrice: pkg?.basePrice ?? "",
     pricePerPerson: pkg?.pricePerPerson ?? "",
     notes: pkg?.notes || "",
+    allowedStartTimes: (pkg?.allowedStartTimes || [])
+      .map((t) => (t && t.length >= 5 ? t.slice(0, 5) : t))
+      .join(", "),
   }));
 
   const initialInclusionIds = (pkg?.inclusions || []).map(
@@ -320,6 +323,13 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
       pricePerPerson:
         form.pricePerPerson === "" ? null : Number(form.pricePerPerson),
       notes: form.notes.trim(),
+      allowedStartTimes:
+        form.allowedStartTimes == null
+          ? []
+          : form.allowedStartTimes
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean),
     };
 
     if (cleaned.name && cleaned.name !== pkg.name) {
@@ -360,6 +370,20 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
     }
     if (cleaned.notes && cleaned.notes !== (pkg.notes || "")) {
       payload.notes = cleaned.notes;
+    }
+
+    // compare allowed start times
+    const origTimes = (pkg.allowedStartTimes || []).map((t) =>
+      t && t.length >= 5 ? t.slice(0, 5) : t
+    );
+    const newTimes = (cleaned.allowedStartTimes || []).map((t) =>
+      t && t.length >= 5 ? t.slice(0, 5) : t
+    );
+    const timesChanged =
+      origTimes.length !== newTimes.length ||
+      origTimes.some((v, i) => v !== newTimes[i]);
+    if (timesChanged) {
+      payload.allowedStartTimes = cleaned.allowedStartTimes;
     }
 
     const currentSorted = [...initialInclusionIds].sort();
@@ -517,6 +541,22 @@ function EditTourPackage({ package: pkg, onClose, isAdmin }) {
               onChange={handleChange("notes")}
               disabled={isBusy}
             />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">Allowed Start Times</label>
+            <input
+              type="text"
+              className="border border-gray-300 rounded px-2 py-1"
+              value={form.allowedStartTimes}
+              onChange={handleChange("allowedStartTimes")}
+              disabled={isBusy}
+              placeholder="e.g. 08:00,13:00 (comma-separated)"
+            />
+            <span className="text-xs text-gray-500">
+              Enter allowed start times for this package, comma-separated.
+              Formats like HH:MM or HH:MM:SS are accepted.
+            </span>
           </div>
 
           <div className="flex flex-col gap-2 mt-2">

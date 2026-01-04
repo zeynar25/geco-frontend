@@ -19,6 +19,7 @@ function AddTourPackage({ onClose }) {
     basePrice: "",
     pricePerPerson: "",
     notes: "",
+    allowedStartTimes: "",
   });
 
   const [selectedInclusionIds, setSelectedInclusionIds] = useState([]);
@@ -205,6 +206,8 @@ function AddTourPackage({ onClose }) {
 
     const notesTrimmed = form.notes.trim();
 
+    const timesTrimmed = form.allowedStartTimes?.trim();
+
     const payload = {
       name: form.name.trim(),
       description: form.description.trim(),
@@ -219,6 +222,13 @@ function AddTourPackage({ onClose }) {
 
     if (notesTrimmed) {
       payload.notes = notesTrimmed;
+    }
+
+    if (timesTrimmed) {
+      payload.allowedStartTimes = timesTrimmed
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
     }
 
     addPackageMutation.mutate(payload);
@@ -341,6 +351,22 @@ function AddTourPackage({ onClose }) {
               disabled={isBusy}
               placeholder="Optional notes (e.g., requirements, reminders)"
             />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">Allowed Start Times</label>
+            <input
+              type="text"
+              className="border border-gray-300 rounded px-2 py-1"
+              value={form.allowedStartTimes}
+              onChange={handleChange("allowedStartTimes")}
+              disabled={isBusy}
+              placeholder="e.g. 08:00,13:00 (comma-separated)"
+            />
+            <span className="text-xs text-gray-500">
+              Enter allowed start times for this package, comma-separated.
+              Formats like HH:MM or HH:MM:SS are accepted.
+            </span>
           </div>
 
           <div className="flex flex-col gap-2 mt-2">

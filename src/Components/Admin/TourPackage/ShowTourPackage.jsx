@@ -276,6 +276,27 @@ function ShowTourPackage(props) {
                       <p className="text-gray-700">{pkg.notes}</p>
                     </div>
                   )}
+                  {pkg.allowedStartTimes &&
+                    pkg.allowedStartTimes.length > 0 && (
+                      <div className="mt-2 text-sm">
+                        <span className="font-semibold block mb-1">
+                          Start Times:
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {pkg.allowedStartTimes.map((t, i) => {
+                            const time = t && t.length >= 5 ? t.slice(0, 5) : t;
+                            return (
+                              <span
+                                key={i}
+                                className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
+                              >
+                                {time}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                 </div>
               );
             })}
