@@ -102,7 +102,8 @@ export default function ParkMap3D({
       animationFrameId = requestAnimationFrame(animate);
 
       if (model) {
-        model.rotation.y += 0.0025;
+        // Slow auto-rotation: was 0.0025, halve it for a gentler spin
+        model.rotation.y += 0.00125;
       }
 
       controls.update();
