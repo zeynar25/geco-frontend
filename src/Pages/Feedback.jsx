@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer";
 import BackButton from "../Components/BackButton.jsx";
-import { API_BASE_URL, safeFetch, ensureTokenValidOrAlert } from "../apiConfig";
+import { API_BASE_URL, safeFetch } from "../apiConfig";
 import {
   faAngleLeft,
   faAngleRight,
@@ -29,10 +29,30 @@ function Feedback() {
   } = useQuery({
     queryKey: ["feedbacks"],
     queryFn: async () => {
-      ensureTokenValidOrAlert();
-      const response = await safeFetch(
-        `${API_BASE_URL}/feedback/active?page=${feedbackPage}&size=10`
-      );
+      // Allow anonymous access: if a token exists, try `safeFetch`,
+      // otherwise use unauthenticated `fetch`. If the token is expired
+      // `safeFetch` will throw TOKEN_EXPIRED; fall back to unauthenticated fetch.
+      const endpoint = `${API_BASE_URL}/feedback/active?page=${feedbackPage}&size=10`;
+      const token = localStorage.getItem("token");
+      let response;
+      if (token) {
+        try {
+          response = await safeFetch(endpoint);
+        } catch (err) {
+          if (err?.message === "TOKEN_EXPIRED") {
+            try {
+              localStorage.removeItem("token");
+            } catch {
+              /* empty */
+            }
+            response = await fetch(endpoint);
+          } else {
+            throw err;
+          }
+        }
+      } else {
+        response = await fetch(endpoint);
+      }
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error?.error || "Getting feedbacks failed");
