@@ -123,12 +123,27 @@ function Book() {
       // clear schedule when package is deselected
       setSelectedVisitDate("");
       setSelectedVisitTime("");
+      // clear group size when package deselected
+      setSelectedGroupSize(null);
     } else {
       setSelectedPackageId(pkg.packageId);
       setSelectedPackage(pkg);
       // Re-validate group size if already set
       if (selectedGroupSize !== null && selectedGroupSize !== "") {
-        validateGroupSize(selectedGroupSize, pkg);
+        // clamp existing group size to new package bounds
+        const min = pkg.minPerson || 1;
+        const max = pkg.maxPerson || 1000;
+        let clamped = Number(selectedGroupSize);
+        if (isNaN(clamped)) {
+          clamped = null;
+        } else if (clamped < min) {
+          clamped = min;
+        } else if (clamped > max) {
+          clamped = max;
+        }
+        setSelectedGroupSize(clamped);
+        // validate and set error if still invalid
+        validateGroupSize(clamped, pkg);
       }
       // if a time was previously chosen but is not allowed for the new package, clear it
       if (
