@@ -1383,6 +1383,7 @@ function Account() {
                     </label>
                     <textarea
                       className="w-full border px-3 py-2 rounded-md min-h-20"
+                      placeholder="You may leave this blank if you have no suggestions"
                       value={feedbackForm.suggestion}
                       onChange={handleFeedbackFieldChange("suggestion")}
                     />
