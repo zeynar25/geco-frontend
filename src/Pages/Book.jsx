@@ -64,6 +64,7 @@ function Book() {
   const [showDateModal, setShowDateModal] = useState(false);
   const [selectedVisitTime, setSelectedVisitTime] = useState("");
   const [showTimeModal, setShowTimeModal] = useState(false);
+  const scheduleDisabled = !selectedPackageId;
   const [groupSizeError, setGroupSizeError] = useState("");
   // const [selectedInclusions, setSelectedInclusions] = useState([]);
 
@@ -103,17 +104,49 @@ function Book() {
     }
   }
 
+  const normalizeTime = (t) => {
+    if (!t) return null;
+    const parts = String(t).trim().split(":");
+    const hhRaw = parts[0] || "";
+    const mmRaw = parts[1] || "00";
+    const hh = hhRaw.trim().padStart(2, "0").slice(-2);
+    const mm = mmRaw.trim().padStart(2, "0").slice(0, 2);
+    if (!/^[0-9]{2}$/.test(hh) || !/^[0-9]{2}$/.test(mm)) return null;
+    return `${hh}:${mm}`;
+  };
+
   function handleSelectedPackageIdChange(pkg) {
     if (selectedPackageId === pkg.packageId) {
       setSelectedPackageId(null);
       setSelectedPackage(null);
       setGroupSizeError("");
+      // clear schedule when package is deselected
+      setSelectedVisitDate("");
+      setSelectedVisitTime("");
     } else {
       setSelectedPackageId(pkg.packageId);
       setSelectedPackage(pkg);
       // Re-validate group size if already set
       if (selectedGroupSize !== null && selectedGroupSize !== "") {
         validateGroupSize(selectedGroupSize, pkg);
+      }
+      // if a time was previously chosen but is not allowed for the new package, clear it
+      if (
+        selectedVisitTime &&
+        pkg?.allowedStartTimes &&
+        pkg.allowedStartTimes.length
+      ) {
+        const allowed = pkg.allowedStartTimes
+          .map((t) => normalizeTime(t))
+          .filter(Boolean);
+        const chosen = normalizeTime(selectedVisitTime);
+        if (!chosen || !allowed.includes(chosen)) {
+          setSelectedVisitTime("");
+          const msg =
+            "Previously selected time is not allowed for this package. Please choose a new time.";
+          if (window.__showAlert) window.__showAlert(msg);
+          else window.__nativeAlert?.(msg) || alert(msg);
+        }
       }
     }
   }
@@ -171,6 +204,23 @@ function Book() {
       if (window.__showAlert) await window.__showAlert(msg);
       else window.__nativeAlert?.(msg) || alert(msg);
       return;
+    }
+
+    // If package restricts start times, ensure chosen time is allowed
+    if (
+      selectedPackage?.allowedStartTimes &&
+      selectedPackage.allowedStartTimes.length
+    ) {
+      const allowed = selectedPackage.allowedStartTimes
+        .map((t) => normalizeTime(t))
+        .filter(Boolean);
+      const chosen = normalizeTime(selectedVisitTime);
+      if (!chosen || !allowed.includes(chosen)) {
+        const msg = "Selected time is not allowed for the chosen package.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        return;
+      }
     }
 
     // Validate group size before submit
@@ -238,6 +288,7 @@ function Book() {
     data: packageData,
     error: packageError,
     isPending: packagePending,
+    refetch: refetchPackages,
   } = useQuery({
     queryKey: ["packages"],
     queryFn: async () => {
@@ -527,76 +578,7 @@ function Book() {
                     </div>
                   )}
                 </div>
-                {/* Visit Schedule */}
-                <div id="visitSchedule" className="flex flex-col gap-3">
-                  <header className="flex flex-col gap-2">
-                    <span className="font-bold text-xl text-[#48BF56]">
-                      Visit Schedule
-                    </span>
-                  </header>
-                  <div className="grid grid-cols-2 gap-2 xs:gap-10">
-                    <div className="col-span-2 xs:col-span-1">
-                      <label htmlFor="">Visit Date</label>
-                      <div className="flex">
-                        <input
-                          className="w-full border px-5 py-3 cursor-pointer"
-                          type="text"
-                          id="visitDate"
-                          name="visitDate"
-                          value={selectedVisitDate}
-                          readOnly
-                          placeholder="Select a visit date"
-                          required
-                          onClick={() => setShowDateModal(true)}
-                        />
-                      </div>
-                      <VisitDateModal
-                        isOpen={showDateModal}
-                        onClose={() => setShowDateModal(false)}
-                        onSelect={(d) => {
-                          setSelectedVisitDate(d);
-                          setShowDateModal(false);
-                        }}
-                      />
-                    </div>
-                    <div className="col-span-2 xs:col-span-1">
-                      <label htmlFor="">Visit time</label>
-                      <input
-                        className={`w-full border px-5 py-3 ${
-                          !selectedVisitDate
-                            ? "bg-gray-100 cursor-not-allowed"
-                            : "cursor-pointer"
-                        }`}
-                        type="text"
-                        id="visitTime"
-                        name="visitTime"
-                        value={selectedVisitTime}
-                        readOnly
-                        placeholder={
-                          selectedVisitDate
-                            ? "Select a visit time"
-                            : "Pick a date first"
-                        }
-                        required
-                        onClick={() => {
-                          if (!selectedVisitDate) {
-                            const msg = "Please select a visit date first.";
-                            if (window.__showAlert) window.__showAlert(msg);
-                            else window.__nativeAlert?.(msg) || alert(msg);
-                            return;
-                          }
-                          setShowTimeModal(true);
-                        }}
-                      />
-                      <VisitTimeModal
-                        isOpen={showTimeModal}
-                        onClose={() => setShowTimeModal(false)}
-                        onSelect={(t) => setSelectedVisitTime(t)}
-                        selectedDate={selectedVisitDate}
-                      />
-                    </div>
-                  </div>
-                </div>
+
                 {/* Tour packages */}
                 <div id="package-selection" className="flex flex-col gap-3">
                   <header className="flex flex-col gap-2">
@@ -611,6 +593,44 @@ function Book() {
                         <span className="ml-3 font-semibold">
                           Loading Tour packages...
                         </span>
+                      </div>
+                    ) : packageError ? (
+                      <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-6">
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center w-full">
+                          <p className="font-semibold text-red-600 mb-2">
+                            Failed to load tour packages
+                          </p>
+                          <p className="text-sm mb-3">
+                            There was a problem retrieving tour packages. You
+                            can retry or browse packages directly.
+                          </p>
+                          <div className="flex justify-center gap-3">
+                            <button
+                              onClick={() => refetchPackages?.()}
+                              className="px-3 py-2 bg-[#48BF56] text-white rounded"
+                            >
+                              Retry
+                            </button>
+                            <Link
+                              to="/packages-promos"
+                              state={{ from: location.pathname }}
+                              className="underline px-3 py-2"
+                            >
+                              Browse packages
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ) : !packageData || packageData.length === 0 ? (
+                      <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-6">
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center w-full">
+                          <p className="font-semibold text-yellow-700 mb-2">
+                            No tour packages available
+                          </p>
+                          <p className="text-sm">
+                            Please check back later or contact support.
+                          </p>
+                        </div>
                       </div>
                     ) : (
                       packageData?.map((pkg) => (
@@ -756,6 +776,105 @@ function Book() {
                     />
                   </div>
                 )} */}
+
+                {/* Visit Schedule */}
+                <div id="visitSchedule" className="flex flex-col gap-3">
+                  <header className="flex flex-col gap-2">
+                    <span className="font-bold text-xl text-[#48BF56]">
+                      Visit Schedule
+                    </span>
+                  </header>
+                  <div className="grid grid-cols-2 gap-2 xs:gap-10">
+                    <div className="col-span-2 xs:col-span-1">
+                      <label htmlFor="">Visit Date</label>
+                      <div className="flex">
+                        <input
+                          className={`w-full border px-5 py-3 ${
+                            scheduleDisabled
+                              ? "bg-gray-100 cursor-not-allowed"
+                              : "cursor-pointer"
+                          }`}
+                          type="text"
+                          id="visitDate"
+                          name="visitDate"
+                          value={selectedVisitDate}
+                          readOnly
+                          placeholder={
+                            scheduleDisabled
+                              ? "Select a package first"
+                              : "Select a visit date"
+                          }
+                          required
+                          disabled={scheduleDisabled}
+                          onClick={() => {
+                            if (scheduleDisabled) {
+                              const msg = "Please select a tour package first.";
+                              if (window.__showAlert) window.__showAlert(msg);
+                              else window.__nativeAlert?.(msg) || alert(msg);
+                              return;
+                            }
+                            setShowDateModal(true);
+                          }}
+                        />
+                      </div>
+                      <VisitDateModal
+                        isOpen={showDateModal}
+                        onClose={() => setShowDateModal(false)}
+                        onSelect={(d) => {
+                          setSelectedVisitDate(d);
+                          setShowDateModal(false);
+                        }}
+                      />
+                    </div>
+                    <div className="col-span-2 xs:col-span-1">
+                      <label htmlFor="">Visit time</label>
+                      <input
+                        className={`w-full border px-5 py-3 ${
+                          scheduleDisabled || !selectedVisitDate
+                            ? "bg-gray-100 cursor-not-allowed"
+                            : "cursor-pointer"
+                        }`}
+                        type="text"
+                        id="visitTime"
+                        name="visitTime"
+                        value={selectedVisitTime}
+                        readOnly
+                        placeholder={
+                          scheduleDisabled
+                            ? "Select a package first"
+                            : selectedVisitDate
+                            ? "Select a visit time"
+                            : "Pick a date first"
+                        }
+                        required
+                        disabled={scheduleDisabled}
+                        onClick={() => {
+                          if (scheduleDisabled) {
+                            const msg = "Please select a tour package first.";
+                            if (window.__showAlert) window.__showAlert(msg);
+                            else window.__nativeAlert?.(msg) || alert(msg);
+                            return;
+                          }
+                          if (!selectedVisitDate) {
+                            const msg = "Please select a visit date first.";
+                            if (window.__showAlert) window.__showAlert(msg);
+                            else window.__nativeAlert?.(msg) || alert(msg);
+                            return;
+                          }
+                          setShowTimeModal(true);
+                        }}
+                      />
+                      <VisitTimeModal
+                        isOpen={showTimeModal}
+                        onClose={() => setShowTimeModal(false)}
+                        onSelect={(t) => setSelectedVisitTime(t)}
+                        selectedDate={selectedVisitDate}
+                        allowedStartTimes={selectedPackage?.allowedStartTimes}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 {/* account information */}
                 <div className="flex flex-col gap-3 mb-10">
                   <header className="flex flex-col gap-2">
@@ -828,16 +947,26 @@ function Book() {
                         <input
                           className={`w-full border px-2 py-3 pl-11 ${
                             groupSizeError ? "border-red-500" : ""
+                          } ${
+                            !selectedPackageId
+                              ? "bg-gray-100 cursor-not-allowed"
+                              : ""
                           }`}
                           type="number"
                           id="groupSize"
                           name="groupSize"
                           required
-                          placeholder="Enter your group size"
+                          placeholder={
+                            selectedPackageId
+                              ? "Enter your group size"
+                              : "Select a package first"
+                          }
                           min={selectedPackage?.minPerson || 1}
                           max={selectedPackage?.maxPerson || 1000}
                           value={selectedGroupSize ?? ""}
+                          disabled={!selectedPackageId}
                           onChange={(e) => {
+                            if (!selectedPackageId) return;
                             const value =
                               e.target.value === ""
                                 ? ""

@@ -26,6 +26,7 @@ export default function VisitTimeModal({
   onClose,
   onSelect,
   selectedDate,
+  allowedStartTimes = [],
 }) {
   // compute date and weekday unconditionally so hooks can be called in same order
   const dateObj = selectedDate ? new Date(`${selectedDate}T00:00:00`) : null;
@@ -38,6 +39,22 @@ export default function VisitTimeModal({
     const [startHour, endHour] = weekday === 5 ? [7, 16] : [7, 17];
     return timeStrings(startHour, endHour, 30);
   }, [selectedDate, weekday]);
+
+  const normalizedAllowed = useMemo(() => {
+    if (!allowedStartTimes || !allowedStartTimes.length) return null;
+    const normalize = (t) => {
+      if (!t) return null;
+      const parts = t.trim().split(":");
+      const hhRaw = parts[0] || "";
+      const mmRaw = parts[1] || "00";
+      const hh = hhRaw.trim().padStart(2, "0").slice(-2);
+      const mm = mmRaw.trim().padStart(2, "0").slice(0, 2);
+      if (!/^[0-9]{2}$/.test(hh) || !/^[0-9]{2}$/.test(mm)) return null;
+      return `${hh}:${mm}`;
+    };
+    const arr = allowedStartTimes.map(normalize).filter(Boolean);
+    return arr.length ? arr : null;
+  }, [allowedStartTimes]);
 
   if (!isOpen) return null;
 
@@ -115,21 +132,38 @@ export default function VisitTimeModal({
           </div>
         </header>
 
-        <p className="text-sm mb-3">Select a time (available slots shown).</p>
+        <p className="text-sm mb-3">
+          Select a time (available slots shown).
+          {normalizedAllowed && (
+            <span className="block text-xs text-gray-500 mt-1">
+              Package allowed times: {normalizedAllowed.join(", ")}
+            </span>
+          )}
+        </p>
 
         <div className="grid grid-cols-4 gap-2">
-          {times.map((t) => (
-            <button
-              key={t}
-              onClick={() => {
-                onSelect(t);
-                onClose();
-              }}
-              className="px-3 py-2 border rounded hover:bg-[#f0fdf4]"
-            >
-              {t}
-            </button>
-          ))}
+          {times.map((t) => {
+            const isAllowed =
+              !normalizedAllowed || normalizedAllowed.includes(t);
+            return (
+              <button
+                key={t}
+                onClick={() => {
+                  if (!isAllowed) return;
+                  onSelect(t);
+                  onClose();
+                }}
+                disabled={!isAllowed}
+                className={`px-3 py-2 border rounded transition-colors ${
+                  isAllowed
+                    ? "hover:bg-[#f0fdf4]"
+                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                }`}
+              >
+                {t}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
