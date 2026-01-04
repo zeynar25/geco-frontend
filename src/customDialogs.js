@@ -162,4 +162,15 @@ export function setupCustomDialogs() {
       document.addEventListener("keydown", handleKeyDown);
     });
   };
+
+  // Override the global `window.confirm` to use our async custom confirm modal.
+  // NOTE: The native `window.confirm` is synchronous and returns a boolean immediately.
+  // Our custom confirm is async and returns a Promise<boolean>. Callers that rely on
+  // synchronous behavior should use `window.__nativeConfirm(message)` instead.
+  window.confirm = function (message) {
+    if (window.__showConfirm) {
+      return window.__showConfirm(message);
+    }
+    return window.__nativeConfirm ? window.__nativeConfirm(message) : false;
+  };
 }
