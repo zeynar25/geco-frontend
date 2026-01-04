@@ -896,21 +896,6 @@ function Account() {
             <form className="grid grid-cols-2 gap-5" onSubmit={handleSubmit}>
               <div className="col-span-2 sm:col-span-1">
                 <label htmlFor="" className="font-semibold">
-                  Surname
-                </label>
-                <input
-                  className="w-full border px-5 py-3 rounded-md"
-                  type="text"
-                  id="surname"
-                  name="surname"
-                  required
-                  readOnly={!isEditing}
-                  value={formData?.surname || ""}
-                  onChange={handleChange("surname")}
-                />
-              </div>
-              <div className="col-span-2 sm:col-span-1">
-                <label htmlFor="" className="font-semibold">
                   First name
                 </label>
                 <input
@@ -922,6 +907,22 @@ function Account() {
                   readOnly={!isEditing}
                   value={formData?.firstName || ""}
                   onChange={handleChange("firstName")}
+                />
+              </div>
+
+              <div className="col-span-2 sm:col-span-1">
+                <label htmlFor="" className="font-semibold">
+                  Surname
+                </label>
+                <input
+                  className="w-full border px-5 py-3 rounded-md"
+                  type="text"
+                  id="surname"
+                  name="surname"
+                  required
+                  readOnly={!isEditing}
+                  value={formData?.surname || ""}
+                  onChange={handleChange("surname")}
                 />
               </div>
               <div className="col-span-2">
