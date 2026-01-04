@@ -94,7 +94,9 @@ function EditAccount({ account, onClose, isAdmin }) {
     },
     onError: async (error) => {
       if (error?.message === "TOKEN_EXPIRED") {
-        await handleExpiredToken("Your session has expired. Please sign in again.");
+        await handleExpiredToken(
+          "Your session has expired. Please sign in again."
+        );
         return;
       }
       showAlert(error.message || "Updating account role failed");
@@ -127,7 +129,9 @@ function EditAccount({ account, onClose, isAdmin }) {
     },
     onError: async (error) => {
       if (error?.message === "TOKEN_EXPIRED") {
-        await handleExpiredToken("Your session has expired. Please sign in again.");
+        await handleExpiredToken(
+          "Your session has expired. Please sign in again."
+        );
         return;
       }
       showAlert(error.message || "Resetting password failed");
@@ -163,7 +167,9 @@ function EditAccount({ account, onClose, isAdmin }) {
     },
     onError: async (error) => {
       if (error?.message === "TOKEN_EXPIRED") {
-        await handleExpiredToken("Your session has expired. Please sign in again.");
+        await handleExpiredToken(
+          "Your session has expired. Please sign in again."
+        );
         return;
       }
       showAlert(error.message || "Disabling account failed");
@@ -199,7 +205,9 @@ function EditAccount({ account, onClose, isAdmin }) {
     },
     onError: async (error) => {
       if (error?.message === "TOKEN_EXPIRED") {
-        await handleExpiredToken("Your session has expired. Please sign in again.");
+        await handleExpiredToken(
+          "Your session has expired. Please sign in again."
+        );
         return;
       }
       showAlert(error.message || "Restoring account failed");
@@ -237,15 +245,17 @@ function EditAccount({ account, onClose, isAdmin }) {
   const handleResetPassword = async () => {
     if (!account) return;
     let ok = false;
+    const resetMsg =
+      'Reset password for this account? This will set the account password to "password".';
     if (typeof window !== "undefined" && window.__showConfirm) {
       try {
-        ok = await window.__showConfirm("Reset password for this account?");
+        ok = await window.__showConfirm(resetMsg);
       } catch {
-        ok = window.__nativeConfirm ? window.__nativeConfirm("Reset password for this account?") : false;
+        ok = window.__nativeConfirm ? window.__nativeConfirm(resetMsg) : false;
       }
     } else {
       try {
-        ok = window.confirm("Reset password for this account?");
+        ok = window.confirm(resetMsg);
       } catch {
         ok = false;
       }
@@ -257,7 +267,8 @@ function EditAccount({ account, onClose, isAdmin }) {
   const handleDisableAccount = async () => {
     if (!account) return;
     let ok = false;
-    const msg = "Disable this account? The user will no longer be able to sign in.";
+    const msg =
+      "Disable this account? The user will no longer be able to sign in.";
     if (typeof window !== "undefined" && window.__showConfirm) {
       try {
         ok = await window.__showConfirm(msg);
@@ -316,11 +327,7 @@ function EditAccount({ account, onClose, isAdmin }) {
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1">
             <label className="text-sm font-semibold">Account ID</label>
-            <input
-              type="text"
-              value={account?.accountId ?? "-"}
-              readOnly
-            />
+            <input type="text" value={account?.accountId ?? "-"} readOnly />
           </div>
 
           <div className="flex flex-col gap-1">
@@ -387,7 +394,9 @@ function EditAccount({ account, onClose, isAdmin }) {
                     onClick={handleDisableAccount}
                     disabled={isBusy}
                   >
-                    {disableAccountMutation.isLoading ? "Disabling..." : "Disable"}
+                    {disableAccountMutation.isLoading
+                      ? "Disabling..."
+                      : "Disable"}
                   </button>
                 ) : (
                   <button
@@ -396,7 +405,9 @@ function EditAccount({ account, onClose, isAdmin }) {
                     onClick={handleRestoreAccount}
                     disabled={isBusy}
                   >
-                    {restoreAccountMutation.isLoading ? "Restoring..." : "Restore"}
+                    {restoreAccountMutation.isLoading
+                      ? "Restoring..."
+                      : "Restore"}
                   </button>
                 ))}
             </div>
@@ -456,7 +467,9 @@ function EditAccount({ account, onClose, isAdmin }) {
                 }}
                 disabled={isBusy}
               >
-                {updateRoleMutation.isLoading ? "Saving..." : "Yes, transfer admin"}
+                {updateRoleMutation.isLoading
+                  ? "Saving..."
+                  : "Yes, transfer admin"}
               </button>
             </div>
           </div>
