@@ -18,6 +18,9 @@ import {
   faPesoSign,
   faX,
   faStar as faStarSolid,
+  faLock,
+  faEye,
+  faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { ClipLoader } from "react-spinners";
 import {
@@ -47,6 +50,11 @@ function Account() {
   const [formData, setFormData] = useState(null);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+
+  const [oldPasswordVisible, setOldPasswordVisible] = useState(false);
+  const [newPasswordVisible, setNewPasswordVisible] = useState(false);
+  const [confirmNewPasswordVisible, setConfirmNewPasswordVisible] =
+    useState(false);
 
   const [isEditingFeedback, setIsEditingFeedback] = useState(false);
   const [feedbackForm, setFeedbackForm] = useState({
@@ -1449,48 +1457,104 @@ function Account() {
               className="grid grid-cols-2 gap-5"
               onSubmit={handlePasswordSubmit}
             >
-              <div className="col-span-2 sm:col-span-1">
-                <label htmlFor="currentPassword" className="font-semibold">
-                  Current Password
-                </label>
+              <div className="w-full relative">
+                <FontAwesomeIcon
+                  icon={faLock}
+                  className="absolute text-xl left-1 top-1/2 -translate-y-1/2"
+                />
                 <input
-                  className="w-full border px-5 py-3 rounded-md"
-                  type="password"
+                  className="w-full border px-2 py-3 pl-8 pr-10"
+                  type={oldPasswordVisible ? "text" : "password"}
                   id="currentPassword"
                   name="currentPassword"
+                  placeholder="Current Password"
                   value={passwordForm.currentPassword}
                   onChange={handlePasswordFieldChange("currentPassword")}
                   required
                 />
+                <button
+                  type="button"
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 transition-colors duration-150"
+                  onClick={() => setOldPasswordVisible((prev) => !prev)}
+                  aria-label={
+                    oldPasswordVisible ? "Hide password" : "Show password"
+                  }
+                >
+                  <FontAwesomeIcon
+                    icon={oldPasswordVisible ? faEye : faEyeSlash}
+                    className={`transition-transform duration-200 ${
+                      oldPasswordVisible ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
               </div>
-              <div className="col-span-2 sm:col-span-1">
-                <label htmlFor="newPassword" className="font-semibold">
-                  New Password
-                </label>
+
+              <div className="w-full relative">
+                <FontAwesomeIcon
+                  icon={faLock}
+                  className="absolute text-xl left-1 top-1/2 -translate-y-1/2"
+                />
                 <input
-                  className="w-full border px-5 py-3 rounded-md"
-                  type="password"
+                  className="w-full border px-2 py-3 pl-8 pr-10"
+                  type={newPasswordVisible ? "text" : "password"}
                   id="newPassword"
                   name="newPassword"
+                  placeholder="New Password"
                   value={passwordForm.newPassword}
                   onChange={handlePasswordFieldChange("newPassword")}
                   required
                 />
+                <button
+                  type="button"
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 transition-colors duration-150"
+                  onClick={() => setNewPasswordVisible((prev) => !prev)}
+                  aria-label={
+                    newPasswordVisible ? "Hide password" : "Show password"
+                  }
+                >
+                  <FontAwesomeIcon
+                    icon={newPasswordVisible ? faEye : faEyeSlash}
+                    className={`transition-transform duration-200 ${
+                      newPasswordVisible ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
               </div>
-              <div className="col-span-2">
-                <label htmlFor="confirmNewPassword" className="font-semibold">
-                  Confirm New Password
-                </label>
+
+              <div className="w-full relative">
+                <FontAwesomeIcon
+                  icon={faLock}
+                  className="absolute text-xl left-1 top-1/2 -translate-y-1/2"
+                />
                 <input
-                  className="w-full border px-5 py-3 rounded-md"
-                  type="password"
+                  className="w-full border px-2 py-3 pl-8 pr-10"
+                  type={confirmNewPasswordVisible ? "text" : "password"}
                   id="confirmNewPassword"
                   name="confirmNewPassword"
+                  placeholder="Confirm New Password"
                   value={passwordForm.confirmNewPassword}
                   onChange={handlePasswordFieldChange("confirmNewPassword")}
                   required
                 />
+                <button
+                  type="button"
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 transition-colors duration-150"
+                  onClick={() => setConfirmNewPasswordVisible((prev) => !prev)}
+                  aria-label={
+                    confirmNewPasswordVisible
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                >
+                  <FontAwesomeIcon
+                    icon={confirmNewPasswordVisible ? faEye : faEyeSlash}
+                    className={`transition-transform duration-200 ${
+                      confirmNewPasswordVisible ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
               </div>
+
               <div className="col-span-2 flex justify-end gap-3 mt-2">
                 <button
                   type="button"
