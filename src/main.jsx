@@ -67,6 +67,28 @@ const queryClient = new QueryClient({
   },
 });
 
+// Sync token changes across tabs and ensure in-memory app state picks up
+// token removals/changes immediately. When token is removed in another
+// tab we redirect to signin; when token changes we reload to refresh
+// queries so they use the updated token value.
+if (typeof window !== "undefined" && window.addEventListener) {
+  window.addEventListener("storage", (e) => {
+    try {
+      if (e.key === "token") {
+        if (!e.newValue) {
+          // token removed in another tab -> force sign-in
+          window.location.href = "/signin";
+        } else {
+          // token updated in another tab -> reload to pickup new token
+          window.location.reload();
+        }
+      }
+    } catch {
+      // swallow errors from storage handler
+    }
+  });
+}
+
 setupCustomDialogs();
 
 createRoot(document.getElementById("root")).render(

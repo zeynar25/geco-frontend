@@ -39,7 +39,20 @@ export async function safeFetch(url, options = {}) {
     Authorization: `Bearer ${token}`,
   };
 
-  return fetch(url, { ...options, headers });
+  const response = await fetch(url, { ...options, headers });
+
+  // If the server rejects the token (e.g., expired or invalidated),
+  // normalize the behavior so callers get a TOKEN_EXPIRED error.
+  if (response.status === 401) {
+    try {
+      localStorage.removeItem("token");
+    } catch (e) {
+      // ignore
+    }
+    throw new Error("TOKEN_EXPIRED");
+  }
+
+  return response;
 }
 
 export function ensureTokenValidOrThrow() {
