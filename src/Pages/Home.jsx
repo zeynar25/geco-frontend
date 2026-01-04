@@ -108,6 +108,43 @@ export default function Home() {
     handle();
   }, [attractionError, navigate]);
 
+  const {
+    data: parkMapAttraction,
+    isPending: parkMapPending,
+    error: parkMapError,
+  } = useQuery({
+    queryKey: ["park-map-attraction"],
+    queryFn: async () => {
+      const q = encodeURIComponent("park map");
+      const res = await fetch(
+        `${API_BASE_URL}/attraction/search?name=${q}&active=true`
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error || "Getting park map attraction failed");
+      }
+      const arr = await res.json();
+      return Array.isArray(arr) && arr.length > 0 ? arr[0] : null;
+    },
+  });
+
+  useEffect(() => {
+    if (!parkMapError) return;
+    const handle = async () => {
+      const msg = "Your session has expired. Please sign in again.";
+      if (parkMapError?.message === "TOKEN_EXPIRED") {
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msgPark = "something went wrong in retrieving park map attraction";
+      if (window.__showAlert) await window.__showAlert(msgPark);
+      else window.__nativeAlert?.(msgPark) || alert(msgPark);
+    };
+    handle();
+  }, [parkMapError, navigate]);
+
   return (
     <>
       <Header />
@@ -266,9 +303,29 @@ export default function Home() {
 
             <div>
               {mapMode === "2D" ? (
-                <img src="/images/park-map-2d.jpg" alt="2D-park-map" />
+                parkMapPending ? (
+                  <div className="flex flex-col items-center justify-center py-10">
+                    <ClipLoader color="#17EB88" size={40} />
+                    <span className="ml-3 mt-3 font-semibold text-gray-700">Loading park map...</span>
+                  </div>
+                ) : (
+                  <img
+                    src={
+                      (parkMapAttraction &&
+                        `${API_BASE_URL}${parkMapAttraction.photo2dUrl}`) ||
+                      "/images/park-map-2d.jpg"
+                    }
+                    alt="2D-park-map"
+                  />
+                )
               ) : (
-                <ParkMap3D modelPath="/models/map.glb" />
+                <ParkMap3D
+                  modelPath={
+                    (parkMapAttraction &&
+                      `${API_BASE_URL}${parkMapAttraction.glbUrl}`) ||
+                    "/models/map.glb"
+                  }
+                />
               )}
             </div>
           </div>
@@ -292,17 +349,25 @@ export default function Home() {
                     </span>
                   </div>
                 ) : (
-                  attractionData?.map((attraction) => (
-                    <Link
-                      to={`/attractions/${attraction.attractionId}`}
-                      state={{ from: "/#map" }}
-                      key={attraction.attractionId}
-                      id={attraction.attractionId}
-                      className="self-center text-sm"
-                    >
-                      {attraction.name}
-                    </Link>
-                  ))
+                  (attractionData || [])
+                    .filter(
+                      (a) =>
+                        !(
+                          parkMapAttraction &&
+                          a.attractionId === parkMapAttraction.attractionId
+                        )
+                    )
+                    .map((attraction) => (
+                      <Link
+                        to={`/attractions/${attraction.attractionId}`}
+                        state={{ from: "/#map" }}
+                        key={attraction.attractionId}
+                        id={attraction.attractionId}
+                        className="self-center text-sm"
+                      >
+                        {attraction.name}
+                      </Link>
+                    ))
                 )}
               </div>
             </div>
