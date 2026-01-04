@@ -1,10 +1,14 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-export default function ParkMap3D({ modelPath = "/models/gate.glb" }) {
+export default function ParkMap3D({
+  modelPath = "/models/map.glb",
+  distanceFactor = 1.4,
+}) {
   const containerRef = useRef(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -48,6 +52,7 @@ export default function ParkMap3D({ modelPath = "/models/gate.glb" }) {
       (gltf) => {
         model = gltf.scene;
 
+        // compute bounds, scale model to a reasonable size and center it.
         const box = new THREE.Box3().setFromObject(model);
         const size = new THREE.Vector3();
         box.getSize(size);
@@ -60,10 +65,34 @@ export default function ParkMap3D({ modelPath = "/models/gate.glb" }) {
         model.position.sub(center);
 
         scene.add(model);
+
+        // recompute bounds after scaling/centering and position camera closer
+        const boxAfter = new THREE.Box3().setFromObject(model);
+        const sphere = new THREE.Sphere();
+        boxAfter.getBoundingSphere(sphere);
+
+        // place camera so the model fills more of the view
+        const radius = sphere.radius || Math.max(size.x, size.y, size.z) * 0.5;
+        const camDist = Math.max(2, radius * distanceFactor);
+        camera.position.set(
+          sphere.center.x,
+          sphere.center.y + radius * 0.6,
+          sphere.center.z + camDist
+        );
+        camera.lookAt(sphere.center);
+
+        // set controls target to model center and tighten zoom limits
+        controls.target.copy(sphere.center);
+        controls.minDistance = Math.max(1, radius * 0.5);
+        controls.maxDistance = Math.max(10, radius * 4);
+        controls.update();
+        // hide loader once model and camera are positioned
+        setLoading(false);
       },
       undefined,
       (error) => {
         console.error("Error loading 3D park model:", error);
+        setLoading(false);
       }
     );
 
@@ -102,13 +131,22 @@ export default function ParkMap3D({ modelPath = "/models/gate.glb" }) {
         renderer.domElement.parentNode.removeChild(renderer.domElement);
       }
     };
-  }, [modelPath]);
+  }, [modelPath, distanceFactor]);
 
   return (
     <div
       ref={containerRef}
-      className="w-full h-[400px] bg-white"
+      className="relative w-full h-[400px] bg-white"
       aria-label="3D view of CvSU Agri-Eco Tourism Park"
-    />
+    >
+      {loading && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/75">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-10 w-10 border-4 border-[#227B05] border-t-transparent rounded-full animate-spin" />
+            <div className="text-sm text-gray-700">Loading 3D map...</div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

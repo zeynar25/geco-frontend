@@ -268,7 +268,7 @@ export default function Home() {
               {mapMode === "2D" ? (
                 <img src="/images/park-map-2d.jpg" alt="2D-park-map" />
               ) : (
-                <ParkMap3D modelPath="/models/gate.glb" />
+                <ParkMap3D modelPath="/models/map.glb" />
               )}
             </div>
           </div>
