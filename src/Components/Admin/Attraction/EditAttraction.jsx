@@ -203,8 +203,9 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
       (cleanedFunFact && cleanedFunFact !== (attraction.funFact || ""));
 
     const imageChanged = !!imageFile;
+    const modelChanged = !!modelFile;
 
-    if (!textChanged && !imageChanged) {
+    if (!textChanged && !imageChanged && !modelChanged) {
       onClose?.();
       return;
     }
@@ -224,10 +225,12 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
       );
     }
 
+    console.log("Submitting form data:", formData);
+
     if (imageChanged) {
       formData.append("image", imageFile);
     }
-    if (modelFile) {
+    if (modelChanged) {
       formData.append("model", modelFile);
     }
 
