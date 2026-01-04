@@ -26,6 +26,8 @@ import {
 import BackButton from "../Components/BackButton.jsx";
 import { ClipLoader } from "react-spinners";
 
+import VisitDateModal from "../Components/VisitDateModal";
+
 function isLoggedIn() {
   const token = localStorage.getItem("token");
   if (!token) return false;
@@ -55,6 +57,10 @@ function Book() {
   const [selectedPackage, setSelectedPackage] = useState(
     location.state?.selectedPackage || null
   );
+  const [selectedVisitDate, setSelectedVisitDate] = useState(
+    location.state?.selectedDate || ""
+  );
+  const [showDateModal, setShowDateModal] = useState(false);
   const [groupSizeError, setGroupSizeError] = useState("");
   // const [selectedInclusions, setSelectedInclusions] = useState([]);
 
@@ -150,6 +156,13 @@ function Book() {
       return;
     }
 
+    if (!selectedVisitDate) {
+      const msg = "Please select a visit date.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+      return;
+    }
+
     // Validate group size before submit
     if (groupSizeError) {
       const msg = groupSizeError;
@@ -162,7 +175,7 @@ function Book() {
       accountId: accountData.accountId,
       tourPackageId: selectedPackageId,
       bookingInclusionRequests: [],
-      visitDate: document.getElementById("visitDate").value,
+      visitDate: selectedVisitDate,
       visitTime: document.getElementById("visitTime").value,
       groupSize: selectedGroupSize,
       paymentMethod: paymentMethod,
@@ -514,13 +527,26 @@ function Book() {
                   <div className="grid grid-cols-2 gap-2 xs:gap-10">
                     <div className="col-span-2 xs:col-span-1">
                       <label htmlFor="">Visit Date</label>
-                      <input
-                        className="w-full border px-5 py-3"
-                        type="date"
-                        id="visitDate"
-                        name="visitDate"
-                        defaultValue={location.state?.selectedDate || ""}
-                        required
+                      <div className="flex">
+                        <input
+                          className="w-full border px-5 py-3 cursor-pointer"
+                          type="text"
+                          id="visitDate"
+                          name="visitDate"
+                          value={selectedVisitDate}
+                          readOnly
+                          placeholder="Select a visit date"
+                          required
+                          onClick={() => setShowDateModal(true)}
+                        />
+                      </div>
+                      <VisitDateModal
+                        isOpen={showDateModal}
+                        onClose={() => setShowDateModal(false)}
+                        onSelect={(d) => {
+                          setSelectedVisitDate(d);
+                          setShowDateModal(false);
+                        }}
                       />
                     </div>
                     <div className="col-span-2 xs:col-span-1">
