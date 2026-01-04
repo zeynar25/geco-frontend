@@ -17,6 +17,12 @@ export default function VisitDateModal({ isOpen, onClose, onSelect }) {
   const [month, setMonth] = useState(today.getMonth());
   const [year, setYear] = useState(today.getFullYear());
 
+  // normalize today and compute cutoff: dates up to (today + 2 days) are disabled
+  const todayNormalized = new Date();
+  todayNormalized.setHours(0, 0, 0, 0);
+  const cutoffDate = new Date(todayNormalized);
+  cutoffDate.setDate(cutoffDate.getDate() + 2);
+
   const firstDayOfMonth = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -127,9 +133,18 @@ export default function VisitDateModal({ isOpen, onClose, onSelect }) {
               const dayData = calendarData?.[dayNum];
               const weekend = isWeekend(dayNum);
 
+              // date object for this cell (normalized)
+              const dateObj = new Date(year, month, dayNum);
+              dateObj.setHours(0, 0, 0, 0);
+
               // Treat weekends as CLOSED by default
-              const effectiveStatus =
+              let effectiveStatus =
                 dayData?.status ?? (weekend ? "CLOSED" : null);
+
+              // Disable past dates and dates within two days from today
+              if (dateObj.getTime() <= cutoffDate.getTime()) {
+                effectiveStatus = "CLOSED";
+              }
 
               // Disable CLOSED and FULLY_BOOKED
               const disabled =
