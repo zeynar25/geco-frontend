@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
@@ -201,7 +201,9 @@ function ShowCalendar(props) {
         } catch {
           try {
             (window.__nativeAlert || window.alert)(msg);
-          } catch {}
+          } catch {
+            /* empty */
+          }
         }
         navigate("/signin");
         return;
