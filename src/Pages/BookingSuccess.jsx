@@ -173,15 +173,19 @@ function BookingSuccess() {
                 title="What's next?"
                 descriptionContent={
                   <ul className="list-disc pl-5 space-y-1 marker:text-[#222EDA] my-2 mx-4 text-xs sm:text-sm">
-                    <li>You will receive a confirmation email.</li>
-                    <li>Check “My Schedule” to track your booking status.</li>
-                    <li>
+                    {/* <li>You will receive a confirmation email.</li> */}
+                    <li>Check “My Account to track your booking status.</li>
+                    {/* <li>
                       Once approved by our admin, you’ll get another email
                       within 24 hours with down payment instructions and a link
                       to submit your GCash proof of payment.
+                    </li> */}
+                    <li>
+                      Once approved by the park management, you’ll have to pay
+                      the down payment and submit a picture as proof of payment.
                     </li>
                     <li>Bring a valid ID on your visit date</li>
-                    <li>Arrive 10 minutes before your scheduled time</li>
+                    <li>Arrive 15 minutes before your scheduled time</li>
                   </ul>
                 }
               />
@@ -195,8 +199,8 @@ function BookingSuccess() {
                 title="What's next?"
                 descriptionContent={
                   <ul className="list-disc pl-5 space-y-1 marker:text-[#97750B] my-2 mx-4 text-xs sm:text-sm">
+                    <li>Check “My Account to track your booking status.</li>
                     <li>Wait for admin to confirm your booking</li>
-                    <li>Check “My Schedule” to track your booking status.</li>
                     <li>Once approved, your booking is complete!</li>
                     <li>
                       Prepare <FontAwesomeIcon icon={faPesoSign} />
