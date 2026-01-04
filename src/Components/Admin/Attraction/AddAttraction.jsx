@@ -14,6 +14,7 @@ function AddAttraction({ onClose }) {
   const [description, setDescription] = useState("");
   const [funFact, setFunFact] = useState("");
   const [image, setImage] = useState(null);
+  const [model, setModel] = useState(null);
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -30,6 +31,9 @@ function AddAttraction({ onClose }) {
       }
       if (image) {
         formData.append("image", image);
+      }
+      if (model) {
+        formData.append("model", model);
       }
 
       const response = await safeFetch(`${API_BASE_URL}/attraction`, {
@@ -110,6 +114,11 @@ function AddAttraction({ onClose }) {
     setImage(file);
   };
 
+  const handleModelChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setModel(file);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
@@ -185,6 +194,34 @@ function AddAttraction({ onClose }) {
             </div>
             <p className="text-xs text-gray-400 mt-1">
               JPG, PNG, or GIF. A clear 2D image works best.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">3D Model (optional)</label>
+            <div className="flex items-center gap-3">
+              <label
+                className={`px-3 py-1.5 rounded border text-sm cursor-pointer transition-colors ${
+                  isBusy
+                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                <span>Choose .glb</span>
+                <input
+                  type="file"
+                  accept=".glb"
+                  className="hidden"
+                  onChange={handleModelChange}
+                  disabled={isBusy}
+                />
+              </label>
+              <span className="text-xs text-gray-500 truncate">
+                {model ? model.name : "No file chosen"}
+              </span>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">
+              .glb (GLTF binary) file only.
             </p>
           </div>
 

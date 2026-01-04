@@ -1,10 +1,11 @@
 import { useLocation, useParams, Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import Header from "../Components/Header.jsx";
 import Footer from "../Components/Footer.jsx";
 import BackButton from "../Components/BackButton.jsx";
+import ParkMap3D from "../Components/ParkMap3D.jsx";
 import { API_BASE_URL } from "../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +16,8 @@ function Attraction() {
   const backTo = location.state?.from || "/";
 
   const { id } = useParams();
+
+  const [mapMode, setMapMode] = useState("2D");
 
   const {
     data: attractionData,
@@ -73,18 +76,60 @@ function Attraction() {
           <div className="px-3 py-2 rounded-lg overflow-hidden grid grid-cols-2 gap-5 bg-white shadow-md">
             <div className="col-span-2 lg:col-span-1 self-center">
               <div></div>
-              <div className="aspect-video flex">
-                {attractionData?.photo2dUrl ? (
-                  <img
-                    src={`${API_BASE_URL}${attractionData.photo2dUrl}`}
-                    alt={attractionData?.name || "Attraction image"}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <span className="text-gray-400 text-sm self-center mx-auto">
-                    No image available
-                  </span>
-                )}
+              <div>
+                <div className="mb-3">
+                  <div className="w-fit rounded-lg bg-white/70 p-1 ring-1 ring-black/5 backdrop-blur">
+                    <button
+                      type="button"
+                      aria-pressed={mapMode === "2D"}
+                      onClick={() => setMapMode("2D")}
+                      className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                        mapMode === "2D"
+                          ? "bg-white text-gray-900 shadow"
+                          : "text-gray-700 hover:text-gray-900"
+                      }`}
+                    >
+                      2D
+                    </button>
+
+                    <button
+                      type="button"
+                      aria-pressed={mapMode === "3D"}
+                      onClick={() => setMapMode("3D")}
+                      className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                        mapMode === "3D"
+                          ? "bg-white text-gray-900 shadow"
+                          : "text-gray-700 hover:text-gray-900"
+                      }`}
+                    >
+                      3D
+                    </button>
+                  </div>
+                </div>
+
+                <div className="aspect-video flex">
+                  {mapMode === "2D" ? (
+                    attractionData?.photo2dUrl ? (
+                      <img
+                        src={`${API_BASE_URL}${attractionData.photo2dUrl}`}
+                        alt={attractionData?.name || "Attraction image"}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-gray-400 text-sm self-center mx-auto">
+                        No image available
+                      </span>
+                    )
+                  ) : attractionData?.glbUrl ? (
+                    <ParkMap3D
+                      modelPath={`${API_BASE_URL}${attractionData.glbUrl}`}
+                    />
+                  ) : (
+                    <span className="text-gray-400 text-sm self-center mx-auto">
+                      No 3D model available
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <div className="col-span-2 lg:col-span-1 flex flex-col gap-5 p-3">

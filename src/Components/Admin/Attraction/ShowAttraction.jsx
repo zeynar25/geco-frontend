@@ -6,6 +6,8 @@ import {
   faPlus,
   faEdit,
 } from "@fortawesome/free-solid-svg-icons";
+import { faCube, faX } from "@fortawesome/free-solid-svg-icons";
+import ParkMap3D from "../../ParkMap3D.jsx";
 import {
   API_BASE_URL,
   safeFetch,
@@ -14,6 +16,8 @@ import {
 
 function ShowAttraction(props) {
   const [activityFilter, setActivityFilter] = useState("ALL");
+  const [show3DModal, setShow3DModal] = useState(false);
+  const [modelUrl, setModelUrl] = useState(null);
 
   const isActive = (attraction) => {
     if (!attraction) return true;
@@ -126,6 +130,27 @@ function ShowAttraction(props) {
           <span>Add Attraction</span>
         </button>
       </div>
+      {show3DModal && modelUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full p-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="font-semibold">3D Model Viewer</h3>
+              <button
+                type="button"
+                aria-label="Close 3D viewer"
+                title="Close"
+                className="text-gray-600 hover:text-gray-800"
+                onClick={() => setShow3DModal(false)}
+              >
+                <FontAwesomeIcon icon={faX} />
+              </button>
+            </div>
+            <div className="w-full">
+              <ParkMap3D modelPath={modelUrl} distanceFactor={1.2} />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="p-5 flex flex-col gap-4">
         <form className="flex justify-end flex-wrap gap-2 text-sm">
@@ -219,6 +244,23 @@ function ShowAttraction(props) {
                           </span>
                         )}
                       </div>
+                      {attraction.glbUrl && (
+                        <div className="mt-2 flex justify-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModelUrl(
+                                `${API_BASE_URL}${attraction.glbUrl}`
+                              );
+                              setShow3DModal(true);
+                            }}
+                            className="text-xs inline-flex items-center gap-2 px-2 py-1 rounded bg-[#F3F8F3] text-[#227B05] hover:bg-[#eaf6ea]"
+                          >
+                            <FontAwesomeIcon icon={faCube} />
+                            <span>View 3D</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     <div className="col-span-2 flex flex-col gap-2 text-sm">

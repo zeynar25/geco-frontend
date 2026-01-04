@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
+import ParkMap3D from "../../ParkMap3D.jsx";
 import {
   API_BASE_URL,
   safeFetch,
@@ -14,6 +15,9 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
   const [description, setDescription] = useState(attraction?.description || "");
   const [funFact, setFunFact] = useState(attraction?.funFact || "");
   const [imageFile, setImageFile] = useState(null);
+  const [modelFile, setModelFile] = useState(null);
+  const [show3DModal, setShow3DModal] = useState(false);
+  const [modelUrl, setModelUrl] = useState(null);
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -223,6 +227,9 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
     if (imageChanged) {
       formData.append("image", imageFile);
     }
+    if (modelFile) {
+      formData.append("model", modelFile);
+    }
 
     updateAttractionMutation.mutate({
       attractionId: attraction.attractionId,
@@ -233,6 +240,11 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
   const handleFileChange = (event) => {
     const file = event.target.files?.[0] || null;
     setImageFile(file);
+  };
+
+  const handleModelChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setModelFile(file);
   };
 
   const handleDisable = () => {
@@ -272,6 +284,28 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
           </button>
         </div>
 
+        {show3DModal && modelUrl && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full p-4 max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="font-semibold">3D Model Viewer</h3>
+                <button
+                  type="button"
+                  aria-label="Close 3D viewer"
+                  title="Close"
+                  className="text-gray-600 hover:text-gray-800"
+                  onClick={() => setShow3DModal(false)}
+                >
+                  <FontAwesomeIcon icon={faX} />
+                </button>
+              </div>
+              <div className="w-full">
+                <ParkMap3D modelPath={modelUrl} distanceFactor={1.2} />
+              </div>
+            </div>
+          </div>
+        )}
+
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           {attraction?.photo2dUrl && (
             <div className="flex flex-col gap-1">
@@ -282,6 +316,24 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
                   alt={attraction.name || "Attraction image"}
                   className="h-full w-full object-cover"
                 />
+              </div>
+            </div>
+          )}
+
+          {attraction?.glbUrl && (
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-semibold">Current 3D Model</label>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setModelUrl(`${API_BASE_URL}${attraction.glbUrl}`);
+                    setShow3DModal(true);
+                  }}
+                  className="text-sm text-[#227B05] underline"
+                >
+                  View current .glb
+                </button>
               </div>
             </div>
           )}
@@ -344,6 +396,36 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
             </div>
             <p className="text-xs text-gray-400 mt-1">
               JPG, PNG, or GIF. A clear 2D image works best.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold">
+              Change 3D Model (optional)
+            </label>
+            <div className="flex items-center gap-3">
+              <label
+                className={`px-3 py-1.5 rounded border text-sm cursor-pointer transition-colors ${
+                  isBusy
+                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                <span>Choose .glb</span>
+                <input
+                  type="file"
+                  accept=".glb"
+                  className="hidden"
+                  onChange={handleModelChange}
+                  disabled={isBusy}
+                />
+              </label>
+              <span className="text-xs text-gray-500 truncate">
+                {modelFile ? modelFile.name : "No file chosen"}
+              </span>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">
+              .glb (GLTF binary) file only.
             </p>
           </div>
 
