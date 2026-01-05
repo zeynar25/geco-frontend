@@ -7,7 +7,11 @@ import {
   ensureTokenValidOrAlert,
 } from "../../apiConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartColumn, faChartPie } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChartColumn,
+  faChartLine,
+  faChartPie,
+} from "@fortawesome/free-solid-svg-icons";
 
 import {
   BarChart,
@@ -278,7 +282,7 @@ function ShowTrend(props) {
           {/* visitors chart */}
           <div className="col-span-2 lg:col-span-1 bg-white rounded-lg overflow-hidden shadow-xl">
             <div className="text-white bg-[#48BF56] p-4 font-bold text-2xl">
-              <FontAwesomeIcon icon={faChartColumn} className="mr-3 text-2xl" />
+              <FontAwesomeIcon icon={faChartLine} className="mr-3 text-2xl" />
               {viewMode === "MONTHLY" && <span>{selectedYear} Visitors</span>}
               {viewMode === "YEARLY" && (
                 <span>
