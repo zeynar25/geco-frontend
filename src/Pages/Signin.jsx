@@ -124,13 +124,13 @@ function Signin() {
       <Header />
       <div>
         <div className="relative min-h-fit h-[90vh] bg-[url('/images/homepage.png')] bg-cover bg-center bg-no-repeat flex">
-          <div className="absolute inset-0 z-0 bg-linear-to-r from-[#0A7A28]/80 to-[#020D00]/80" />
+          <div className="absolute inset-0 bg-linear-to-b from-black/60 to-black/70" />
 
           <div className="relative w-auto grid grid-cols-2 gap-20 m-auto">
             <div className="z-1 hidden md:flex flex-col items-center justify-center">
               <img
-                src="/images/geco-logo.png"
-                alt="geco-logo"
+                src="/images/agri-eco-logo.png"
+                alt="agri-eco-logo"
                 className="h-64"
               />
               <div className="flex flex-col items-center gap-3">
