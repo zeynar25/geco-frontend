@@ -149,6 +149,69 @@ function ShowLog(props) {
     }
   };
 
+  const renderValue = (value) => {
+    if (value == null || value === "")
+      return <span className="text-gray-600">-</span>;
+
+    // If it's a string that might contain JSON, try to parse it
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.startsWith("JSON_ERROR")) {
+        return <pre className="whitespace-pre-wrap text-sm">{trimmed}</pre>;
+      }
+      try {
+        const parsed = JSON.parse(trimmed);
+        // fall through to object renderer
+        value = parsed;
+      } catch {
+        // not JSON - render as plain text
+        return <pre className="whitespace-pre-wrap text-sm">{value}</pre>;
+      }
+    }
+
+    // If value is now an object/array, render as key/value pairs
+    if (typeof value === "object") {
+      if (Array.isArray(value)) {
+        return (
+          <ul className="list-disc pl-5 text-sm">
+            {value.map((item, idx) => (
+              <li key={idx} className="mb-1">
+                {typeof item === "object" ? (
+                  <pre className="whitespace-pre-wrap text-sm">
+                    {JSON.stringify(item, null, 2)}
+                  </pre>
+                ) : (
+                  String(item)
+                )}
+              </li>
+            ))}
+          </ul>
+        );
+      }
+
+      // Plain object: render properties
+      return (
+        <div className="grid gap-2 text-sm">
+          {Object.keys(value).map((k) => (
+            <div key={k} className="flex flex-col">
+              <span className="text-xs text-gray-500">{k}</span>
+              <div className="font-mono bg-gray-50 p-2 rounded text-sm">
+                {typeof value[k] === "object"
+                  ? JSON.stringify(value[k], null, 2)
+                  : String(value[k])}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // Fallback: use formatJson to prettify text/JSON
+    return (
+      <pre className="whitespace-pre-wrap text-sm">{formatJson(value)}</pre>
+    );
+  };
+
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-xl">
       <div className="flex gap-3 flex-wrap justify-between text-white bg-[#48BF56] p-4 font-bold text-2xl">
@@ -397,17 +460,17 @@ function ShowLog(props) {
                 <span className="font-semibold text-xs uppercase text-red-700">
                   Old Value
                 </span>
-                <pre className="whitespace-pre-wrap wrap-break-word text-[0.7rem] md:text-xs text-gray-800 max-h-60 overflow-auto bg-white rounded p-2 border border-red-100 font-mono">
-                  {formatJson(selectedLog.oldValue)}
-                </pre>
+                <div className="whitespace-pre-wrap wrap-break-word text-[0.7rem] md:text-xs text-gray-800 max-h-60 overflow-auto bg-white rounded p-2 border border-red-100">
+                  {renderValue(selectedLog.oldValue)}
+                </div>
               </div>
               <div className="border border-emerald-100 rounded-md p-3 bg-emerald-50/40 flex flex-col gap-2">
                 <span className="font-semibold text-xs uppercase text-emerald-700">
                   New Value
                 </span>
-                <pre className="whitespace-pre-wrap wrap-break-word text-[0.7rem] md:text-xs text-gray-800 max-h-60 overflow-auto bg-white rounded p-2 border border-emerald-100 font-mono">
-                  {formatJson(selectedLog.newValue)}
-                </pre>
+                <div className="whitespace-pre-wrap wrap-break-word text-[0.7rem] md:text-xs text-gray-800 max-h-60 overflow-auto bg-white rounded p-2 border border-emerald-100">
+                  {renderValue(selectedLog.newValue)}
+                </div>
               </div>
             </div>
             <div className="px-4 py-3 border-t flex justify-end bg-gray-50">
