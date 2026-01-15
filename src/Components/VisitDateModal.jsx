@@ -155,7 +155,8 @@ export default function VisitDateModal({ isOpen, onClose, onSelect }) {
               if (effectiveStatus === "CLOSED") {
                 bg = "bg-gray-200 text-gray-400";
               } else if (effectiveStatus === "FULLY_BOOKED") {
-                bg = "bg-red-200 text-gray-500 opacity-60";
+                // Keep fully booked visually red (disabled but not gray like CLOSED)
+                bg = "bg-red-200 text-red-700";
               } else if (dayData) {
                 bg = dayData.bookings > 0 ? "bg-yellow-200" : "bg-green-200";
               }
