@@ -27,6 +27,7 @@ function ShowBooking(props) {
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("ALL");
   const [startDateFilter, setStartDateFilter] = useState("");
   const [endDateFilter, setEndDateFilter] = useState("");
+  const [dateField, setDateField] = useState("createdAt");
   const [bookingPage, setBookingPage] = useState(0);
 
   const [searchEmail, setSearchEmail] = useState("");
@@ -71,6 +72,7 @@ function ShowBooking(props) {
       paymentMethodFilter,
       startDateFilter,
       endDateFilter,
+      dateField,
       searchEmail,
     ],
     enabled: props.canViewDashboard && props.bookingIn,
@@ -101,6 +103,10 @@ function ShowBooking(props) {
 
       if (endDateFilter) {
         params.append("endDate", endDateFilter);
+      }
+
+      if (dateField) {
+        params.append("dateField", dateField);
       }
 
       const queryString = params.toString();
@@ -231,6 +237,24 @@ function ShowBooking(props) {
                 <option value="ALL">All</option>
                 <option value="PARK">On-park</option>
                 <option value="ONLINE">Online</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col min-w-[150px]">
+              <span className="text-xs font-semibold text-gray-600 mb-1">
+                Date Field
+              </span>
+              <select
+                value={dateField}
+                onChange={(e) => {
+                  setDateField(e.target.value);
+                  setBookingPage(0);
+                }}
+                className="border border-[#227B05] rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#227B05] bg-white"
+              >
+                <option value="createdAt">Created At</option>
+                <option value="visitDate">Visit Date</option>
+                {/* <option value="updatedAt">Updated At</option> */}
               </select>
             </div>
 
@@ -441,32 +465,40 @@ function ShowBooking(props) {
                     <hr className="mb-5" />
 
                     {/* Booking details */}
-                    <div className="grid grid-cols-5 gap-3 mb-5">
-                      <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
+                    <div className="grid grid-cols-6 gap-3 mb-5">
+                      <div className="col-span-6 sm:col-span-1 flex flex-col text-center">
                         <span>Visit Date:</span>
                         <span className="font-semibold">
                           {new Date(booking.visitDate).toLocaleDateString()}
                         </span>
                       </div>
-                      <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
+                      <div className="col-span-6 sm:col-span-1 flex flex-col text-center">
+                        <span>Created:</span>
+                        <span className="font-semibold">
+                          {booking.createdAt
+                            ? new Date(booking.createdAt).toLocaleString()
+                            : "-"}
+                        </span>
+                      </div>
+                      <div className="col-span-6 sm:col-span-1 flex flex-col text-center">
                         <span>Time:</span>
                         <span className="font-semibold">
                           {booking.visitTime}
                         </span>
                       </div>
-                      <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
+                      <div className="col-span-6 sm:col-span-1 flex flex-col text-center">
                         <span>Group Size:</span>
                         <span className="font-semibold">
                           {booking.groupSize}
                         </span>
                       </div>
-                      <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
+                      <div className="col-span-6 sm:col-span-1 flex flex-col text-center">
                         <span>Package:</span>
                         <span className="font-semibold">
                           {booking.tourPackage.name}
                         </span>
                       </div>
-                      <div className="col-span-5 sm:col-span-1 flex flex-col text-center">
+                      <div className="col-span-6 sm:col-span-1 flex flex-col text-center">
                         <span>Total Fee:</span>
                         <span className="font-semibold">
                           <FontAwesomeIcon icon={faPesoSign} />
