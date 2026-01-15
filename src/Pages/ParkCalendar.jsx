@@ -328,7 +328,8 @@ function ParkCalendar() {
                   <span className="text-center">{totalBookings}</span>
 
                   {swappableDate !== currentDate &&
-                    selectedDayStatus !== "CLOSED" && (
+                    selectedDayStatus !== "CLOSED" &&
+                    selectedDayStatus !== "FULLY_BOOKED" && (
                       <div className="col-span-2 text-center">
                         <Link
                           className="bg-[#0A7A28]/90 text-white border-2 border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] hover:cursor-pointer mt-5 flex items-center justify-center"
