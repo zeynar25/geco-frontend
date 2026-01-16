@@ -252,8 +252,8 @@ function ShowBooking(props) {
                 }}
                 className="border border-[#227B05] rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#227B05] bg-white"
               >
-                <option value="createdAt">Created At</option>
-                <option value="visitDate">Visit Date</option>
+                <option value="createdAt">Booked on</option>
+                <option value="visitDate">Visit on</option>
                 {/* <option value="updatedAt">Updated At</option> */}
               </select>
             </div>
@@ -467,13 +467,13 @@ function ShowBooking(props) {
                     {/* Booking details */}
                     <div className="grid grid-cols-6 gap-3 mb-5">
                       <div className="col-span-6 sm:col-span-1 flex flex-col text-center">
-                        <span>Visit Date:</span>
+                        <span>Visit on:</span>
                         <span className="font-semibold">
                           {new Date(booking.visitDate).toLocaleDateString()}
                         </span>
                       </div>
                       <div className="col-span-6 sm:col-span-1 flex flex-col text-center">
-                        <span>Created:</span>
+                        <span>Booked on:</span>
                         <span className="font-semibold">
                           {booking.createdAt
                             ? new Date(booking.createdAt).toLocaleString()
