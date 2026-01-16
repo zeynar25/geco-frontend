@@ -87,6 +87,10 @@ function Account() {
 
   // 0-based page index
   const [bookingPage, setBookingPage] = useState(0);
+  const [bookingFilter, setBookingFilter] = useState("ALL");
+  const [paymentFilter, setPaymentFilter] = useState("ALL");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState("ALL");
+  const [dateField, setDateField] = useState("createdAt");
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -159,11 +163,30 @@ function Account() {
     error: bookingError,
     isPending: bookingPending,
   } = useQuery({
-    queryKey: ["bookings", bookingPage],
+    queryKey: [
+      "bookings",
+      bookingPage,
+      bookingFilter,
+      paymentFilter,
+      paymentMethodFilter,
+      dateField,
+    ],
     queryFn: async () => {
       ensureTokenValidOrAlert();
+      const params = new URLSearchParams();
+      params.append("page", bookingPage.toString());
+      params.append("size", "5");
+      if (bookingFilter !== "ALL")
+        params.append("bookingStatus", bookingFilter);
+      if (paymentFilter !== "ALL")
+        params.append("paymentStatus", paymentFilter);
+      if (paymentMethodFilter !== "ALL")
+        params.append("paymentMethod", paymentMethodFilter);
+
+      if (dateField) params.append("dateField", dateField);
+
       const response = await safeFetch(
-        `${API_BASE_URL}/booking/me?page=${bookingPage}&size=5`
+        `${API_BASE_URL}/booking/me?${params.toString()}`
       );
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -997,6 +1020,79 @@ function Account() {
             <span>My Bookings</span>
           </div>
           <div className="bg-white px-5 sm:px-10 py-2 md:py-5 text-md flex flex-col gap-5">
+            <form className="flex flex-wrap items-end gap-4 text-sm justify-between">
+              <div>
+                <span className="font-semibold">Booking Status:</span>
+                <select
+                  value={bookingFilter}
+                  onChange={(e) => {
+                    setBookingFilter(e.target.value);
+                    setBookingPage(0);
+                  }}
+                  className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
+                >
+                  <option value="ALL">All</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="CANCELLED">Cancelled</option>
+                  <option value="APPROVED">Approved</option>
+                  <option value="REJECTED">Rejected</option>
+                  <option value="COMPLETED">Completed</option>
+                </select>
+              </div>
+
+              <div>
+                <span className="font-semibold">Payment Status:</span>
+                <select
+                  value={paymentFilter}
+                  onChange={(e) => {
+                    setPaymentFilter(e.target.value);
+                    setBookingPage(0);
+                  }}
+                  className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
+                >
+                  <option value="ALL">All</option>
+                  <option value="UNPAID">Unpaid</option>
+                  <option value="PAYMENT_VERIFICATION">
+                    Payment Verification
+                  </option>
+                  <option value="VERIFIED">Verified</option>
+                  <option value="REJECTED">Rejected</option>
+                  <option value="REFUNDED">Refunded</option>
+                </select>
+              </div>
+
+              <div>
+                <span className="font-semibold">Payment Method:</span>
+                <select
+                  value={paymentMethodFilter}
+                  onChange={(e) => {
+                    setPaymentMethodFilter(e.target.value);
+                    setBookingPage(0);
+                  }}
+                  className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
+                >
+                  <option value="ALL">All</option>
+                  <option value="PARK">On-park</option>
+                  <option value="ONLINE">Online</option>
+                </select>
+              </div>
+
+              <div>
+                <span className="font-semibold">Date Field:</span>
+                <select
+                  value={dateField}
+                  onChange={(e) => {
+                    setDateField(e.target.value);
+                    setBookingPage(0);
+                  }}
+                  className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
+                >
+                  <option value="createdAt">Booked on</option>
+                  <option value="visitDate">Visit on</option>
+                </select>
+              </div>
+            </form>
+
             {bookingPending ? (
               <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
                 <ClipLoader color="#17EB88" size={40} />
@@ -1039,6 +1135,10 @@ function Account() {
                   >
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-5 justify-between">
                       <div className="col-span-2 xs:col-span-1 flex flex-col justify-center items-center">
+                        <div className="text-[#227B05] font-semibold text-lg">
+                          Booked on:{" "}
+                          {new Date(booking.createdAt).toLocaleDateString()}
+                        </div>
                         <div className="text-[#227B05] font-semibold text-lg">
                           Visit on:{" "}
                           {new Date(booking.visitDate).toLocaleDateString()}
