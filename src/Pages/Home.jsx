@@ -260,7 +260,7 @@ export default function Home() {
 
         <div className="px-5 py-5 bg-green-50 grid grid-cols-1 lg:grid-cols-5 gap-3">
           {/* park map */}
-          <div className="rounded-xl overflow-hidden shadow-2xl grid lg:col-span-3">
+          <div className="bg-white rounded-xl overflow-hidden shadow-2xl grid lg:col-span-3">
             <div className="px-5 py-5 h-fit bg-[#227B05]">
               <div className="flex flex-col justify-between sm:flex-row  gap-3">
                 <h1 className="text-white font-semibold text-lg sm:text-2xl">
@@ -306,7 +306,9 @@ export default function Home() {
                 parkMapPending ? (
                   <div className="flex flex-col items-center justify-center py-10">
                     <ClipLoader color="#17EB88" size={40} />
-                    <span className="ml-3 mt-3 font-semibold text-gray-700">Loading park map...</span>
+                    <span className="ml-3 mt-3 font-semibold text-gray-700">
+                      Loading park map...
+                    </span>
                   </div>
                 ) : (
                   <img
