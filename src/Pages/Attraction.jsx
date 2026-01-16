@@ -18,6 +18,8 @@ function Attraction() {
   const { id } = useParams();
 
   const [mapMode, setMapMode] = useState("2D");
+  const [imageLoading, setImageLoading] = useState(false);
+  const [modelLoading, setModelLoading] = useState(false);
 
   const {
     data: attractionData,
@@ -82,7 +84,10 @@ function Attraction() {
                     <button
                       type="button"
                       aria-pressed={mapMode === "2D"}
-                      onClick={() => setMapMode("2D")}
+                      onClick={() => {
+                        setMapMode("2D");
+                        if (attractionData?.photo2dUrl) setImageLoading(true);
+                      }}
                       className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                         mapMode === "2D"
                           ? "bg-white text-gray-900 shadow"
@@ -95,7 +100,10 @@ function Attraction() {
                     <button
                       type="button"
                       aria-pressed={mapMode === "3D"}
-                      onClick={() => setMapMode("3D")}
+                      onClick={() => {
+                        setMapMode("3D");
+                        if (attractionData?.glbUrl) setModelLoading(true);
+                      }}
                       className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                         mapMode === "3D"
                           ? "bg-white text-gray-900 shadow"
@@ -108,27 +116,56 @@ function Attraction() {
                 </div>
 
                 <div className="aspect-video flex">
-                  {mapMode === "2D" ? (
-                    attractionData?.photo2dUrl ? (
-                      <img
-                        src={`${API_BASE_URL}${attractionData.photo2dUrl}`}
-                        alt={attractionData?.name || "Attraction image"}
-                        className="h-full w-full object-cover"
-                      />
+                  <div className="relative w-full h-full">
+                    {mapMode === "2D" ? (
+                      attractionData?.photo2dUrl ? (
+                        <>
+                          {imageLoading && (
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/75">
+                              <div className="flex flex-col items-center gap-3">
+                                <div className="h-10 w-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
+                                <div className="text-sm text-gray-700">
+                                  Loading image...
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          <img
+                            src={`${API_BASE_URL}${attractionData.photo2dUrl}`}
+                            alt={attractionData?.name || "Attraction image"}
+                            className="h-full w-full object-cover"
+                            onLoad={() => setImageLoading(false)}
+                            onError={() => setImageLoading(false)}
+                          />
+                        </>
+                      ) : (
+                        <span className="text-gray-400 text-sm self-center mx-auto">
+                          No image available
+                        </span>
+                      )
+                    ) : attractionData?.glbUrl ? (
+                      <>
+                        {modelLoading && (
+                          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/75">
+                            <div className="flex flex-col items-center gap-3">
+                              <div className="h-10 w-10 border-4 border-[#227B05] border-t-transparent rounded-full animate-spin" />
+                              <div className="text-sm text-gray-700">
+                                Loading 3D model...
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        <ParkMap3D
+                          modelPath={`${API_BASE_URL}${attractionData.glbUrl}`}
+                          onModelLoad={() => setModelLoading(false)}
+                        />
+                      </>
                     ) : (
                       <span className="text-gray-400 text-sm self-center mx-auto">
-                        No image available
+                        No 3D model available
                       </span>
-                    )
-                  ) : attractionData?.glbUrl ? (
-                    <ParkMap3D
-                      modelPath={`${API_BASE_URL}${attractionData.glbUrl}`}
-                    />
-                  ) : (
-                    <span className="text-gray-400 text-sm self-center mx-auto">
-                      No 3D model available
-                    </span>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

@@ -6,6 +6,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 export default function ParkMap3D({
   modelPath = "/models/map.glb",
   distanceFactor = 1.4,
+  onModelLoad,
 }) {
   const containerRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -88,11 +89,13 @@ export default function ParkMap3D({
         controls.update();
         // hide loader once model and camera are positioned
         setLoading(false);
+        if (typeof onModelLoad === "function") onModelLoad(true);
       },
       undefined,
       (error) => {
         console.error("Error loading 3D park model:", error);
         setLoading(false);
+        if (typeof onModelLoad === "function") onModelLoad(false);
       }
     );
 
@@ -132,7 +135,7 @@ export default function ParkMap3D({
         renderer.domElement.parentNode.removeChild(renderer.domElement);
       }
     };
-  }, [modelPath, distanceFactor]);
+  }, [modelPath, distanceFactor, onModelLoad]);
 
   return (
     <div
