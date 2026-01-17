@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import BackButton from "../Components/BackButton";
+import FilterModal from "../Components/FilterModal";
 
 import { jwtDecode } from "jwt-decode";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -227,6 +228,8 @@ function Account() {
   }
   const bookings = bookingData?.content ?? [];
   const totalBookingPages = bookingData?.totalPages ?? 0;
+
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const {
     data: feedbackData,
@@ -1020,78 +1023,104 @@ function Account() {
             <span>My Bookings</span>
           </div>
           <div className="bg-white px-5 sm:px-10 py-2 md:py-5 text-md flex flex-col gap-5">
-            <form className="flex flex-wrap items-end gap-4 text-sm justify-between">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600">Filters</div>
               <div>
-                <span className="font-semibold">Booking Status:</span>
-                <select
-                  value={bookingFilter}
-                  onChange={(e) => {
-                    setBookingFilter(e.target.value);
-                    setBookingPage(0);
-                  }}
-                  className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
+                <button
+                  type="button"
+                  className="px-3 py-1 bg-white border border-[#227B05] text-[#227B05] rounded-md"
+                  onClick={() => setIsFilterModalOpen(true)}
                 >
-                  <option value="ALL">All</option>
-                  <option value="PENDING">Pending</option>
-                  <option value="CANCELLED">Cancelled</option>
-                  <option value="APPROVED">Approved</option>
-                  <option value="REJECTED">Rejected</option>
-                  <option value="COMPLETED">Completed</option>
-                </select>
+                  Open Filters
+                </button>
               </div>
+            </div>
 
-              <div>
-                <span className="font-semibold">Payment Status:</span>
-                <select
-                  value={paymentFilter}
-                  onChange={(e) => {
-                    setPaymentFilter(e.target.value);
-                    setBookingPage(0);
-                  }}
-                  className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
-                >
-                  <option value="ALL">All</option>
-                  <option value="UNPAID">Unpaid</option>
-                  <option value="PAYMENT_VERIFICATION">
-                    Payment Verification
-                  </option>
-                  <option value="VERIFIED">Verified</option>
-                  <option value="REJECTED">Rejected</option>
-                  <option value="REFUNDED">Refunded</option>
-                </select>
-              </div>
+            <FilterModal
+              isOpen={isFilterModalOpen}
+              onClose={() => setIsFilterModalOpen(false)}
+              title="Booking Filters"
+              onClear={() => {
+                setBookingFilter("ALL");
+                setPaymentFilter("ALL");
+                setPaymentMethodFilter("ALL");
+                setDateField("createdAt");
+                setBookingPage(0);
+              }}
+            >
+              <form className="flex flex-wrap items-end gap-4 text-sm justify-between">
+                <div>
+                  <span className="font-semibold">Booking Status:</span>
+                  <select
+                    value={bookingFilter}
+                    onChange={(e) => {
+                      setBookingFilter(e.target.value);
+                      setBookingPage(0);
+                    }}
+                    className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
+                  >
+                    <option value="ALL">All</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="CANCELLED">Cancelled</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="REJECTED">Rejected</option>
+                    <option value="COMPLETED">Completed</option>
+                  </select>
+                </div>
 
-              <div>
-                <span className="font-semibold">Payment Method:</span>
-                <select
-                  value={paymentMethodFilter}
-                  onChange={(e) => {
-                    setPaymentMethodFilter(e.target.value);
-                    setBookingPage(0);
-                  }}
-                  className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
-                >
-                  <option value="ALL">All</option>
-                  <option value="PARK">On-park</option>
-                  <option value="ONLINE">Online</option>
-                </select>
-              </div>
+                <div>
+                  <span className="font-semibold">Payment Status:</span>
+                  <select
+                    value={paymentFilter}
+                    onChange={(e) => {
+                      setPaymentFilter(e.target.value);
+                      setBookingPage(0);
+                    }}
+                    className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
+                  >
+                    <option value="ALL">All</option>
+                    <option value="UNPAID">Unpaid</option>
+                    <option value="PAYMENT_VERIFICATION">
+                      Payment Verification
+                    </option>
+                    <option value="VERIFIED">Verified</option>
+                    <option value="REJECTED">Rejected</option>
+                    <option value="REFUNDED">Refunded</option>
+                  </select>
+                </div>
 
-              <div>
-                <span className="font-semibold">Date Field:</span>
-                <select
-                  value={dateField}
-                  onChange={(e) => {
-                    setDateField(e.target.value);
-                    setBookingPage(0);
-                  }}
-                  className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
-                >
-                  <option value="createdAt">Booked on</option>
-                  <option value="visitDate">Visit on</option>
-                </select>
-              </div>
-            </form>
+                <div>
+                  <span className="font-semibold">Payment Method:</span>
+                  <select
+                    value={paymentMethodFilter}
+                    onChange={(e) => {
+                      setPaymentMethodFilter(e.target.value);
+                      setBookingPage(0);
+                    }}
+                    className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
+                  >
+                    <option value="ALL">All</option>
+                    <option value="PARK">On-park</option>
+                    <option value="ONLINE">Online</option>
+                  </select>
+                </div>
+
+                <div>
+                  <span className="font-semibold">Date Field:</span>
+                  <select
+                    value={dateField}
+                    onChange={(e) => {
+                      setDateField(e.target.value);
+                      setBookingPage(0);
+                    }}
+                    className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
+                  >
+                    <option value="createdAt">Booked on</option>
+                    <option value="visitDate">Visit on</option>
+                  </select>
+                </div>
+              </form>
+            </FilterModal>
 
             {bookingPending ? (
               <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">

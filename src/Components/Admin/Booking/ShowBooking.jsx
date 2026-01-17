@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import FilterModal from "../../FilterModal";
 
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,8 @@ function ShowBooking(props) {
   const [bookingPage, setBookingPage] = useState(0);
 
   const [searchEmail, setSearchEmail] = useState("");
+
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const [isProofModalOpen, setIsProofModalOpen] = useState(false);
   const [selectedProofUrl, setSelectedProofUrl] = useState(null);
@@ -171,7 +174,36 @@ function ShowBooking(props) {
       </div>
       <div>
         <div className="border-b border-gray-100 bg-white">
-          <form className="flex flex-wrap items-end gap-4 px-5 py-4 text-sm justify-between">
+          <div className="flex items-center justify-between px-5 py-3">
+            <div className="text-sm text-gray-600">Filters</div>
+            <div>
+              <button
+                type="button"
+                className="px-3 py-1 bg-white border border-[#227B05] text-[#227B05] rounded-md"
+                onClick={() => setIsFilterModalOpen(true)}
+              >
+                Open Filters
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <FilterModal
+          isOpen={isFilterModalOpen}
+          onClose={() => setIsFilterModalOpen(false)}
+          title="Booking Filters"
+          onClear={() => {
+            setBookingFilter("ALL");
+            setPaymentFilter("ALL");
+            setPaymentMethodFilter("ALL");
+            setStartDateFilter("");
+            setEndDateFilter("");
+            setDateField("createdAt");
+            setSearchEmail("");
+            setBookingPage(0);
+          }}
+        >
+          <form className="flex flex-wrap items-end gap-4 px-1 py-1 text-sm justify-between">
             <div className="flex flex-col min-w-[200px]">
               <span className="text-xs font-semibold text-gray-600 mb-1">
                 Search by Email
@@ -254,7 +286,6 @@ function ShowBooking(props) {
               >
                 <option value="createdAt">Booked on</option>
                 <option value="visitDate">Visit on</option>
-                {/* <option value="updatedAt">Updated At</option> */}
               </select>
             </div>
 
@@ -285,7 +316,7 @@ function ShowBooking(props) {
               </div>
             </div>
           </form>
-        </div>
+        </FilterModal>
 
         <div className="p-4 flex flex-col gap-5">
           {bookingPending && (
