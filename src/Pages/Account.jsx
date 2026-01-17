@@ -1051,73 +1051,119 @@ function Account() {
               <form className="flex flex-wrap items-end gap-4 text-sm justify-between">
                 <div>
                   <span className="font-semibold">Booking Status:</span>
-                  <select
-                    value={bookingFilter}
-                    onChange={(e) => {
-                      setBookingFilter(e.target.value);
-                      setBookingPage(0);
-                    }}
-                    className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
-                  >
-                    <option value="ALL">All</option>
-                    <option value="PENDING">Pending</option>
-                    <option value="CANCELLED">Cancelled</option>
-                    <option value="APPROVED">Approved</option>
-                    <option value="REJECTED">Rejected</option>
-                    <option value="COMPLETED">Completed</option>
-                  </select>
+                  <div className="ml-2 flex flex-wrap gap-2 mt-1">
+                    {[
+                      ["ALL", "All"],
+                      ["PENDING", "Pending"],
+                      ["CANCELLED", "Cancelled"],
+                      ["APPROVED", "Approved"],
+                      ["REJECTED", "Rejected"],
+                      ["COMPLETED", "Completed"],
+                    ].map(([val, label]) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => {
+                          setBookingFilter(val);
+                          setBookingPage(0);
+                        }}
+                        className={
+                          "px-3 py-1 rounded text-sm border " +
+                          (bookingFilter === val
+                            ? "bg-[#227B05] text-white border-[#227B05]"
+                            : "bg-white text-[#227B05] border-[#227B05]")
+                        }
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div>
                   <span className="font-semibold">Payment Status:</span>
-                  <select
-                    value={paymentFilter}
-                    onChange={(e) => {
-                      setPaymentFilter(e.target.value);
-                      setBookingPage(0);
-                    }}
-                    className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
-                  >
-                    <option value="ALL">All</option>
-                    <option value="UNPAID">Unpaid</option>
-                    <option value="PAYMENT_VERIFICATION">
-                      Payment Verification
-                    </option>
-                    <option value="VERIFIED">Verified</option>
-                    <option value="REJECTED">Rejected</option>
-                    <option value="REFUNDED">Refunded</option>
-                  </select>
+                  <div className="ml-2 flex flex-wrap gap-2 mt-1">
+                    {[
+                      ["ALL", "All"],
+                      ["UNPAID", "Unpaid"],
+                      ["PAYMENT_VERIFICATION", "Payment Verification"],
+                      ["VERIFIED", "Verified"],
+                      ["REJECTED", "Rejected"],
+                      ["REFUNDED", "Refunded"],
+                    ].map(([val, label]) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => {
+                          setPaymentFilter(val);
+                          setBookingPage(0);
+                        }}
+                        className={
+                          "px-3 py-1 rounded text-sm border " +
+                          (paymentFilter === val
+                            ? "bg-[#227B05] text-white border-[#227B05]"
+                            : "bg-white text-[#227B05] border-[#227B05]")
+                        }
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div>
                   <span className="font-semibold">Payment Method:</span>
-                  <select
-                    value={paymentMethodFilter}
-                    onChange={(e) => {
-                      setPaymentMethodFilter(e.target.value);
-                      setBookingPage(0);
-                    }}
-                    className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
-                  >
-                    <option value="ALL">All</option>
-                    <option value="PARK">On-park</option>
-                    <option value="ONLINE">Online</option>
-                  </select>
+                  <div className="ml-2 flex flex-wrap gap-2 mt-1">
+                    {[
+                      ["ALL", "All"],
+                      ["PARK", "On-park"],
+                      ["ONLINE", "Online"],
+                    ].map(([val, label]) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => {
+                          setPaymentMethodFilter(val);
+                          setBookingPage(0);
+                        }}
+                        className={
+                          "px-3 py-1 rounded text-sm border " +
+                          (paymentMethodFilter === val
+                            ? "bg-[#227B05] text-white border-[#227B05]"
+                            : "bg-white text-[#227B05] border-[#227B05]")
+                        }
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div>
                   <span className="font-semibold">Date Field:</span>
-                  <select
-                    value={dateField}
-                    onChange={(e) => {
-                      setDateField(e.target.value);
-                      setBookingPage(0);
-                    }}
-                    className="ml-2 border border-[#227B05] rounded px-2 py-1 text-sm"
-                  >
-                    <option value="createdAt">Booked on</option>
-                    <option value="visitDate">Visit on</option>
-                  </select>
+                  <div className="ml-2 flex flex-wrap gap-2 mt-1">
+                    {[
+                      ["createdAt", "Booked on"],
+                      ["visitDate", "Visit on"],
+                    ].map(([val, label]) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => {
+                          setDateField(val);
+                          setBookingPage(0);
+                        }}
+                        className={
+                          "px-3 py-1 rounded text-sm border " +
+                          (dateField === val
+                            ? "bg-[#227B05] text-white border-[#227B05]"
+                            : "bg-white text-[#227B05] border-[#227B05]")
+                        }
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </form>
             </FilterModal>
