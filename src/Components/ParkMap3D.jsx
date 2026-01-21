@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -9,7 +9,7 @@ export default function ParkMap3D({
   onModelLoad,
 }) {
   const containerRef = useRef(null);
-  const [loading, setLoading] = useState(true);
+  // Parent component may show its own loading UI via `onModelLoad`
 
   useEffect(() => {
     const container = containerRef.current;
@@ -88,13 +88,11 @@ export default function ParkMap3D({
         controls.maxDistance = Math.max(10, radius * 4);
         controls.update();
         // hide loader once model and camera are positioned
-        setLoading(false);
         if (typeof onModelLoad === "function") onModelLoad(true);
       },
       undefined,
       (error) => {
         console.error("Error loading 3D park model:", error);
-        setLoading(false);
         if (typeof onModelLoad === "function") onModelLoad(false);
       }
     );
@@ -143,14 +141,7 @@ export default function ParkMap3D({
       className="relative w-full h-[400px] bg-white"
       aria-label="3D view of CvSU Agri-Eco Tourism Park"
     >
-      {loading && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/75">
-          <div className="flex flex-col items-center gap-3">
-            <div className="h-10 w-10 border-4 border-[#227B05] border-t-transparent rounded-full animate-spin" />
-            <div className="text-sm text-gray-700">Loading 3D map...</div>
-          </div>
-        </div>
-      )}
+      {/* Loading overlay removed: parent should show loading state via `onModelLoad` */}
     </div>
   );
 }
