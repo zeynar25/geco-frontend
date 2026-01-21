@@ -84,41 +84,43 @@ function Attraction() {
             <div className="col-span-2 lg:col-span-1 self-center">
               <div></div>
               <div>
-                <div className="mb-3">
-                  <div className="w-fit rounded-lg bg-white/70 p-1 ring-1 ring-black/5 backdrop-blur">
-                    <button
-                      type="button"
-                      aria-pressed={mapMode === "2D"}
-                      onClick={() => {
-                        setMapMode("2D");
-                        if (attractionData?.photo2dUrl) setImageLoading(true);
-                      }}
-                      className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                        mapMode === "2D"
-                          ? "bg-white text-gray-900 shadow"
-                          : "text-gray-700 hover:text-gray-900"
-                      }`}
-                    >
-                      2D
-                    </button>
+                {attractionData?.glbUrl && (
+                  <div className="mb-3">
+                    <div className="w-fit rounded-lg bg-white/70 p-1 ring-1 ring-black/5 backdrop-blur">
+                      <button
+                        type="button"
+                        aria-pressed={mapMode === "2D"}
+                        onClick={() => {
+                          setMapMode("2D");
+                          if (attractionData?.photo2dUrl) setImageLoading(true);
+                        }}
+                        className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                          mapMode === "2D"
+                            ? "bg-white text-gray-900 shadow"
+                            : "text-gray-700 hover:text-gray-900"
+                        }`}
+                      >
+                        2D
+                      </button>
 
-                    <button
-                      type="button"
-                      aria-pressed={mapMode === "3D"}
-                      onClick={() => {
-                        setMapMode("3D");
-                        if (attractionData?.glbUrl) setModelLoading(true);
-                      }}
-                      className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                        mapMode === "3D"
-                          ? "bg-white text-gray-900 shadow"
-                          : "text-gray-700 hover:text-gray-900"
-                      }`}
-                    >
-                      3D
-                    </button>
+                      <button
+                        type="button"
+                        aria-pressed={mapMode === "3D"}
+                        onClick={() => {
+                          setMapMode("3D");
+                          if (attractionData?.glbUrl) setModelLoading(true);
+                        }}
+                        className={`btn-sweep relative overflow-hidden px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                          mapMode === "3D"
+                            ? "bg-white text-gray-900 shadow"
+                            : "text-gray-700 hover:text-gray-900"
+                        }`}
+                      >
+                        3D
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="aspect-video flex">
                   <div className="relative w-full h-full">
