@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { ClipLoader } from "react-spinners";
@@ -27,6 +27,9 @@ import { useQuery } from "@tanstack/react-query";
 export default function Home() {
   const location = useLocation();
   const [mapMode, setMapMode] = useState("2D");
+  const mapRef = useRef(null);
+  const attractionsHeaderRef = useRef(null);
+  const [attractionsMaxHeight, setAttractionsMaxHeight] = useState(null);
 
   useEffect(() => {
     // Scroll to the element with the ID matching the hash
@@ -128,6 +131,11 @@ export default function Home() {
     },
   });
 
+  const resolveAssetUrl = (u) => {
+    if (!u) return null;
+    return u.startsWith("http") ? u : `${API_BASE_URL}${u}`;
+  };
+
   useEffect(() => {
     if (!parkMapError) return;
     const handle = async () => {
@@ -144,6 +152,22 @@ export default function Home() {
     };
     handle();
   }, [parkMapError, navigate]);
+
+  useEffect(() => {
+    const update = () => {
+      const mapEl = mapRef.current;
+      const headerEl = attractionsHeaderRef.current;
+      if (!mapEl) return setAttractionsMaxHeight(null);
+      const mapH = mapEl.clientHeight;
+      const headerH = headerEl ? headerEl.clientHeight : 0;
+      const maxH = Math.max(120, mapH - headerH - 24);
+      setAttractionsMaxHeight(maxH);
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [parkMapAttraction]);
 
   return (
     <>
@@ -258,9 +282,12 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="px-5 py-5 bg-green-50 grid grid-cols-1 lg:grid-cols-5 gap-3">
+        <div className="px-5 py-5 bg-green-50 grid grid-cols-1 lg:grid-cols-5 gap-3 items-start">
           {/* park map */}
-          <div className="bg-white rounded-xl overflow-hidden shadow-2xl grid lg:col-span-3">
+          <div
+            ref={mapRef}
+            className="bg-white rounded-xl overflow-hidden shadow-2xl grid lg:col-span-3 min-h-112"
+          >
             <div className="px-5 py-5 h-fit bg-[#227B05]">
               <div className="flex flex-col justify-between sm:flex-row  gap-3">
                 <h1 className="text-white font-semibold text-lg sm:text-2xl">
@@ -311,20 +338,23 @@ export default function Home() {
                     </span>
                   </div>
                 ) : (
-                  <img
-                    src={
-                      (parkMapAttraction &&
-                        `${API_BASE_URL}${parkMapAttraction.photo2dUrl}`) ||
-                      "/images/park-map-2d.jpg"
-                    }
-                    alt="2D-park-map"
-                  />
+                  <div className="aspect-video rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                    {parkMapAttraction && parkMapAttraction.photo2dUrl ? (
+                      <img
+                        src={resolveAssetUrl(parkMapAttraction.photo2dUrl)}
+                        alt="2D-park-map"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <img src="/images/park-map-2d.jpg" alt="2D-park-map" />
+                    )}
+                  </div>
                 )
               ) : (
                 <ParkMap3D
                   modelPath={
                     (parkMapAttraction &&
-                      `${API_BASE_URL}${parkMapAttraction.glbUrl}`) ||
+                      resolveAssetUrl(parkMapAttraction.glbUrl)) ||
                     "/models/map.glb"
                   }
                 />
@@ -335,13 +365,21 @@ export default function Home() {
           {/* side options */}
           <div className="lg:col-span-2 flex flex-col gap-3">
             {/* Park attractions */}
-            <div className="rounded-xl overflow-hidden shadow-2xl bg-white">
-              <div className="bg-[#0A7A28]/30 p-3">
+            <div className="lg:max-h-85 2xl:max-h-110 rounded-xl overflow-hidden shadow-2xl bg-white flex flex-col flex-1">
+              <div ref={attractionsHeaderRef} className="bg-[#0A7A28]/30 p-3">
                 <h3 className="font-semibold">Park Attractions</h3>
                 <span>Click to view</span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 text-center gap-3 px-3 py-1 max-h-50 overflow-y-auto">
+              <div
+                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 text-center gap-3 px-3 py-1 flex-1"
+                style={{
+                  maxHeight: attractionsMaxHeight
+                    ? `${attractionsMaxHeight}px`
+                    : undefined,
+                  overflowY: "auto",
+                }}
+              >
                 {/* Attractions */}
                 {attractionPending ? (
                   <div className="flex justify-center items-center col-span-2 lg:col-span-3 py-10">
@@ -365,7 +403,7 @@ export default function Home() {
                         state={{ from: "/#map" }}
                         key={attraction.attractionId}
                         id={attraction.attractionId}
-                        className="self-center text-sm"
+                        className="self-center text-sm block w-full px-2 py-1 rounded hover:bg-[#F3F8F3] hover:text-[#227B05] transition cursor-pointer"
                       >
                         {attraction.name}
                       </Link>
