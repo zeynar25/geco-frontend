@@ -59,6 +59,11 @@ function Attraction() {
     handle();
   }, [error, navigate]);
 
+  const resolveAssetUrl = (u) => {
+    if (!u) return null;
+    return u.startsWith("http") ? u : `${API_BASE_URL}${u}`;
+  };
+
   return (
     <>
       <Header />
@@ -131,7 +136,7 @@ function Attraction() {
                             </div>
                           )}
                           <img
-                            src={`${API_BASE_URL}${attractionData.photo2dUrl}`}
+                            src={resolveAssetUrl(attractionData.photo2dUrl)}
                             alt={attractionData?.name || "Attraction image"}
                             className="h-full w-full object-cover"
                             onLoad={() => setImageLoading(false)}
@@ -156,7 +161,7 @@ function Attraction() {
                           </div>
                         )}
                         <ParkMap3D
-                          modelPath={`${API_BASE_URL}${attractionData.glbUrl}`}
+                          modelPath={resolveAssetUrl(attractionData.glbUrl)}
                           onModelLoad={() => setModelLoading(false)}
                         />
                       </>
