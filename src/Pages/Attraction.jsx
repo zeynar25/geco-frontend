@@ -81,7 +81,7 @@ function Attraction() {
           </div>
         ) : (
           <div className="px-3 py-2 rounded-lg overflow-hidden grid grid-cols-2 gap-5 bg-white shadow-md">
-            <div className="col-span-2 lg:col-span-1 self-center">
+            <div className="col-span-2 lg:col-span-1 my-5">
               <div></div>
               <div>
                 {attractionData?.glbUrl && (
