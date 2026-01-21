@@ -214,7 +214,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
         queryKey: ["attractions"],
         exact: false,
       });
-      const msg = "Attraction deleted permanently.";
+      const msg = "Attraction deleted.";
       if (window.__showAlert) await window.__showAlert(msg);
       else window.__nativeAlert?.(msg) || alert(msg);
       onClose?.();
@@ -525,7 +525,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
                     if (!attraction) return;
                     if (
                       !window.confirm(
-                        "Permanently delete this attraction? This cannot be undone."
+                        "Delete this attraction? This cannot be undone."
                       )
                     )
                       return;
@@ -535,7 +535,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
                   }}
                   disabled={anyBusy}
                 >
-                  Delete permanently
+                  Delete
                 </button>
               </div>
             )}
