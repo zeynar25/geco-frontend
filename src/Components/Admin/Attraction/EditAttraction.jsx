@@ -22,6 +22,11 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  const resolveAssetUrl = (u) => {
+    if (!u) return null;
+    return u.startsWith("http") ? u : `${API_BASE_URL}${u}`;
+  };
+
   const updateAttractionMutation = useMutation({
     mutationFn: async ({ attractionId, formData }) => {
       ensureTokenValidOrAlert();
@@ -184,10 +189,65 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
     },
   });
 
+  const hardDeleteAttractionMutation = useMutation({
+    mutationFn: async ({ attractionId }) => {
+      ensureTokenValidOrAlert();
+
+      const response = await safeFetch(
+        `${API_BASE_URL}/attraction/${attractionId}?soft=false`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Deleting attraction failed");
+      }
+    },
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: ["attractions"],
+        exact: false,
+      });
+      queryClient.refetchQueries({
+        queryKey: ["attractions"],
+        exact: false,
+      });
+      const msg = "Attraction deleted permanently.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+      onClose?.();
+      onUpdated?.();
+    },
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (typeof window !== "undefined" && window.__showAlert) {
+          try {
+            await window.__showAlert(msg);
+          } catch {
+            window.__nativeAlert?.(msg) || alert(msg);
+          }
+        } else {
+          window.__nativeAlert?.(msg) || alert(msg);
+        }
+        navigate("/signin");
+        return;
+      }
+      const errMsg = error.message || "Deleting attraction failed";
+      if (window.__showAlert) await window.__showAlert(errMsg);
+      else window.__nativeAlert?.(errMsg) || alert(errMsg);
+    },
+  });
+
   const isBusy =
     updateAttractionMutation.isPending ||
     disableAttractionMutation.isPending ||
     restoreAttractionMutation.isPending;
+
+  // include hard delete pending state
+  const anyBusy = isBusy || hardDeleteAttractionMutation.isPending;
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -315,7 +375,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
               <label className="text-sm font-semibold">Current Image</label>
               <div className="aspect-video rounded-md overflow-hidden bg-gray-100 flex items-center justify-center">
                 <img
-                  src={`${API_BASE_URL}${attraction.photo2dUrl}`}
+                  src={resolveAssetUrl(attraction.photo2dUrl)}
                   alt={attraction.name || "Attraction image"}
                   className="h-full w-full object-cover"
                 />
@@ -330,7 +390,7 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
                 <button
                   type="button"
                   onClick={() => {
-                    setModelUrl(`${API_BASE_URL}${attraction.glbUrl}`);
+                    setModelUrl(resolveAssetUrl(attraction.glbUrl));
                     setShow3DModal(true);
                   }}
                   className="text-sm text-[#227B05] underline"
@@ -453,11 +513,30 @@ function EditAttraction({ attraction, onClose, isAdmin, onUpdated }) {
                     type="button"
                     className="px-3 py-2 rounded border border-green-600 text-green-700 text-sm hover:bg-green-50 disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={handleRestore}
-                    disabled={isBusy}
+                    disabled={anyBusy}
                   >
                     Restore
                   </button>
                 )}
+                <button
+                  type="button"
+                  className="px-3 py-2 rounded border border-red-700 bg-red-50 text-red-700 text-sm hover:bg-red-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                  onClick={() => {
+                    if (!attraction) return;
+                    if (
+                      !window.confirm(
+                        "Permanently delete this attraction? This cannot be undone."
+                      )
+                    )
+                      return;
+                    hardDeleteAttractionMutation.mutate({
+                      attractionId: attraction.attractionId,
+                    });
+                  }}
+                  disabled={anyBusy}
+                >
+                  Delete permanently
+                </button>
               </div>
             )}
 

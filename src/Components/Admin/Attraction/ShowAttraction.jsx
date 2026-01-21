@@ -19,6 +19,11 @@ function ShowAttraction(props) {
   const [show3DModal, setShow3DModal] = useState(false);
   const [modelUrl, setModelUrl] = useState(null);
 
+  const resolveAssetUrl = (u) => {
+    if (!u) return null;
+    return u.startsWith("http") ? u : `${API_BASE_URL}${u}`;
+  };
+
   const isActive = (attraction) => {
     if (!attraction) return true;
     if (typeof attraction.isActive === "boolean") return attraction.isActive;
@@ -234,7 +239,7 @@ function ShowAttraction(props) {
                       <div className="aspect-video rounded-md overflow-hidden bg-gray-100 flex items-center justify-center">
                         {attraction.photo2dUrl ? (
                           <img
-                            src={`${API_BASE_URL}${attraction.photo2dUrl}`}
+                            src={resolveAssetUrl(attraction.photo2dUrl)}
                             alt={attraction.name || "Attraction image"}
                             className="h-full w-full object-cover"
                           />
@@ -249,9 +254,7 @@ function ShowAttraction(props) {
                           <button
                             type="button"
                             onClick={() => {
-                              setModelUrl(
-                                `${API_BASE_URL}${attraction.glbUrl}`
-                              );
+                              setModelUrl(resolveAssetUrl(attraction.glbUrl));
                               setShow3DModal(true);
                             }}
                             className="text-xs inline-flex items-center gap-2 px-2 py-1 rounded bg-[#F3F8F3] text-[#227B05] hover:bg-[#eaf6ea]"
