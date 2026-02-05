@@ -26,6 +26,13 @@ function ShowCalendar(props) {
   const [year, setYear] = useState(today.getFullYear());
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("AVAILABLE");
+  const [selectedBookingLimitDraft, setSelectedBookingLimitDraft] =
+    useState("");
+  const [isEditingSelectedBookingLimit, setIsEditingSelectedBookingLimit] =
+    useState(false);
+  const [globalBookingLimit, setGlobalBookingLimit] = useState("");
+  const [isEditingGlobalBookingLimit, setIsEditingGlobalBookingLimit] =
+    useState(false);
   const [show, setShow] = useState(true);
 
   const queryClient = useQueryClient();
@@ -69,7 +76,7 @@ function ShowCalendar(props) {
     queryFn: async () => {
       ensureTokenValidOrAlert();
       const response = await safeFetch(
-        `${API_BASE_URL}/calendar/${year}/${month + 1}`
+        `${API_BASE_URL}/calendar/${year}/${month + 1}`,
       );
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -79,9 +86,38 @@ function ShowCalendar(props) {
     },
   });
 
-  if (calendarError) {
-    // handled in useEffect below
-  }
+  const {
+    data: bookingLimitRestriction,
+    isPending: bookingLimitRestrictionPending,
+    error: bookingLimitRestrictionError,
+  } = useQuery({
+    queryKey: ["restriction", "name", "booking_limit"],
+    enabled: props.canViewDashboard && props.calendarIn,
+    queryFn: async () => {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/restriction/name/${encodeURIComponent("booking_limit")}`,
+      );
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(
+          error?.error || "Getting booking limit restriction failed",
+        );
+      }
+      return response.json();
+    },
+  });
+
+  const globalBookingLimitDisplayValue = isEditingGlobalBookingLimit
+    ? globalBookingLimit
+    : bookingLimitRestriction?.value != null
+      ? String(bookingLimitRestriction.value)
+      : "";
+
+  const globalBookingLimitValue =
+    bookingLimitRestriction?.value != null
+      ? bookingLimitRestriction.value
+      : null;
 
   useEffect(() => {
     if (!calendarError) return;
@@ -106,30 +142,62 @@ function ShowCalendar(props) {
   let totalVisitors;
   let currentDayStatus = "AVAILABLE";
 
-  if (selectedDay && calendarData?.[selectedDay]) {
+  const selectedDayData = selectedDay ? calendarData?.[selectedDay] : null;
+  const selectedDayBookingLimitOverride = selectedDayData?.bookingLimit ?? null;
+
+  if (selectedDay && selectedDayData) {
     displayLabel = new Date(year, month, selectedDay).toLocaleString(
       "default",
       {
         month: "long",
         day: "numeric",
         year: "numeric",
-      }
+      },
     );
-    const dayData = calendarData[selectedDay];
-    totalBookings = dayData.bookings || 0;
-    totalVisitors = dayData.visitors || 0;
-    currentDayStatus = dayData.status || "AVAILABLE";
+
+    totalBookings = selectedDayData.bookings || 0;
+    totalVisitors = selectedDayData.visitors || 0;
+    currentDayStatus = selectedDayData.status || "AVAILABLE";
   } else {
     displayLabel = currentDate;
     totalBookings = Object.values(calendarData || {}).reduce(
       (sum, day) => sum + (day.bookings || 0),
-      0
+      0,
     );
     totalVisitors = Object.values(calendarData || {}).reduce(
       (sum, day) => sum + (day.visitors || 0),
-      0
+      0,
     );
   }
+
+  const isSelectedDayInheritingGlobalBookingLimit =
+    !!selectedDay && selectedDayBookingLimitOverride == null;
+
+  const selectedBookingLimitDisplayValue = isEditingSelectedBookingLimit
+    ? selectedBookingLimitDraft
+    : selectedDayBookingLimitOverride != null
+      ? String(selectedDayBookingLimitOverride)
+      : globalBookingLimitValue != null
+        ? String(globalBookingLimitValue)
+        : "";
+
+  const isDayStatusUnchanged =
+    !!selectedDay && String(selectedStatus) === String(currentDayStatus);
+
+  // Disable per-date booking limit save only when the date has an explicit bookingLimit
+  // and the input matches it. If bookingLimit is null (inheriting global), keep save enabled.
+  const isSelectedDateBookingLimitUnchanged = (() => {
+    if (!selectedDay) return true;
+    if (selectedDayBookingLimitOverride == null) return false;
+    const parsed = Number.parseInt(
+      String(selectedBookingLimitDisplayValue).trim(),
+      10,
+    );
+    return (
+      Number.isFinite(parsed) &&
+      parsed === Number(selectedDayBookingLimitOverride)
+    );
+  })();
 
   // Keep selectedStatus in sync when day changes
   const handleDayClick = (dayNum) => {
@@ -139,6 +207,10 @@ function ShowCalendar(props) {
       setTimeout(() => {
         setSelectedDay(null);
         setSelectedStatus("AVAILABLE");
+        setSelectedBookingLimitDraft("");
+        setIsEditingSelectedBookingLimit(false);
+        setGlobalBookingLimit("");
+        setIsEditingGlobalBookingLimit(false);
         setShow(true);
       }, 250);
       return;
@@ -146,6 +218,12 @@ function ShowCalendar(props) {
 
     setTimeout(() => {
       setSelectedDay(dayNum);
+
+      // Switching to a day hides global controls; cancel any in-progress global edit.
+      setGlobalBookingLimit("");
+      setIsEditingGlobalBookingLimit(false);
+      setSelectedBookingLimitDraft("");
+      setIsEditingSelectedBookingLimit(false);
 
       const dayData = calendarData?.[dayNum];
       if (dayData && dayData.status) {
@@ -156,6 +234,146 @@ function ShowCalendar(props) {
       setShow(true);
     }, 250);
   };
+
+  const startEditingSelectedDateBookingLimit = async () => {
+    if (!selectedDay) return;
+
+    // Prefill draft with what's currently displayed (override or global fallback)
+    setSelectedBookingLimitDraft(
+      String(selectedBookingLimitDisplayValue || ""),
+    );
+    setIsEditingSelectedBookingLimit(true);
+  };
+
+  const cancelEditingSelectedDateBookingLimit = () => {
+    setSelectedBookingLimitDraft("");
+    setIsEditingSelectedBookingLimit(false);
+  };
+
+  const updateBookingLimitRestrictionMutation = useMutation({
+    mutationFn: async ({ id, value }) => {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/restriction/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ value }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Updating booking limit failed");
+      }
+
+      return response.json();
+    },
+    onSuccess: async (updatedRestriction) => {
+      // Keep restriction query data in sync so the UI updates immediately.
+      if (updatedRestriction) {
+        queryClient.setQueryData(
+          ["restriction", "name", "booking_limit"],
+          updatedRestriction,
+        );
+      }
+
+      // Clear any draft so the input reflects the latest saved value.
+      setGlobalBookingLimit("");
+      setIsEditingGlobalBookingLimit(false);
+
+      queryClient.invalidateQueries({
+        queryKey: ["calendar"],
+        exact: false,
+      });
+      const successMsg = "Booking limit updated successfully.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        await window.__showAlert(successMsg);
+      } else {
+        window.__nativeAlert?.(successMsg) || alert(successMsg);
+      }
+    },
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msg = error.message || "Updating booking limit failed";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    },
+  });
+
+  const startEditingGlobalBookingLimit = async () => {
+    if (bookingLimitRestrictionPending || bookingLimitRestrictionError) return;
+    if (!bookingLimitRestriction?.id) {
+      const msg =
+        "BOOKING_LIMIT restriction not loaded yet. Please refresh and try again.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+      return;
+    }
+
+    if (bookingLimitRestriction?.value != null) {
+      setGlobalBookingLimit(String(bookingLimitRestriction.value));
+    } else {
+      setGlobalBookingLimit("");
+    }
+    setIsEditingGlobalBookingLimit(true);
+  };
+
+  const cancelEditingGlobalBookingLimit = () => {
+    setGlobalBookingLimit("");
+    setIsEditingGlobalBookingLimit(false);
+  };
+
+  const updateSingleDateBookingLimitMutation = useMutation({
+    mutationFn: async ({ date, dateStatus, bookingLimit }) => {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(`${API_BASE_URL}/calendar-date`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ date, dateStatus, bookingLimit }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Updating date booking limit failed");
+      }
+
+      return response.json();
+    },
+    onSuccess: async () => {
+      setSelectedBookingLimitDraft("");
+      setIsEditingSelectedBookingLimit(false);
+      queryClient.invalidateQueries({
+        queryKey: ["calendar"],
+        exact: false,
+      });
+      const successMsg = "Date booking limit updated successfully.";
+      if (typeof window !== "undefined" && window.__showAlert) {
+        await window.__showAlert(successMsg);
+      } else {
+        window.__nativeAlert?.(successMsg) || alert(successMsg);
+      }
+    },
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msg = error.message || "Updating date booking limit failed";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    },
+  });
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ date, status }) => {
@@ -223,10 +441,84 @@ function ShowCalendar(props) {
     }
 
     const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(
-      selectedDay
+      selectedDay,
     ).padStart(2, "0")}`;
 
     updateStatusMutation.mutate({ date: dateString, status: selectedStatus });
+  };
+
+  const handleSaveGlobalBookingLimit = async () => {
+    const restrictionId = bookingLimitRestriction?.id;
+    if (restrictionId == null) {
+      const msg =
+        "BOOKING_LIMIT restriction not loaded yet. Please refresh and try again.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+      return;
+    }
+
+    const valueNum = Number.parseInt(
+      String(globalBookingLimitDisplayValue).trim(),
+      10,
+    );
+    if (!Number.isFinite(valueNum) || valueNum < 0) {
+      const msg = "Please enter a valid booking limit (0 or greater).";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+      return;
+    }
+
+    if (bookingLimitRestriction?.value != null) {
+      const current = Number.parseInt(
+        String(bookingLimitRestriction.value),
+        10,
+      );
+      if (Number.isFinite(current) && current === valueNum) {
+        const msg = "No changes detected.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        return;
+      }
+    }
+
+    updateBookingLimitRestrictionMutation.mutate({
+      id: restrictionId,
+      value: valueNum,
+    });
+  };
+
+  const handleSaveSelectedDateBookingLimit = async () => {
+    if (!selectedDay) {
+      const msg = "Please select a day to update its booking limit.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+      return;
+    }
+
+    const valueNum = Number.parseInt(
+      String(selectedBookingLimitDisplayValue).trim(),
+      10,
+    );
+    if (!Number.isFinite(valueNum) || valueNum < 0) {
+      const msg = "Please enter a valid booking limit (0 or greater).";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+      return;
+    }
+
+    const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(
+      selectedDay,
+    ).padStart(2, "0")}`;
+
+    // Preserve status by default when only changing booking limit.
+    const dayData = calendarData?.[selectedDay];
+    const dateStatus = dayData?.status || "AVAILABLE";
+
+    updateSingleDateBookingLimitMutation.mutate({
+      date: dateString,
+      dateStatus,
+      bookingLimit: valueNum,
+    });
   };
 
   return (
@@ -383,10 +675,9 @@ function ShowCalendar(props) {
 
             {selectedDay && (
               <div className="border-t px-6 py-4 flex flex-col gap-2 text-sm">
-                <span className="font-semibold mb-1">Day Status</span>
                 <div className="flex items-center justify-between gap-3 mb-2">
                   <span className="text-gray-700 text-sm">
-                    Current: <strong>{currentDayStatus}</strong>
+                    Day Status: <strong>{currentDayStatus}</strong>
                   </span>
                 </div>
                 <div className="flex items-center gap-2 mb-3">
@@ -406,7 +697,11 @@ function ShowCalendar(props) {
                   type="button"
                   className="w-full bg-[#0A7A28]/90 text-white border border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   onClick={handleSaveStatus}
-                  disabled={!selectedDay || updateStatusMutation.isPending}
+                  disabled={
+                    !selectedDay ||
+                    updateStatusMutation.isPending ||
+                    isDayStatusUnchanged
+                  }
                 >
                   <FontAwesomeIcon
                     icon={faCalendarCheck}
@@ -418,9 +713,141 @@ function ShowCalendar(props) {
                       : "Save day status"}
                   </span>
                 </button>
+
+                <div className="mt-4 pt-4 border-t flex flex-col gap-2">
+                  <span className="font-semibold">
+                    Booking Limit (Selected Date)
+                  </span>
+                  {isSelectedDayInheritingGlobalBookingLimit && (
+                    <div className="text-xs text-gray-600">
+                      No per-date booking limit set (using global).
+                    </div>
+                  )}
+                  <input
+                    className="border border-gray-300 rounded px-2 py-2"
+                    value={selectedBookingLimitDisplayValue}
+                    onChange={(e) =>
+                      setSelectedBookingLimitDraft(e.target.value)
+                    }
+                    placeholder="e.g. 200"
+                    inputMode="numeric"
+                    disabled={
+                      updateSingleDateBookingLimitMutation.isPending ||
+                      !isEditingSelectedBookingLimit
+                    }
+                  />
+
+                  {!isEditingSelectedBookingLimit ? (
+                    <button
+                      type="button"
+                      className="w-full bg-[#0A7A28]/90 text-white border border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] disabled:opacity-60 disabled:cursor-not-allowed"
+                      onClick={startEditingSelectedDateBookingLimit}
+                      disabled={
+                        !selectedDay ||
+                        updateSingleDateBookingLimitMutation.isPending
+                      }
+                    >
+                      Update booking limit
+                    </button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className="flex-1 bg-[#0A7A28]/90 text-white border border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] disabled:opacity-60 disabled:cursor-not-allowed"
+                        onClick={handleSaveSelectedDateBookingLimit}
+                        disabled={
+                          updateSingleDateBookingLimitMutation.isPending ||
+                          isSelectedDateBookingLimitUnchanged
+                        }
+                      >
+                        {updateSingleDateBookingLimitMutation.isPending
+                          ? "Saving..."
+                          : "Save"}
+                      </button>
+                      <button
+                        type="button"
+                        className="flex-1 bg-white text-[#0A7A28] border border-black rounded-lg py-2 px-3 hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                        onClick={cancelEditingSelectedDateBookingLimit}
+                        disabled={
+                          updateSingleDateBookingLimitMutation.isPending
+                        }
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
+
+          {/* booking limit controls (only when no day is selected) */}
+          {!selectedDay && (
+            <div className="bg-white border rounded-lg">
+              <div className="text-[#0A7A28] font-semibold text-center py-3 border-b">
+                Global Booking Limit
+              </div>
+              <div className="px-4 py-4 text-sm flex flex-col gap-3">
+                {bookingLimitRestrictionPending ? (
+                  <div className="text-xs text-gray-600">
+                    Loading BOOKING_LIMIT restriction...
+                  </div>
+                ) : bookingLimitRestrictionError ? (
+                  <div className="text-xs text-red-700">
+                    Failed to auto-load BOOKING_LIMIT restriction. Global
+                    booking limit update is unavailable.
+                  </div>
+                ) : null}
+
+                <div className="flex flex-col gap-1">
+                  <input
+                    className="border border-gray-300 rounded px-2 py-2"
+                    value={globalBookingLimitDisplayValue}
+                    onChange={(e) => setGlobalBookingLimit(e.target.value)}
+                    placeholder="e.g. 250"
+                    inputMode="numeric"
+                    disabled={!isEditingGlobalBookingLimit}
+                  />
+                </div>
+
+                {!isEditingGlobalBookingLimit ? (
+                  <button
+                    type="button"
+                    className="w-full bg-[#0A7A28]/90 text-white border border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={startEditingGlobalBookingLimit}
+                    disabled={
+                      bookingLimitRestrictionPending ||
+                      bookingLimitRestrictionError ||
+                      !bookingLimitRestriction?.id
+                    }
+                  >
+                    Update Global Booking Limit
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      className="flex-1 bg-[#0A7A28]/90 text-white border border-black rounded-lg py-2 px-3 hover:bg-[#0A7A28] disabled:opacity-60 disabled:cursor-not-allowed"
+                      onClick={handleSaveGlobalBookingLimit}
+                      disabled={updateBookingLimitRestrictionMutation.isPending}
+                    >
+                      {updateBookingLimitRestrictionMutation.isPending
+                        ? "Saving..."
+                        : "Save"}
+                    </button>
+                    <button
+                      type="button"
+                      className="flex-1 bg-white text-[#0A7A28] border border-black rounded-lg py-2 px-3 hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                      onClick={cancelEditingGlobalBookingLimit}
+                      disabled={updateBookingLimitRestrictionMutation.isPending}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
