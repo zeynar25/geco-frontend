@@ -1,0 +1,1 @@
+Walkability is vital for sustainable tourism, yet most Philippine cities remain car-centered, plagued by congestion, pollution, and unsafe streets. This study examines tourists' perceptions of BGC's walkability—notable for its wide sidewalks and green spaces—and its impact on their overall experience.
