@@ -7,13 +7,15 @@ import BackButton from "../Components/BackButton";
 import FilterModal from "../Components/FilterModal";
 
 import { jwtDecode } from "jwt-decode";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_BASE_URL, safeFetch, ensureTokenValidOrAlert } from "../apiConfig";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleLeft,
   faAngleRight,
+  faBell,
+  faCalendarCheck,
   faCalendar,
   faClock,
   faPesoSign,
@@ -98,6 +100,74 @@ function Account() {
 
   const location = useLocation();
   const backTo = location.state?.from || "/";
+
+  const [notifModalOpen, setNotifModalOpen] = useState(false);
+  const [selectedNotifBooking, setSelectedNotifBooking] = useState(null);
+  const [isNotifBookingModalOpen, setIsNotifBookingModalOpen] = useState(false);
+
+  const { data: latestNotifData } = useQuery({
+    queryKey: ["latestNotifications"],
+    enabled: loggedIn,
+    queryFn: async () => {
+      ensureTokenValidOrAlert();
+
+      const params = new URLSearchParams();
+      params.append("page", "0");
+      params.append("size", "5");
+      params.append("sort", "createdAt,desc");
+
+      const response = await safeFetch(
+        `${API_BASE_URL}/notification?${params.toString()}`,
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Getting notifications failed");
+      }
+
+      return await response.json();
+    },
+  });
+
+  const latestNotifications = latestNotifData?.content ?? [];
+
+  const markNotifAsReadMutation = useMutation({
+    mutationFn: async (notificationId) => {
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/notification/${notificationId}/read`,
+        {
+          method: "PATCH",
+        },
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Marking notification as read failed");
+      }
+
+      return await response.json();
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["latestNotifications"],
+      });
+      await queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+    onError: async (error) => {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+      const msg =
+        error?.message || "Something went wrong while updating notification.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    },
+  });
 
   useEffect(() => {
     if (!loggedIn) {
@@ -187,7 +257,7 @@ function Account() {
       if (dateField) params.append("dateField", dateField);
 
       const response = await safeFetch(
-        `${API_BASE_URL}/booking/me?${params.toString()}`
+        `${API_BASE_URL}/booking/me?${params.toString()}`,
       );
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -289,7 +359,7 @@ function Account() {
     queryFn: async () => {
       ensureTokenValidOrAlert();
       const response = await safeFetch(
-        `${API_BASE_URL}/feedback-category/active`
+        `${API_BASE_URL}/feedback-category/active`,
       );
       if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -379,7 +449,7 @@ function Account() {
             firstName: formData?.firstName,
             contactNumber: formData?.contactNumber,
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -427,8 +497,8 @@ function Account() {
         feedback.categoryId != null
           ? String(feedback.categoryId)
           : feedback.category?.categoryId != null
-          ? String(feedback.category.categoryId)
-          : "",
+            ? String(feedback.category.categoryId)
+            : "",
     });
   };
 
@@ -541,7 +611,7 @@ function Account() {
       const payload = {};
       formData.append(
         "data",
-        new Blob([JSON.stringify(payload)], { type: "application/json" })
+        new Blob([JSON.stringify(payload)], { type: "application/json" }),
       );
       // Indicate whether this is a resubmission after rejection
       formData.append("resubmit", isResubmittingPayment ? "true" : "false");
@@ -553,13 +623,13 @@ function Account() {
         {
           method: "PATCH",
           body: formData,
-        }
+        },
       );
 
       if (!response.ok) {
         const error = await response.json().catch(() => null);
         throw new Error(
-          error?.error || "Submitting payment proof failed. Please try again."
+          error?.error || "Submitting payment proof failed. Please try again.",
         );
       }
 
@@ -573,7 +643,7 @@ function Account() {
         return {
           ...oldData,
           content: oldContent.map((b) =>
-            b.bookingId === updatedBooking.bookingId ? updatedBooking : b
+            b.bookingId === updatedBooking.bookingId ? updatedBooking : b,
           ),
         };
       });
@@ -662,7 +732,7 @@ function Account() {
             password: passwordForm.newPassword,
             confirmPassword: passwordForm.confirmNewPassword,
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -794,7 +864,7 @@ function Account() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(feedbackDetails),
-          }
+          },
         );
 
         if (!response.ok) {
@@ -818,7 +888,7 @@ function Account() {
               content: oldContent.map((fb) =>
                 fb.booking?.bookingId === updatedFeedback.booking?.bookingId
                   ? updatedFeedback
-                  : fb
+                  : fb,
               ),
             };
           }
@@ -903,7 +973,310 @@ function Account() {
               </Link>
             )
           }
+          extraButton3={
+            <button
+              type="button"
+              onClick={() => setNotifModalOpen(true)}
+              className="bg-[#4D9C43] hover:bg-[#4D9C43]/95 text-[#FDDB3C] px-4 py-2 rounded-md flex items-center my-auto"
+            >
+              <FontAwesomeIcon icon={faBell} className="mr-2" />
+              <span>Notifications</span>
+              {latestNotifications.filter((n) => !n.read).length > 0 && (
+                <span className="ml-2 bg-[#FDDB3C] text-[#227B05] text-xs font-semibold px-2 py-0.5 rounded-full">
+                  {latestNotifications.filter((n) => !n.read).length}
+                </span>
+              )}
+            </button>
+          }
         />
+
+        {notifModalOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+            onClick={() => setNotifModalOpen(false)}
+          >
+            <div
+              className="bg-white rounded-lg shadow-xl w-11/12 max-w-2xl p-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="font-semibold text-lg">
+                  Latest Notifications
+                </div>
+                <button
+                  type="button"
+                  className="text-gray-500"
+                  onClick={() => setNotifModalOpen(false)}
+                >
+                  <FontAwesomeIcon icon={faX} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-3 max-h-80 overflow-y-auto">
+                {latestNotifications.length > 0 ? (
+                  latestNotifications.map((n) => (
+                    <div
+                      key={n.id}
+                      className={`rounded-lg border p-3 ${
+                        n.read ? "bg-white" : "bg-green-50"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="text-sm text-gray-800 whitespace-pre-line">
+                          {n.message}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {n.createdAt
+                            ? new Date(n.createdAt).toLocaleDateString(
+                                undefined,
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                },
+                              )
+                            : "-"}
+                        </div>
+                      </div>
+
+                      {n.booking && (
+                        <div className="mt-3 flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setNotifModalOpen(false);
+                              setSelectedNotifBooking(n.booking);
+                              setIsNotifBookingModalOpen(true);
+                            }}
+                            className="px-3 py-1 border rounded text-sm"
+                          >
+                            Show booking
+                          </button>
+                          {!n.read && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                markNotifAsReadMutation.mutate(n.id)
+                              }
+                              className="px-3 py-1 border border-[#227B05] text-[#227B05] rounded text-sm hover:bg-[#227B05]/5 disabled:opacity-60 disabled:cursor-not-allowed"
+                              disabled={markNotifAsReadMutation.isPending}
+                            >
+                              Mark as read
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      {!n.booking && !n.read && (
+                        <div className="mt-3 flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => markNotifAsReadMutation.mutate(n.id)}
+                            className="px-3 py-1 border border-[#227B05] text-[#227B05] rounded text-sm hover:bg-[#227B05]/5 disabled:opacity-60 disabled:cursor-not-allowed"
+                            disabled={markNotifAsReadMutation.isPending}
+                          >
+                            Mark as read
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center text-gray-600 py-6">
+                    No notifications
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end mt-3">
+                <Link
+                  to="/notifications"
+                  onClick={() => setNotifModalOpen(false)}
+                  className="px-4 py-2 bg-[#227B05] text-white rounded"
+                >
+                  Show more
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isNotifBookingModalOpen && selectedNotifBooking && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+            onClick={() => setIsNotifBookingModalOpen(false)}
+          >
+            <div
+              className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                className="absolute top-3 right-3 text-gray-500 hover:text-black text-lg"
+                onClick={() => setIsNotifBookingModalOpen(false)}
+              >
+                <FontAwesomeIcon icon={faX} />
+              </button>
+
+              <div className="flex items-center gap-3 mb-4 text-[#227B05]">
+                <FontAwesomeIcon icon={faCalendarCheck} className="text-xl" />
+                <div>
+                  <h2 className="text-xl font-semibold">Booking Details</h2>
+                  <p className="text-sm text-gray-600">
+                    Review the booking linked to this notification.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 text-sm sm:text-base">
+                <div className="col-span-2 rounded-lg border border-[#227B05]/20 bg-green-50 p-4">
+                  <div className="font-semibold text-[#227B05] mb-2">
+                    Visitor
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <div className="text-gray-500 text-xs">Name</div>
+                      <div className="font-semibold">
+                        {selectedNotifBooking?.account?.detail?.firstName}{" "}
+                        {selectedNotifBooking?.account?.detail?.surname}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500 text-xs">Email</div>
+                      <div className="font-semibold break-all">
+                        {selectedNotifBooking?.account?.detail?.email || "-"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500 text-xs">
+                        Contact Number
+                      </div>
+                      <div className="font-semibold">
+                        {selectedNotifBooking?.account?.detail?.contactNumber ||
+                          "-"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500 text-xs">Account Role</div>
+                      <div className="font-semibold">
+                        {selectedNotifBooking?.account?.role || "-"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-lg border p-4">
+                  <div className="text-gray-500 text-xs">Visit Date</div>
+                  <div className="font-semibold text-[#227B05]">
+                    {selectedNotifBooking?.visitDate
+                      ? new Date(
+                          selectedNotifBooking.visitDate,
+                        ).toLocaleDateString(undefined, {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : "-"}
+                  </div>
+                </div>
+                <div className="rounded-lg border p-4">
+                  <div className="text-gray-500 text-xs">Visit Time</div>
+                  <div className="font-semibold text-[#227B05]">
+                    {selectedNotifBooking?.visitTime ?? "-"}
+                  </div>
+                </div>
+                <div className="rounded-lg border p-4">
+                  <div className="text-gray-500 text-xs">Group Size</div>
+                  <div className="font-semibold text-[#227B05]">
+                    {selectedNotifBooking?.groupSize != null
+                      ? `${selectedNotifBooking.groupSize} visitor(s)`
+                      : "-"}
+                  </div>
+                </div>
+                <div className="rounded-lg border p-4">
+                  <div className="text-gray-500 text-xs">Total Price</div>
+                  <div className="font-semibold text-[#227B05]">
+                    <FontAwesomeIcon icon={faPesoSign} className="mr-1" />
+                    {selectedNotifBooking?.totalPrice ?? "-"}
+                  </div>
+                </div>
+
+                <div className="rounded-lg border p-4">
+                  <div className="text-gray-500 text-xs">Booking Status</div>
+                  <div className="font-semibold text-[#227B05] flex items-center gap-2">
+                    {selectedNotifBooking?.bookingStatus === "PENDING" ? (
+                      <FontAwesomeIcon icon={faClock} />
+                    ) : selectedNotifBooking?.bookingStatus === "CANCELLED" ||
+                      selectedNotifBooking?.bookingStatus === "REJECTED" ? (
+                      <FontAwesomeIcon icon={faCircleXmark} />
+                    ) : selectedNotifBooking?.bookingStatus === "APPROVED" ||
+                      selectedNotifBooking?.bookingStatus === "COMPLETED" ? (
+                      <FontAwesomeIcon icon={faCheckCircle} />
+                    ) : null}
+                    <span>{selectedNotifBooking?.bookingStatus || "-"}</span>
+                  </div>
+                </div>
+                <div className="rounded-lg border p-4">
+                  <div className="text-gray-500 text-xs">Payment Method</div>
+                  <div className="font-semibold text-[#227B05]">
+                    {selectedNotifBooking?.paymentMethod || "-"}
+                  </div>
+                </div>
+                <div className="rounded-lg border p-4 col-span-2 sm:col-span-1">
+                  <div className="text-gray-500 text-xs">Payment Status</div>
+                  <div className="font-semibold text-[#227B05]">
+                    {selectedNotifBooking?.paymentStatus || "-"}
+                  </div>
+                </div>
+                <div className="rounded-lg border p-4 col-span-2 sm:col-span-1">
+                  <div className="text-gray-500 text-xs">Booked On</div>
+                  <div className="font-semibold text-[#227B05]">
+                    {selectedNotifBooking?.createdAt
+                      ? new Date(
+                          selectedNotifBooking.createdAt,
+                        ).toLocaleDateString(undefined, {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : "-"}
+                  </div>
+                </div>
+              </div>
+
+              {selectedNotifBooking?.tourPackage && (
+                <div className="mt-4 rounded-lg border border-[#227B05]/20 bg-white p-4">
+                  <div className="text-[#227B05] font-semibold mb-2">
+                    Tour Package
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <div className="text-gray-500 text-xs">Name</div>
+                      <div className="font-semibold">
+                        {selectedNotifBooking.tourPackage.name || "-"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500 text-xs">
+                        Price Per Person
+                      </div>
+                      <div className="font-semibold">
+                        {selectedNotifBooking.tourPackage.pricePerPerson ?? "-"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {selectedNotifBooking?.staffReply && (
+                <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+                  <div className="font-semibold mb-1">Staff Reply</div>
+                  <div>{selectedNotifBooking.staffReply}</div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* My profile */}
         <div
@@ -1237,14 +1610,14 @@ function Account() {
                             (booking.bookingStatus === "PENDING"
                               ? "bg-[#FDDB3C]"
                               : booking.bookingStatus === "CANCELLED"
-                              ? "bg-[#E32726]/70"
-                              : booking.bookingStatus === "APPROVED"
-                              ? "bg-[#BAD0F8]/90"
-                              : booking.bookingStatus === "REJECTED"
-                              ? "bg-[#E32726]/70"
-                              : booking.bookingStatus === "COMPLETED"
-                              ? "bg-[#A86CCB]"
-                              : "")
+                                ? "bg-[#E32726]/70"
+                                : booking.bookingStatus === "APPROVED"
+                                  ? "bg-[#BAD0F8]/90"
+                                  : booking.bookingStatus === "REJECTED"
+                                    ? "bg-[#E32726]/70"
+                                    : booking.bookingStatus === "COMPLETED"
+                                      ? "bg-[#A86CCB]"
+                                      : "")
                           }
                         >
                           {booking.bookingStatus === "PENDING" ? (
@@ -1351,7 +1724,7 @@ function Account() {
                       (() => {
                         const bookingFeedback = feedbacks.find(
                           (feedback) =>
-                            feedback.booking?.bookingId === booking.bookingId
+                            feedback.booking?.bookingId === booking.bookingId,
                         );
 
                         if (bookingFeedback) {
@@ -1588,8 +1961,8 @@ function Account() {
                             selectedFeedback.categoryId != null
                               ? String(selectedFeedback.categoryId)
                               : selectedFeedback.category?.categoryId != null
-                              ? String(selectedFeedback.category.categoryId)
-                              : "",
+                                ? String(selectedFeedback.category.categoryId)
+                                : "",
                         });
                         setIsEditingFeedback(false);
                       }}
@@ -1778,7 +2151,7 @@ function Account() {
               <span className="font-semibold">
                 {" "}
                 {new Date(
-                  selectedBookingForPayment.visitDate
+                  selectedBookingForPayment.visitDate,
                 ).toLocaleDateString()}
               </span>
               .
