@@ -169,6 +169,56 @@ function Account() {
     },
   });
 
+  const getNotificationBookingAction = (booking) => {
+    if (!booking) return null;
+
+    if (
+      booking.bookingStatus === "APPROVED" &&
+      booking.paymentMethod === "ONLINE" &&
+      booking.paymentStatus === "UNPAID"
+    ) {
+      return {
+        type: "pay",
+        label: "Submit payment",
+        className:
+          "px-3 py-1 bg-[#222EDA] text-white rounded text-sm hover:bg-[#1b26b6]",
+      };
+    }
+
+    if (
+      booking.bookingStatus === "APPROVED" &&
+      booking.paymentMethod === "ONLINE" &&
+      booking.paymentStatus === "REJECTED"
+    ) {
+      return {
+        type: "resubmit",
+        label: "Resubmit payment",
+        className:
+          "px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700",
+      };
+    }
+
+    if (
+      booking.bookingStatus === "APPROVED" &&
+      booking.paymentMethod === "ONLINE" &&
+      booking.paymentStatus === "PAYMENT_VERIFICATION"
+    ) {
+      return {
+        type: "info",
+        label: "Payment is under verification",
+      };
+    }
+
+    if (booking.bookingStatus === "PENDING") {
+      return {
+        type: "info",
+        label: "Waiting for staff approval",
+      };
+    }
+
+    return null;
+  };
+
   useEffect(() => {
     if (!loggedIn) {
       const handle = async () => {
@@ -1014,44 +1064,83 @@ function Account() {
 
               <div className="flex flex-col gap-3 max-h-80 overflow-y-auto">
                 {latestNotifications.length > 0 ? (
-                  latestNotifications.map((n) => (
-                    <div
-                      key={n.id}
-                      className={`rounded-lg border p-3 ${
-                        n.read ? "bg-white" : "bg-green-50"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="text-sm text-gray-800 whitespace-pre-line">
-                          {n.message}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {n.createdAt
-                            ? new Date(n.createdAt).toLocaleDateString(
-                                undefined,
-                                {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                },
-                              )
-                            : "-"}
-                        </div>
-                      </div>
+                  latestNotifications.map((n) => {
+                    const bookingAction = getNotificationBookingAction(
+                      n.booking,
+                    );
 
-                      {n.booking && (
-                        <div className="mt-3 flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setNotifModalOpen(false);
-                              setSelectedNotifBooking(n.booking);
-                              setIsNotifBookingModalOpen(true);
-                            }}
-                            className="px-3 py-1 border rounded text-sm"
-                          >
-                            Show booking
-                          </button>
+                    return (
+                      <div
+                        key={n.id}
+                        className={`rounded-lg border p-3 ${
+                          n.read ? "bg-white" : "bg-green-50"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="text-sm text-gray-800 whitespace-pre-line">
+                            {n.message}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {n.createdAt
+                              ? new Date(n.createdAt).toLocaleDateString(
+                                  undefined,
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  },
+                                )
+                              : "-"}
+                          </div>
+                        </div>
+
+                        <div className="mt-3 flex flex-wrap gap-2 items-center">
+                          {n.booking && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNotifModalOpen(false);
+                                setSelectedNotifBooking(n.booking);
+                                setIsNotifBookingModalOpen(true);
+                              }}
+                              className="px-3 py-1 border rounded text-sm"
+                            >
+                              Show booking
+                            </button>
+                          )}
+
+                          {bookingAction?.type === "pay" && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNotifModalOpen(false);
+                                openPaymentModal(n.booking);
+                              }}
+                              className={bookingAction.className}
+                            >
+                              {bookingAction.label}
+                            </button>
+                          )}
+
+                          {bookingAction?.type === "resubmit" && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNotifModalOpen(false);
+                                openPaymentModal(n.booking);
+                              }}
+                              className={bookingAction.className}
+                            >
+                              {bookingAction.label}
+                            </button>
+                          )}
+
+                          {bookingAction?.type === "info" && (
+                            <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                              {bookingAction.label}
+                            </span>
+                          )}
+
                           {!n.read && (
                             <button
                               type="button"
@@ -1065,22 +1154,9 @@ function Account() {
                             </button>
                           )}
                         </div>
-                      )}
-
-                      {!n.booking && !n.read && (
-                        <div className="mt-3 flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => markNotifAsReadMutation.mutate(n.id)}
-                            className="px-3 py-1 border border-[#227B05] text-[#227B05] rounded text-sm hover:bg-[#227B05]/5 disabled:opacity-60 disabled:cursor-not-allowed"
-                            disabled={markNotifAsReadMutation.isPending}
-                          >
-                            Mark as read
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ))
+                      </div>
+                    );
+                  })
                 ) : (
                   <div className="text-center text-gray-600 py-6">
                     No notifications
