@@ -139,7 +139,7 @@ function getNotificationBookingAction(booking) {
   return null;
 }
 
-function BookingDetailsModal({ booking, onClose }) {
+function BookingDetailsModal({ booking, onClose, onViewProof }) {
   const account = booking?.account;
   const accountDetail = account?.detail;
 
@@ -262,6 +262,28 @@ function BookingDetailsModal({ booking, onClose }) {
           </div>
         </div>
 
+        {booking?.proofOfPaymentPhoto && (
+          <div className="mt-4 rounded-lg border border-[#227B05]/20 bg-blue-50 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="font-semibold text-[#227B05]">
+                  Proof of Payment
+                </div>
+                <div className="text-sm text-gray-600">
+                  A payment screenshot was uploaded for this booking.
+                </div>
+              </div>
+              <button
+                type="button"
+                className="px-4 py-2 rounded-md border border-[#227B05] text-[#227B05] hover:bg-[#227B05]/5 font-semibold"
+                onClick={() => onViewProof?.(booking)}
+              >
+                View proof
+              </button>
+            </div>
+          </div>
+        )}
+
         {booking?.tourPackage && (
           <div className="mt-4 rounded-lg border border-[#227B05]/20 bg-white p-4">
             <div className="text-[#227B05] font-semibold mb-2">
@@ -306,6 +328,9 @@ function NotificationPage() {
   const [paymentFile, setPaymentFile] = useState(null);
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
   const [isResubmittingPayment, setIsResubmittingPayment] = useState(false);
+  const [selectedProofUrl, setSelectedProofUrl] = useState(null);
+  const [isProofModalOpen, setIsProofModalOpen] = useState(false);
+  const [isProofLoading, setIsProofLoading] = useState(false);
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -474,6 +499,19 @@ function NotificationPage() {
   const closeBookingModal = () => {
     setSelectedBooking(null);
     setIsBookingModalOpen(false);
+  };
+
+  const openProofModal = (booking) => {
+    if (!booking?.proofOfPaymentPhoto) return;
+    setSelectedProofUrl(booking.proofOfPaymentPhoto);
+    setIsProofLoading(true);
+    setIsProofModalOpen(true);
+  };
+
+  const closeProofModal = () => {
+    setSelectedProofUrl(null);
+    setIsProofModalOpen(false);
+    setIsProofLoading(false);
   };
 
   const openPaymentModal = (booking) => {
@@ -845,6 +883,7 @@ function NotificationPage() {
           <BookingDetailsModal
             booking={selectedBooking}
             onClose={closeBookingModal}
+            onViewProof={openProofModal}
           />
         )}
 
@@ -930,6 +969,59 @@ function NotificationPage() {
                       ? "Resubmit"
                       : "Submit"}
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isProofModalOpen && selectedProofUrl && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+            onClick={closeProofModal}
+          >
+            <div
+              className="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 p-4 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                className="absolute top-3 right-3 text-gray-500 hover:text-black text-lg"
+                onClick={closeProofModal}
+              >
+                <FontAwesomeIcon icon={faX} />
+              </button>
+              <h2 className="text-lg font-semibold mb-3 text-[#227B05]">
+                Proof of Payment
+              </h2>
+              <div className="flex justify-center items-center min-h-[200px]">
+                {isProofLoading && (
+                  <div className="flex flex-col items-center gap-2 text-gray-600">
+                    <ClipLoader color="#227B05" size={32} />
+                    <span className="text-sm">Loading image...</span>
+                  </div>
+                )}
+                <img
+                  src={
+                    selectedProofUrl.startsWith("http")
+                      ? selectedProofUrl
+                      : `${API_BASE_URL}${selectedProofUrl}`
+                  }
+                  alt="Proof of payment"
+                  className={`max-h-[70vh] w-auto object-contain border rounded-md ${
+                    isProofLoading ? "hidden" : ""
+                  }`}
+                  onLoad={() => setIsProofLoading(false)}
+                  onError={() => {
+                    setIsProofLoading(false);
+                    const msg =
+                      "Failed to load proof of payment image. Please try again.";
+                    if (typeof window !== "undefined" && window.__showAlert) {
+                      window.__showAlert(msg);
+                    } else {
+                      window.__nativeAlert?.(msg) || alert(msg);
+                    }
+                  }}
+                />
               </div>
             </div>
           </div>

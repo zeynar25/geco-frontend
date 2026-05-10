@@ -1320,6 +1320,28 @@ function Account() {
                 </div>
               </div>
 
+              {selectedNotifBooking?.proofOfPaymentPhoto && (
+                <div className="mt-4 rounded-lg border border-[#227B05]/20 bg-blue-50 p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="font-semibold text-[#227B05]">
+                        Proof of Payment
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        A payment screenshot has been uploaded for this booking.
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className="px-4 py-2 rounded-md border border-[#227B05] text-[#227B05] hover:bg-[#227B05]/5 font-semibold"
+                      onClick={() => openProofModal(selectedNotifBooking)}
+                    >
+                      View proof
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {selectedNotifBooking?.tourPackage && (
                 <div className="mt-4 rounded-lg border border-[#227B05]/20 bg-white p-4">
                   <div className="text-[#227B05] font-semibold mb-2">
