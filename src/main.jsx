@@ -9,6 +9,7 @@ import PackagesPromos from "./Pages/PackagesPromos.jsx";
 import ParkCalendar from "./Pages/ParkCalendar.jsx";
 import BookingSuccess from "./Pages/BookingSuccess.jsx";
 import Account from "./Pages/Account.jsx";
+import Notification from "./Pages/Notification.jsx";
 import Attraction from "./Pages/Attraction.jsx";
 import Feedback from "./Pages/Feedback.jsx";
 import AdminDashboard from "./Pages/AdminDashboard.jsx";
@@ -32,6 +33,8 @@ const router = createBrowserRouter([
       { path: "/park-calendar", element: <ParkCalendar /> },
       { path: "/booking-success", element: <BookingSuccess /> },
       { path: "/my-account", element: <Account /> },
+      { path: "/notifications", element: <Notification /> },
+      { path: "/notification", element: <Notification /> },
       { path: "/attractions/:id", element: <Attraction /> },
       { path: "/feedback", element: <Feedback /> },
       { path: "/admin", element: <AdminDashboard /> },
@@ -96,5 +99,5 @@ createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router}></RouterProvider>
     </QueryClientProvider>
-  </StrictMode>
+  </StrictMode>,
 );
