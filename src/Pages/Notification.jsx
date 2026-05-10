@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleLeft,
   faAngleRight,
+  faUser,
   faBell,
   faCalendarCheck,
   faCheckCircle,
@@ -492,7 +493,7 @@ function NotificationPage() {
               to="/my-account"
               className="bg-[#4D9C43] hover:bg-[#4D9C43]/95 text-[#FDDB3C] px-4 py-2 rounded-md flex items-center my-auto"
             >
-              <FontAwesomeIcon icon={faBell} className="mr-2" />
+              <FontAwesomeIcon icon={faUser} className="mr-2" />
               <span>My Account</span>
             </Link>
           }
