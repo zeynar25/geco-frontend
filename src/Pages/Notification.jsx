@@ -108,6 +108,37 @@ function getPaymentStatusLabel(paymentStatus) {
   return labels[paymentStatus] || paymentStatus;
 }
 
+function getNotificationBookingAction(booking) {
+  if (!booking) return null;
+
+  if (
+    booking.bookingStatus === "APPROVED" &&
+    booking.paymentMethod === "ONLINE" &&
+    booking.paymentStatus === "UNPAID"
+  ) {
+    return {
+      type: "pay",
+      label: "Submit payment",
+      className:
+        "px-3 py-2 rounded-md bg-[#222EDA] text-white hover:bg-[#1b26b6]",
+    };
+  }
+
+  if (
+    booking.bookingStatus === "APPROVED" &&
+    booking.paymentMethod === "ONLINE" &&
+    booking.paymentStatus === "REJECTED"
+  ) {
+    return {
+      type: "resubmit",
+      label: "Resubmit payment",
+      className: "px-3 py-2 rounded-md bg-red-600 text-white hover:bg-red-700",
+    };
+  }
+
+  return null;
+}
+
 function BookingDetailsModal({ booking, onClose }) {
   const account = booking?.account;
   const accountDetail = account?.detail;
@@ -270,6 +301,11 @@ function NotificationPage() {
   const [size] = useState(10);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedBookingForPayment, setSelectedBookingForPayment] =
+    useState(null);
+  const [paymentFile, setPaymentFile] = useState(null);
+  const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
+  const [isResubmittingPayment, setIsResubmittingPayment] = useState(false);
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -440,6 +476,92 @@ function NotificationPage() {
     setIsBookingModalOpen(false);
   };
 
+  const openPaymentModal = (booking) => {
+    if (!booking) return;
+    setSelectedBookingForPayment(booking);
+    setPaymentFile(null);
+    setIsResubmittingPayment(booking.paymentStatus === "REJECTED");
+  };
+
+  const closePaymentModal = () => {
+    setSelectedBookingForPayment(null);
+    setPaymentFile(null);
+    setIsResubmittingPayment(false);
+  };
+
+  const handlePaymentFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setPaymentFile(file);
+  };
+
+  const handleSubmitPayment = async () => {
+    if (!selectedBookingForPayment) return;
+
+    if (!paymentFile) {
+      const msg = "Please select a file as proof of payment.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+      return;
+    }
+
+    setIsSubmittingPayment(true);
+
+    try {
+      const formData = new FormData();
+      formData.append(
+        "data",
+        new Blob([JSON.stringify({})], { type: "application/json" }),
+      );
+      formData.append("resubmit", isResubmittingPayment ? "true" : "false");
+      formData.append("proofOfPayment", paymentFile);
+
+      ensureTokenValidOrAlert();
+      const response = await safeFetch(
+        `${API_BASE_URL}/booking/${selectedBookingForPayment.bookingId}`,
+        {
+          method: "PATCH",
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(
+          error?.error || "Submitting payment proof failed. Please try again.",
+        );
+      }
+
+      await response.json();
+      await queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["latestNotifications"],
+      });
+
+      const msg =
+        "Payment proof submitted successfully.\nWe'll verify it shortly.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+
+      closePaymentModal();
+    } catch (error) {
+      if (error?.message === "TOKEN_EXPIRED") {
+        const msg = "Your session has expired. Please sign in again.";
+        if (window.__showAlert) await window.__showAlert(msg);
+        else window.__nativeAlert?.(msg) || alert(msg);
+        navigate("/signin");
+        return;
+      }
+
+      const msg =
+        error?.message ||
+        "Something went wrong while submitting your payment proof.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    } finally {
+      setIsSubmittingPayment(false);
+    }
+  };
+
   const handleMarkAllAsRead = async () => {
     if (markAllAsReadMutation.isPending) return;
     markAllAsReadMutation.mutate();
@@ -561,6 +683,9 @@ function NotificationPage() {
                 <div className="flex flex-col gap-4">
                   {notifications.map((notification) => {
                     const hasBooking = Boolean(notification.booking);
+                    const bookingAction = getNotificationBookingAction(
+                      notification.booking,
+                    );
 
                     return (
                       <div
@@ -649,6 +774,18 @@ function NotificationPage() {
                               Show booking
                             </button>
 
+                            {bookingAction && hasBooking && (
+                              <button
+                                type="button"
+                                className={bookingAction.className}
+                                onClick={() =>
+                                  openPaymentModal(notification.booking)
+                                }
+                              >
+                                {bookingAction.label}
+                              </button>
+                            )}
+
                             <button
                               type="button"
                               className={`px-3 py-2 rounded-md border disabled:opacity-60 disabled:cursor-not-allowed ${
@@ -709,6 +846,93 @@ function NotificationPage() {
             booking={selectedBooking}
             onClose={closeBookingModal}
           />
+        )}
+
+        {selectedBookingForPayment && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+            onClick={closePaymentModal}
+          >
+            <div
+              className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                className="absolute top-3 right-3 text-gray-500 hover:text-black text-lg"
+                onClick={closePaymentModal}
+              >
+                <FontAwesomeIcon icon={faX} />
+              </button>
+              <h2 className="text-xl font-semibold mb-3 text-[#227B05]">
+                {isResubmittingPayment
+                  ? "Resubmit Payment Proof"
+                  : "Submit Payment Proof"}
+              </h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Please upload a clear photo or screenshot of your payment
+                transaction for your booking on{" "}
+                <span className="font-semibold">
+                  {selectedBookingForPayment.visitDate
+                    ? formatHumanDate(selectedBookingForPayment.visitDate)
+                    : "-"}
+                </span>
+                .
+              </p>
+              <div className="mb-4">
+                <label className="block font-semibold mb-1">
+                  Proof of payment
+                </label>
+                <div className="flex items-center gap-3">
+                  <label
+                    className={`px-3 py-1.5 rounded border text-sm cursor-pointer transition-colors ${
+                      isSubmittingPayment
+                        ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                    }`}
+                  >
+                    <span>Choose file</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handlePaymentFileChange}
+                      disabled={isSubmittingPayment}
+                    />
+                  </label>
+                  <span className="text-xs text-gray-500 truncate">
+                    {paymentFile ? paymentFile.name : "No file chosen"}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Accepted formats: JPG, PNG. Max size depends on your network
+                  and server limits.
+                </p>
+              </div>
+              <div className="flex justify-end gap-3 mt-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 border rounded-md font-semibold hover:bg-black/5"
+                  onClick={closePaymentModal}
+                  disabled={isSubmittingPayment}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                  onClick={handleSubmitPayment}
+                  disabled={isSubmittingPayment}
+                >
+                  {isSubmittingPayment
+                    ? "Submitting..."
+                    : isResubmittingPayment
+                      ? "Resubmit"
+                      : "Submit"}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </main>
       <Footer />
