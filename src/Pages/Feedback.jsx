@@ -1,4 +1,4 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 
@@ -21,18 +21,26 @@ function Feedback() {
   const backTo = location.state?.from || "/";
 
   const [feedbackPage, setFeedbackPage] = useState(0);
+  const [starsFilter, setStarsFilter] = useState("");
 
   const {
     data: feedbackData,
     error: feedbackError,
     isPending: feedbackPending,
   } = useQuery({
-    queryKey: ["feedbacks"],
+    queryKey: ["feedbacks", feedbackPage, starsFilter],
     queryFn: async () => {
       // Allow anonymous access: if a token exists, try `safeFetch`,
       // otherwise use unauthenticated `fetch`. If the token is expired
       // `safeFetch` will throw TOKEN_EXPIRED; fall back to unauthenticated fetch.
-      const endpoint = `${API_BASE_URL}/feedback/active?page=${feedbackPage}&size=10`;
+      const params = new URLSearchParams({
+        page: String(feedbackPage),
+        size: "10",
+      });
+      if (starsFilter !== "") {
+        params.set("stars", starsFilter);
+      }
+      const endpoint = `${API_BASE_URL}/feedback/active?${params.toString()}`;
       const token = localStorage.getItem("token");
       let response;
       if (token) {
@@ -90,8 +98,13 @@ function Feedback() {
   const handleNextFeedbackPage = () => {
     if (totalFeedbackPages === 0) return;
     setFeedbackPage((prev) =>
-      prev + 1 < totalFeedbackPages ? prev + 1 : prev
+      prev + 1 < totalFeedbackPages ? prev + 1 : prev,
     );
+  };
+
+  const handleStarsFilterChange = (event) => {
+    setStarsFilter(event.target.value);
+    setFeedbackPage(0);
   };
 
   return (
@@ -109,11 +122,30 @@ function Feedback() {
             <div className="h-10 w-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
             <p className="text-gray-600">Loading feedbacks...</p>
           </div>
-        ) : feedbacks.length > 0 ? (
-          <div>
-            <div className="flex justify-between items-center mb-3">
+        ) : (
+          <>
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-3">
+              <div className="flex items-center gap-2">
+                <label htmlFor="stars-filter" className="text-sm text-gray-700">
+                  Filter by stars
+                </label>
+                <select
+                  id="stars-filter"
+                  className="border rounded px-2 py-1 text-sm"
+                  value={starsFilter}
+                  onChange={handleStarsFilterChange}
+                >
+                  <option value="">All ratings</option>
+                  <option value="5">5 stars</option>
+                  <option value="4">4 stars</option>
+                  <option value="3">3 stars</option>
+                  <option value="2">2 stars</option>
+                  <option value="1">1 star</option>
+                </select>
+              </div>
               <span className="text-sm text-gray-600">
-                Page {feedbackPage + 1} of {Math.max(totalFeedbackPages, 1)}
+                Page {feedbacks.length > 0 ? feedbackPage + 1 : 0} of{" "}
+                {Math.max(totalFeedbackPages, 0)}
               </span>
               <div className="flex gap-2">
                 <button
@@ -137,75 +169,84 @@ function Feedback() {
                 </button>
               </div>
             </div>
-            <div className="px-3 py-2 flex flex-wrap gap-5">
-              {feedbacks.map((feedback) => {
-                const rating = Number(feedback.stars) || 0;
-                const fullStars = Math.floor(rating);
-                const hasHalfStar = rating - fullStars >= 0.5;
 
-                return (
-                  <div
-                    key={feedback.feedbackId}
-                    className="p-5 bg-white rounded-lg shadow-xl border border-[#227B05] flex flex-col gap-3 lg:w-100"
-                  >
-                    {feedback.stars != null && (
-                      <div className="mb-2">
-                        <div className="flex gap-1 items-center justify-end">
-                          {Array.from({ length: 5 }).map((_, index) => {
-                            const isFull = index < fullStars;
-                            const isHalf =
-                              !isFull && hasHalfStar && index === fullStars;
+            {feedbacks.length > 0 ? (
+              <div className="px-3 py-2 flex flex-wrap gap-5">
+                {feedbacks.map((feedback) => {
+                  const rating = Number(feedback.stars) || 0;
+                  const fullStars = Math.floor(rating);
+                  const hasHalfStar = rating - fullStars >= 0.5;
 
-                            return (
-                              <FontAwesomeIcon
-                                key={index}
-                                icon={isHalf ? faStarHalfStroke : faStar}
-                                className={
-                                  isFull || isHalf
-                                    ? "text-yellow-400"
-                                    : "text-gray-300"
-                                }
-                              />
-                            );
-                          })}
+                  return (
+                    <div
+                      key={feedback.feedbackId}
+                      className="p-5 bg-white rounded-lg shadow-xl border border-[#227B05] flex flex-col gap-3 lg:w-100"
+                    >
+                      {feedback.stars != null && (
+                        <div className="mb-2">
+                          <div className="flex gap-1 items-center justify-end">
+                            {Array.from({ length: 5 }).map((_, index) => {
+                              const isFull = index < fullStars;
+                              const isHalf =
+                                !isFull && hasHalfStar && index === fullStars;
+
+                              return (
+                                <FontAwesomeIcon
+                                  key={index}
+                                  icon={isHalf ? faStarHalfStroke : faStar}
+                                  className={
+                                    isFull || isHalf
+                                      ? "text-yellow-400"
+                                      : "text-gray-300"
+                                  }
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      {feedback.comment && (
+                        <div className="mb-2">"{feedback.comment}"</div>
+                      )}
+                      {feedback.staffReply && (
+                        <div className="mb-4 bg-[#48BF56]/20 flex flex-col py-2 px-4 rounded-lg">
+                          <span className="text-[#0A7A28] font-semibold text-md">
+                            Agri-Eco Park Management:
+                          </span>
+                          <span className="text-sm text-[#007B53]">
+                            {feedback.staffReply}
+                          </span>
+                        </div>
+                      )}
+                      {!feedback.comment && !feedback.suggestion && (
+                        <div className="text-sm text-gray-600 mb-4">
+                          No additional details provided.
+                        </div>
+                      )}
+                      <hr className="text-[#227B05] border-2" />
+                      <div>
+                        <div className="font-semibold text-md">
+                          <span>{feedback.account.detail.firstName}</span>{" "}
+                          <span>{feedback.account.detail.surname}</span>
+                        </div>
+                        <div className="text-sm text-[#227B05]">
+                          Visited {feedback.booking.visitDate}
                         </div>
                       </div>
-                    )}
-                    {feedback.comment && (
-                      <div className="mb-2">"{feedback.comment}"</div>
-                    )}
-                    {feedback.staffReply && (
-                      <div className="mb-4 bg-[#48BF56]/20 flex flex-col py-2 px-4 rounded-lg">
-                        <span className="text-[#0A7A28] font-semibold text-md">
-                          Agri-Eco Park Management:
-                        </span>
-                        <span className="text-sm text-[#007B53]">
-                          {feedback.staffReply}
-                        </span>
-                      </div>
-                    )}
-                    {!feedback.comment && !feedback.suggestion && (
-                      <div className="text-sm text-gray-600 mb-4">
-                        No additional details provided.
-                      </div>
-                    )}
-                    <hr className="text-[#227B05] border-2" />
-                    <div>
-                      <div className="font-semibold text-md">
-                        <span>{feedback.account.detail.firstName}</span>{" "}
-                        <span>{feedback.account.detail.surname}</span>
-                      </div>
-                      <div className="text-sm text-[#227B05]">
-                        Visited {feedback.booking.visitDate}
-                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          <div>Park have no feedbacks yet.</div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="flex items-center justify-center h-64 text-gray-600">
+                <div className="text-center">
+                  {starsFilter
+                    ? `No ${starsFilter}-star feedbacks found.`
+                    : "Park have no feedbacks yet."}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </main>
       <Footer />
