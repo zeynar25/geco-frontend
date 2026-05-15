@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleLeft,
   faAngleRight,
+  faFilter,
   faUser,
   faBell,
   faCalendarCheck,
@@ -137,6 +138,121 @@ function getNotificationBookingAction(booking) {
   }
 
   return null;
+}
+
+function NotificationFilterModal({
+  isOpen,
+  readFilter,
+  startDate,
+  endDate,
+  onChangeReadFilter,
+  onChangeStartDate,
+  onChangeEndDate,
+  onApply,
+  onClear,
+  onClose,
+}) {
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg rounded-lg bg-white p-5 shadow-xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-semibold text-[#227B05]">
+              Filter Notifications
+            </h2>
+            <p className="text-sm text-gray-600">
+              Choose read state and date range, then apply the filter.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-black"
+            onClick={onClose}
+          >
+            <FontAwesomeIcon icon={faX} />
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
+              Read status
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: "All", value: "" },
+                { label: "Read", value: "true" },
+                { label: "Unread", value: "false" },
+              ].map((option) => (
+                <button
+                  key={option.label}
+                  type="button"
+                  className={`rounded-md border px-3 py-2 text-sm font-semibold transition-colors ${
+                    readFilter === option.value
+                      ? "border-[#227B05] bg-[#227B05] text-white"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                  }`}
+                  onClick={() => onChangeReadFilter(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm font-semibold text-gray-700">
+                Start date
+              </label>
+              <input
+                type="date"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[#227B05] focus:outline-none"
+                value={startDate}
+                onChange={(event) => onChangeStartDate(event.target.value)}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-semibold text-gray-700">
+                End date
+              </label>
+              <input
+                type="date"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[#227B05] focus:outline-none"
+                value={endDate}
+                onChange={(event) => onChangeEndDate(event.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap justify-end gap-2 pt-2">
+            <button
+              type="button"
+              className="rounded-md border border-gray-300 px-4 py-2 font-semibold text-gray-700 hover:bg-gray-50"
+              onClick={onClear}
+            >
+              Clear
+            </button>
+            <button
+              type="button"
+              className="rounded-md bg-[#227B05] px-4 py-2 font-semibold text-white hover:bg-[#1d6804]"
+              onClick={onApply}
+            >
+              Filter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function BookingDetailsModal({ booking, onClose, onViewProof }) {
@@ -321,6 +437,13 @@ function NotificationPage() {
   const [loggedIn] = useState(isLoggedIn());
   const [page, setPage] = useState(0);
   const [size] = useState(10);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [draftReadFilter, setDraftReadFilter] = useState("");
+  const [draftStartDate, setDraftStartDate] = useState("");
+  const [draftEndDate, setDraftEndDate] = useState("");
+  const [appliedReadFilter, setAppliedReadFilter] = useState("");
+  const [appliedStartDate, setAppliedStartDate] = useState("");
+  const [appliedEndDate, setAppliedEndDate] = useState("");
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedBookingForPayment, setSelectedBookingForPayment] =
@@ -352,7 +475,14 @@ function NotificationPage() {
     error: notificationError,
     isPending: notificationPending,
   } = useQuery({
-    queryKey: ["notifications", page, size],
+    queryKey: [
+      "notifications",
+      page,
+      size,
+      appliedReadFilter,
+      appliedStartDate,
+      appliedEndDate,
+    ],
     enabled: loggedIn,
     queryFn: async () => {
       ensureTokenValidOrAlert();
@@ -361,6 +491,15 @@ function NotificationPage() {
       params.append("page", page.toString());
       params.append("size", size.toString());
       params.append("sort", "createdAt,desc");
+      if (appliedReadFilter !== "") {
+        params.append("isRead", appliedReadFilter);
+      }
+      if (appliedStartDate) {
+        params.append("startDate", appliedStartDate);
+      }
+      if (appliedEndDate) {
+        params.append("endDate", appliedEndDate);
+      }
 
       const response = await safeFetch(
         `${API_BASE_URL}/notification?${params.toString()}`,
@@ -411,6 +550,58 @@ function NotificationPage() {
   const unreadCount = notifications.filter(
     (notification) => !notification.read,
   ).length;
+
+  const filteredEmptyMessage = (() => {
+    const readLabel =
+      appliedReadFilter === "true"
+        ? "read"
+        : appliedReadFilter === "false"
+          ? "unread"
+          : null;
+    const dateText =
+      appliedStartDate || appliedEndDate ? "selected date range" : null;
+
+    if (readLabel && dateText) {
+      return `No ${readLabel} notifications found for the selected date range.`;
+    }
+    if (readLabel) {
+      return `No ${readLabel} notifications found.`;
+    }
+    if (dateText) {
+      return "No notifications found for the selected date range.";
+    }
+    return "You have no notifications yet.";
+  })();
+
+  const openFilterModal = () => {
+    setDraftReadFilter(appliedReadFilter);
+    setDraftStartDate(appliedStartDate);
+    setDraftEndDate(appliedEndDate);
+    setIsFilterModalOpen(true);
+  };
+
+  const closeFilterModal = () => {
+    setIsFilterModalOpen(false);
+  };
+
+  const applyFilters = () => {
+    setAppliedReadFilter(draftReadFilter);
+    setAppliedStartDate(draftStartDate);
+    setAppliedEndDate(draftEndDate);
+    setPage(0);
+    setIsFilterModalOpen(false);
+  };
+
+  const clearFilters = () => {
+    setDraftReadFilter("");
+    setDraftStartDate("");
+    setDraftEndDate("");
+    setAppliedReadFilter("");
+    setAppliedStartDate("");
+    setAppliedEndDate("");
+    setPage(0);
+    setIsFilterModalOpen(false);
+  };
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
@@ -675,209 +866,231 @@ function NotificationPage() {
               <div className="text-sm text-gray-600">
                 Latest notifications are shown first.
               </div>
-              <button
-                type="button"
-                className="px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
-                onClick={handleMarkAllAsRead}
-                disabled={
-                  markAllAsReadMutation.isPending || notifications.length === 0
-                }
-              >
-                {markAllAsReadMutation.isPending
-                  ? "Updating..."
-                  : "Mark all as read"}
-              </button>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 border border-[#227B05] text-[#227B05] hover:bg-[#227B05]/5 rounded-md font-semibold"
+                  onClick={openFilterModal}
+                >
+                  <FontAwesomeIcon icon={faFilter} className="mr-2" />
+                  Open filter
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-[#227B05]/90 hover:bg-[#227B05] text-white rounded-md font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                  onClick={handleMarkAllAsRead}
+                  disabled={
+                    markAllAsReadMutation.isPending ||
+                    notifications.length === 0
+                  }
+                >
+                  {markAllAsReadMutation.isPending
+                    ? "Updating..."
+                    : "Mark all as read"}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm text-gray-600">
+                Page {notifications.length > 0 ? page + 1 : 0} of{" "}
+                {Math.max(totalNotificationPages, 0)}
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  className="px-2 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handlePrevPage}
+                  disabled={page === 0}
+                >
+                  <FontAwesomeIcon icon={faAngleLeft} />
+                </button>
+                <button
+                  type="button"
+                  className="px-2 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleNextPage}
+                  disabled={
+                    totalNotificationPages === 0 ||
+                    page + 1 >= totalNotificationPages
+                  }
+                >
+                  <FontAwesomeIcon icon={faAngleRight} />
+                </button>
+              </div>
             </div>
 
             {notifications.length > 0 ? (
-              <>
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-sm text-gray-600">
-                    Page {page + 1} of {Math.max(totalNotificationPages, 1)}
-                  </span>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      className="px-2 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={handlePrevPage}
-                      disabled={page === 0}
+              <div className="flex flex-col gap-4">
+                {notifications.map((notification) => {
+                  const hasBooking = Boolean(notification.booking);
+                  const bookingAction = getNotificationBookingAction(
+                    notification.booking,
+                  );
+
+                  return (
+                    <div
+                      key={notification.id}
+                      className={`rounded-lg border p-4 shadow-sm transition-colors ${
+                        notification.read
+                          ? "border-gray-200 bg-white"
+                          : "border-[#227B05]/30 bg-green-50"
+                      }`}
                     >
-                      <FontAwesomeIcon icon={faAngleLeft} />
-                    </button>
-                    <button
-                      type="button"
-                      className="px-2 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={handleNextPage}
-                      disabled={
-                        totalNotificationPages === 0 ||
-                        page + 1 >= totalNotificationPages
-                      }
-                    >
-                      <FontAwesomeIcon icon={faAngleRight} />
-                    </button>
-                  </div>
-                </div>
+                      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span
+                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${
+                                notification.read
+                                  ? "bg-gray-200 text-gray-700"
+                                  : "bg-[#227B05] text-white"
+                              }`}
+                            >
+                              {notification.read ? "Read" : "Unread"}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {formatNotificationDate(notification.createdAt)}
+                            </span>
+                          </div>
+                          <div className="text-sm sm:text-base text-gray-800 whitespace-pre-line">
+                            {notification.message}
+                          </div>
 
-                <div className="flex flex-col gap-4">
-                  {notifications.map((notification) => {
-                    const hasBooking = Boolean(notification.booking);
-                    const bookingAction = getNotificationBookingAction(
-                      notification.booking,
-                    );
-
-                    return (
-                      <div
-                        key={notification.id}
-                        className={`rounded-lg border p-4 shadow-sm transition-colors ${
-                          notification.read
-                            ? "border-gray-200 bg-white"
-                            : "border-[#227B05]/30 bg-green-50"
-                        }`}
-                      >
-                        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span
-                                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${
-                                  notification.read
-                                    ? "bg-gray-200 text-gray-700"
-                                    : "bg-[#227B05] text-white"
-                                }`}
-                              >
-                                {notification.read ? "Read" : "Unread"}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {formatNotificationDate(notification.createdAt)}
-                              </span>
-                            </div>
-                            <div className="text-sm sm:text-base text-gray-800 whitespace-pre-line">
-                              {notification.message}
-                            </div>
-
-                            {hasBooking && (
-                              <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-                                <div>
-                                  <div className="text-gray-500 text-xs">
-                                    Visit Date
-                                  </div>
-                                  <div className="font-semibold">
-                                    {notification.booking.visitDate
-                                      ? formatHumanDate(
-                                          notification.booking.visitDate,
-                                        )
-                                      : "-"}
-                                  </div>
+                          {hasBooking && (
+                            <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                              <div>
+                                <div className="text-gray-500 text-xs">
+                                  Visit Date
                                 </div>
-                                <div>
-                                  <div className="text-gray-500 text-xs">
-                                    Visit Time
-                                  </div>
-                                  <div className="font-semibold">
-                                    {notification.booking.visitTime || "-"}
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="text-gray-500 text-xs">
-                                    Status
-                                  </div>
-                                  <div className="font-semibold">
-                                    {getBookingStatusLabel(
-                                      notification.booking.bookingStatus,
-                                    )}
-                                  </div>
-                                </div>
-                                <div>
-                                  <div className="text-gray-500 text-xs">
-                                    Payment
-                                  </div>
-                                  <div className="font-semibold">
-                                    {getPaymentStatusLabel(
-                                      notification.booking.paymentStatus,
-                                    )}
-                                  </div>
+                                <div className="font-semibold">
+                                  {notification.booking.visitDate
+                                    ? formatHumanDate(
+                                        notification.booking.visitDate,
+                                      )
+                                    : "-"}
                                 </div>
                               </div>
-                            )}
-                          </div>
+                              <div>
+                                <div className="text-gray-500 text-xs">
+                                  Visit Time
+                                </div>
+                                <div className="font-semibold">
+                                  {notification.booking.visitTime || "-"}
+                                </div>
+                              </div>
+                              <div>
+                                <div className="text-gray-500 text-xs">
+                                  Status
+                                </div>
+                                <div className="font-semibold">
+                                  {getBookingStatusLabel(
+                                    notification.booking.bookingStatus,
+                                  )}
+                                </div>
+                              </div>
+                              <div>
+                                <div className="text-gray-500 text-xs">
+                                  Payment
+                                </div>
+                                <div className="font-semibold">
+                                  {getPaymentStatusLabel(
+                                    notification.booking.paymentStatus,
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
 
-                          <div className="flex flex-wrap gap-2 lg:justify-end md:flex-row">
+                        <div className="flex flex-wrap gap-2 lg:justify-end md:flex-row">
+                          <button
+                            type="button"
+                            className="px-3 py-2 rounded-md border border-[#227B05] text-[#227B05] hover:bg-[#227B05]/5 disabled:opacity-60 disabled:cursor-not-allowed"
+                            onClick={() =>
+                              openBookingModal(notification.booking)
+                            }
+                            disabled={!hasBooking}
+                          >
+                            Show booking
+                          </button>
+
+                          {bookingAction && hasBooking && (
                             <button
                               type="button"
-                              className="px-3 py-2 rounded-md border border-[#227B05] text-[#227B05] hover:bg-[#227B05]/5 disabled:opacity-60 disabled:cursor-not-allowed"
+                              className={bookingAction.className}
                               onClick={() =>
-                                openBookingModal(notification.booking)
+                                openPaymentModal(notification.booking)
                               }
-                              disabled={!hasBooking}
                             >
-                              Show booking
+                              {bookingAction.label}
                             </button>
+                          )}
 
-                            {bookingAction && hasBooking && (
-                              <button
-                                type="button"
-                                className={bookingAction.className}
-                                onClick={() =>
-                                  openPaymentModal(notification.booking)
-                                }
-                              >
-                                {bookingAction.label}
-                              </button>
-                            )}
+                          <button
+                            type="button"
+                            className={`px-3 py-2 rounded-md border disabled:opacity-60 disabled:cursor-not-allowed ${
+                              notification.read
+                                ? "border-[#227B05] text-[#227B05] hover:bg-[#227B05]/5"
+                                : "border-blue-600 text-blue-600 hover:bg-blue-50"
+                            }`}
+                            onClick={() =>
+                              handleNotificationAction(notification)
+                            }
+                            disabled={markNotificationMutation.isPending}
+                          >
+                            <FontAwesomeIcon
+                              icon={notification.read ? faEyeSlash : faEye}
+                              className="mr-2"
+                            />
+                            {notification.read ? "Mark unread" : "Mark read"}
+                          </button>
 
-                            <button
-                              type="button"
-                              className={`px-3 py-2 rounded-md border disabled:opacity-60 disabled:cursor-not-allowed ${
-                                notification.read
-                                  ? "border-[#227B05] text-[#227B05] hover:bg-[#227B05]/5"
-                                  : "border-blue-600 text-blue-600 hover:bg-blue-50"
-                              }`}
-                              onClick={() =>
-                                handleNotificationAction(notification)
-                              }
-                              disabled={markNotificationMutation.isPending}
-                            >
-                              <FontAwesomeIcon
-                                icon={notification.read ? faEyeSlash : faEye}
-                                className="mr-2"
-                              />
-                              {notification.read ? "Mark unread" : "Mark read"}
-                            </button>
-
-                            <button
-                              type="button"
-                              className="px-3 py-2 rounded-md border border-red-500 text-red-600 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                              onClick={() =>
-                                handleDeleteNotification(notification)
-                              }
-                              disabled={deleteNotificationMutation.isPending}
-                            >
-                              <FontAwesomeIcon
-                                icon={faTrash}
-                                className="mr-2"
-                              />
-                              Delete
-                            </button>
-                          </div>
+                          <button
+                            type="button"
+                            className="px-3 py-2 rounded-md border border-red-500 text-red-600 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                            onClick={() =>
+                              handleDeleteNotification(notification)
+                            }
+                            disabled={deleteNotificationMutation.isPending}
+                          >
+                            <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                            Delete
+                          </button>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </>
+                    </div>
+                  );
+                })}
+              </div>
             ) : (
-              <div className="py-10 flex flex-col items-center justify-center gap-3 text-gray-600">
+              <div className="flex min-h-[260px] flex-col items-center justify-center gap-3 text-gray-600">
                 <FontAwesomeIcon
                   icon={faBell}
                   className="text-3xl text-[#227B05]"
                 />
-                <div className="font-semibold">
-                  You have no notifications yet.
+                <div className="text-center font-semibold">
+                  {filteredEmptyMessage}
                 </div>
-                <div className="text-sm">Booking updates will appear here.</div>
+                <div className="text-sm text-center">
+                  Use the filter button to adjust read status or date range.
+                </div>
               </div>
             )}
           </div>
         </section>
+
+        <NotificationFilterModal
+          isOpen={isFilterModalOpen}
+          readFilter={draftReadFilter}
+          startDate={draftStartDate}
+          endDate={draftEndDate}
+          onChangeReadFilter={setDraftReadFilter}
+          onChangeStartDate={setDraftStartDate}
+          onChangeEndDate={setDraftEndDate}
+          onApply={applyFilters}
+          onClear={clearFilters}
+          onClose={closeFilterModal}
+        />
 
         {isBookingModalOpen && selectedBooking && (
           <BookingDetailsModal
