@@ -105,6 +105,35 @@ function Account() {
   const [selectedNotifBooking, setSelectedNotifBooking] = useState(null);
   const [isNotifBookingModalOpen, setIsNotifBookingModalOpen] = useState(false);
 
+  const { data: paymentSettingsData, error: paymentSettingsError } = useQuery({
+    queryKey: ["paymentSettingsActive"],
+    enabled: loggedIn,
+    queryFn: async () => {
+      const response = await fetch(`${API_BASE_URL}/payment-settings/active`);
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Getting payment settings failed");
+      }
+      return await response.json();
+    },
+  });
+
+  useEffect(() => {
+    if (!paymentSettingsError) return;
+    const handle = async () => {
+      const msg = "Something went wrong while retrieving payment settings.";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    };
+    handle();
+  }, [paymentSettingsError]);
+
+  const paymentQrUrl = paymentSettingsData?.gcashQrImage
+    ? paymentSettingsData.gcashQrImage.startsWith("http")
+      ? paymentSettingsData.gcashQrImage
+      : `${API_BASE_URL}${paymentSettingsData.gcashQrImage}`
+    : "";
+
   const { data: latestNotifData } = useQuery({
     queryKey: ["latestNotifications"],
     enabled: loggedIn,
@@ -1042,7 +1071,7 @@ function Account() {
 
         {notifModalOpen && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+            className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 px-4 py-8 sm:py-10"
             onClick={() => setNotifModalOpen(false)}
           >
             <div
@@ -2086,7 +2115,7 @@ function Account() {
           onClick={closePasswordModal}
         >
           <div
-            className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6 relative"
+            className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative max-h-[calc(100vh-4rem)] overflow-y-auto sm:max-h-[calc(100vh-5rem)]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -2226,11 +2255,11 @@ function Account() {
       )}
       {isPaymentModalOpen && selectedBookingForPayment && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 px-4 py-8 sm:py-10"
           onClick={closePaymentModal}
         >
           <div
-            className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6 relative"
+            className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative max-h-[calc(100vh-4rem)] overflow-y-auto sm:max-h-[calc(100vh-5rem)]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -2254,6 +2283,31 @@ function Account() {
               </span>
               .
             </p>
+            <div className="mb-4 rounded-lg border border-[#227B05]/20 bg-green-50 p-4">
+              <div className="font-semibold text-[#227B05]">GCash Details</div>
+              <div className="mt-2 text-sm text-gray-700">
+                <span className="font-semibold">Number: </span>
+                <span>
+                  {paymentSettingsData?.gcashNumber || "Loading number..."}
+                </span>
+              </div>
+              <div className="mt-2 text-sm text-gray-700">
+                <span className="font-semibold">Account name: </span>
+                <span>{paymentSettingsData?.gcashAccountName || "-"}</span>
+              </div>
+              {paymentQrUrl && (
+                <div className="mt-3">
+                  <div className="text-xs font-semibold text-gray-600 mb-2">
+                    QR Code
+                  </div>
+                  <img
+                    src={paymentQrUrl}
+                    alt="GCash QR code"
+                    className="mx-auto w-full max-w-[220px] max-h-40 rounded border bg-white object-contain"
+                  />
+                </div>
+              )}
+            </div>
             <div className="mb-4">
               <label className="block font-semibold mb-1">
                 Proof of payment

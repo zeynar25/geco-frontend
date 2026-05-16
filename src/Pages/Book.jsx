@@ -53,13 +53,13 @@ function Book() {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [selectedGroupSize, setSelectedGroupSize] = useState(null);
   const [selectedPackageId, setSelectedPackageId] = useState(
-    location.state?.selectedPackageId || null
+    location.state?.selectedPackageId || null,
   );
   const [selectedPackage, setSelectedPackage] = useState(
-    location.state?.selectedPackage || null
+    location.state?.selectedPackage || null,
   );
   const [selectedVisitDate, setSelectedVisitDate] = useState(
-    location.state?.selectedDate || ""
+    location.state?.selectedDate || "",
   );
   const [showDateModal, setShowDateModal] = useState(false);
   const [selectedVisitTime, setSelectedVisitTime] = useState("");
@@ -315,6 +315,36 @@ function Book() {
       return await tourPackages.json();
     },
   });
+
+  const {
+    data: paymentSettingsData,
+    error: paymentSettingsError,
+    isPending: paymentSettingsPending,
+  } = useQuery({
+    queryKey: ["paymentSettingsActive"],
+    queryFn: async () => {
+      const response = await fetch(`${API_BASE_URL}/payment-settings/active`);
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.error || "Getting payment settings failed");
+      }
+      return await response.json();
+    },
+  });
+
+  if (paymentSettingsError) {
+    // handled in useEffect below
+  }
+
+  useEffect(() => {
+    if (!paymentSettingsError) return;
+    const handle = async () => {
+      const msg = "something went wrong in retrieving payment settings";
+      if (window.__showAlert) await window.__showAlert(msg);
+      else window.__nativeAlert?.(msg) || alert(msg);
+    };
+    handle();
+  }, [paymentSettingsError]);
 
   if (packageError) {
     // handled in useEffect below
@@ -582,7 +612,12 @@ function Book() {
                     <div className="bg-[#222EDA]/20 text-[#222EDA] rounded-lg p-4 flex flex-col gap-3">
                       <div>
                         <span className="font-bold mr-2">Gcash Number:</span>
-                        <span>09xx-xxx-xxxx (CvSU Agri-Eco Park)</span>
+                        <span>
+                          {paymentSettingsPending
+                            ? "Loading GCash number..."
+                            : paymentSettingsData?.gcashNumber ||
+                              "09xx-xxx-xxxx (CvSU Agri-Eco Park)"}
+                        </span>
                       </div>
                       <p className="text-sm text-black">
                         After submitting this form, you’ll receive payment
@@ -858,8 +893,8 @@ function Book() {
                           scheduleDisabled
                             ? "Select a package first"
                             : selectedVisitDate
-                            ? "Select a visit time"
-                            : "Pick a date first"
+                              ? "Select a visit time"
+                              : "Pick a date first"
                         }
                         required
                         disabled={scheduleDisabled}
