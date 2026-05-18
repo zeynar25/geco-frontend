@@ -24,6 +24,7 @@ import AddFaq from "../Components/Admin/Faq/AddFaq";
 import EditFaq from "../Components/Admin/Faq/EditFaq";
 import ShowCalendar from "../Components/Admin/ShowCalendar";
 import ShowLog from "../Components/Admin/ShowLog";
+import Contact from "../Components/Admin/Contact";
 import ShowAccount from "../Components/Admin/Account/ShowAccount";
 import AddAccount from "../Components/Admin/Account/AddAccount";
 import EditAccount from "../Components/Admin/Account/EditAccount";
@@ -74,6 +75,7 @@ function AdminDashboard() {
   const [calendarIn, setCalendarIn] = useState(false);
   const [accountsIn, setAccountsIn] = useState(false);
   const [paymentIn, setPaymentIn] = useState(false);
+  const [contactsIn, setContactsIn] = useState(false);
   const [logsIn, setLogsIn] = useState(false);
 
   const [editingBooking, setEditingBooking] = useState(null);
@@ -159,6 +161,7 @@ function AdminDashboard() {
     !attractionsIn &&
     !calendarIn &&
     !accountsIn &&
+    !contactsIn &&
     !logsIn;
 
   useEffect(() => {
@@ -509,6 +512,7 @@ function AdminDashboard() {
               setAttractionsIn(false);
               setCalendarIn(false);
               setAccountsIn(true);
+              setContactsIn(false);
               setLogsIn(false);
             }}
           >
@@ -529,11 +533,34 @@ function AdminDashboard() {
               setAttractionsIn(false);
               setCalendarIn(false);
               setAccountsIn(false);
+              setContactsIn(false);
               setLogsIn(false);
               setPaymentIn(true);
             }}
           >
             Payment
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              contactsIn ? "text-[#227B05]" : "text-black"
+            }`}
+            onClick={() => {
+              setBookingIn(false);
+              setFinancesIn(false);
+              setTrendsIn(false);
+              setFeedbackIn(false);
+              setPackagesIn(false);
+              setFaqsIn(false);
+              setAttractionsIn(false);
+              setCalendarIn(false);
+              setAccountsIn(false);
+              setPaymentIn(false);
+              setContactsIn(true);
+              setLogsIn(false);
+            }}
+          >
+            Contacts
           </button>
           {isAdmin && (
             <button
@@ -647,8 +674,13 @@ function AdminDashboard() {
           )}
 
           {paymentTabActive && (
-            <Payment canViewDashboard={canViewDashboard} paymentIn={paymentTabActive} />
+            <Payment
+              canViewDashboard={canViewDashboard}
+              paymentIn={paymentTabActive}
+            />
           )}
+
+          {contactsIn && <Contact canViewDashboard={canViewDashboard} />}
 
           {logsIn && isAdmin && (
             <ShowLog canViewDashboard={canViewDashboard} logsIn={logsIn} />

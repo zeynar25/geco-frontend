@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faLocationDot,
@@ -10,8 +11,43 @@ import {
 import { faEnvelope, faClock } from "@fortawesome/free-regular-svg-icons";
 import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { Link } from "react-router-dom";
+import { API_BASE_URL } from "../apiConfig";
 
 function Footer() {
+  const [contacts, setContacts] = useState([]);
+
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/contact`);
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data)) {
+            setContacts(data);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load contacts:", error);
+      }
+    };
+    fetchContacts();
+  }, []);
+
+  // Map contacts by contactName for easy access
+  const contactMap = {};
+  contacts.forEach((contact) => {
+    contactMap[contact.contactName] = contact.value;
+  });
+
+  const contactNumber = contactMap["contactnumber"];
+  const email = contactMap["email"];
+  const facebookUrl = contactMap["facebook"];
+
+  // Check if values exist (not from fallback)
+  const hasContactNumber = contactMap["contactnumber"];
+  const hasEmail = contactMap["email"];
+  const hasFacebook = contactMap["facebook"];
+
   return (
     <footer className="border-t bg-[#227B05] text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
@@ -44,33 +80,37 @@ function Footer() {
                   Cavite State University, Indang, Cavite, Philippines
                 </p>
               </li>
-              <li className="flex items-start gap-3">
-                <FontAwesomeIcon
-                  icon={faPhone}
-                  className="mt-1 text-white"
-                  aria-hidden="true"
-                />
-                <a
-                  href="tel:0123456789"
-                  className="text-sm text-green-100 hover:text-white hover:underline"
-                >
-                  1036
-                </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <FontAwesomeIcon
-                  icon={faEnvelope}
-                  className="mt-1 text-white"
-                  fixedWidth
-                  aria-hidden="true"
-                />
-                <a
-                  href="mailto:agri-ecopark@cvsu.edu.ph"
-                  className="text-sm text-green-100 hover:text-white hover:underline"
-                >
-                  agri-ecopark@cvsu.edu.ph
-                </a>
-              </li>
+              {hasContactNumber && (
+                <li className="flex items-start gap-3">
+                  <FontAwesomeIcon
+                    icon={faPhone}
+                    className="mt-1 text-white"
+                    aria-hidden="true"
+                  />
+                  <a
+                    href={`tel:${contactNumber}`}
+                    className="text-sm text-green-100 hover:text-white hover:underline"
+                  >
+                    {contactNumber}
+                  </a>
+                </li>
+              )}
+              {hasEmail && (
+                <li className="flex items-start gap-3">
+                  <FontAwesomeIcon
+                    icon={faEnvelope}
+                    className="mt-1 text-white"
+                    fixedWidth
+                    aria-hidden="true"
+                  />
+                  <a
+                    href={`mailto:${email}`}
+                    className="text-sm text-green-100 hover:text-white hover:underline"
+                  >
+                    {email}
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
 
@@ -135,15 +175,17 @@ function Footer() {
               </a>
             </div>
             <div className="flex items-center gap-4">
-              <a
-                href="https://facebook.com/cvsuagriecopark"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="CvSU Agri‑Eco Park on Facebook"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 shadow hover:bg-white/20"
-              >
-                <FontAwesomeIcon icon={faFacebook} className="text-white" />
-              </a>
+              {hasFacebook && (
+                <a
+                  href={facebookUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="CvSU Agri‑Eco Park on Facebook"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 shadow hover:bg-white/20"
+                >
+                  <FontAwesomeIcon icon={faFacebook} className="text-white" />
+                </a>
+              )}
             </div>
           </div>
         </div>
