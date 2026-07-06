@@ -25,6 +25,7 @@ import EditFaq from "../Components/Admin/Faq/EditFaq";
 import ShowCalendar from "../Components/Admin/ShowCalendar";
 import ShowLog from "../Components/Admin/ShowLog";
 import Contact from "../Components/Admin/Contact";
+import ExportBookings from "../Components/Admin/ExportBookings";
 import ShowAccount from "../Components/Admin/Account/ShowAccount";
 import AddAccount from "../Components/Admin/Account/AddAccount";
 import EditAccount from "../Components/Admin/Account/EditAccount";
@@ -76,6 +77,7 @@ function AdminDashboard() {
   const [accountsIn, setAccountsIn] = useState(false);
   const [paymentIn, setPaymentIn] = useState(false);
   const [contactsIn, setContactsIn] = useState(false);
+  const [exportIn, setExportIn] = useState(false);
   const [logsIn, setLogsIn] = useState(false);
 
   const [editingBooking, setEditingBooking] = useState(null);
@@ -152,6 +154,7 @@ function AdminDashboard() {
   const canViewDashboard = loggedIn && isAuthorized;
   const paymentTabActive =
     paymentIn &&
+    !exportIn &&
     !bookingIn &&
     !financesIn &&
     !trendsIn &&
@@ -352,6 +355,9 @@ function AdminDashboard() {
               setAttractionsIn(false);
               setCalendarIn(false);
               setAccountsIn(false);
+              setPaymentIn(false);
+              setContactsIn(false);
+              setExportIn(false);
               setLogsIn(false);
             }}
           >
@@ -372,6 +378,9 @@ function AdminDashboard() {
               setAttractionsIn(false);
               setCalendarIn(false);
               setAccountsIn(false);
+              setPaymentIn(false);
+              setContactsIn(false);
+              setExportIn(false);
               setLogsIn(false);
             }}
           >
@@ -392,6 +401,9 @@ function AdminDashboard() {
               setAttractionsIn(false);
               setCalendarIn(false);
               setAccountsIn(false);
+              setPaymentIn(false);
+              setContactsIn(false);
+              setExportIn(false);
               setLogsIn(false);
             }}
           >
@@ -412,6 +424,9 @@ function AdminDashboard() {
               setAttractionsIn(false);
               setCalendarIn(false);
               setAccountsIn(false);
+              setPaymentIn(false);
+              setContactsIn(false);
+              setExportIn(false);
               setLogsIn(false);
             }}
           >
@@ -432,6 +447,9 @@ function AdminDashboard() {
               setAttractionsIn(false);
               setCalendarIn(false);
               setAccountsIn(false);
+              setPaymentIn(false);
+              setContactsIn(false);
+              setExportIn(false);
               setLogsIn(false);
             }}
           >
@@ -452,6 +470,9 @@ function AdminDashboard() {
               setAttractionsIn(false);
               setCalendarIn(false);
               setAccountsIn(false);
+              setPaymentIn(false);
+              setContactsIn(false);
+              setExportIn(false);
               setLogsIn(false);
             }}
           >
@@ -472,6 +493,9 @@ function AdminDashboard() {
               setAttractionsIn(true);
               setCalendarIn(false);
               setAccountsIn(false);
+              setPaymentIn(false);
+              setContactsIn(false);
+              setExportIn(false);
               setLogsIn(false);
             }}
           >
@@ -492,6 +516,9 @@ function AdminDashboard() {
               setAttractionsIn(false);
               setCalendarIn(true);
               setAccountsIn(false);
+              setPaymentIn(false);
+              setContactsIn(false);
+              setExportIn(false);
               setLogsIn(false);
             }}
           >
@@ -513,6 +540,8 @@ function AdminDashboard() {
               setCalendarIn(false);
               setAccountsIn(true);
               setContactsIn(false);
+              setPaymentIn(false);
+              setExportIn(false);
               setLogsIn(false);
             }}
           >
@@ -534,6 +563,7 @@ function AdminDashboard() {
               setCalendarIn(false);
               setAccountsIn(false);
               setContactsIn(false);
+              setExportIn(false);
               setLogsIn(false);
               setPaymentIn(true);
             }}
@@ -556,11 +586,35 @@ function AdminDashboard() {
               setCalendarIn(false);
               setAccountsIn(false);
               setPaymentIn(false);
+              setExportIn(false);
               setContactsIn(true);
               setLogsIn(false);
             }}
           >
             Contacts
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              exportIn ? "text-[#227B05]" : "text-black"
+            }`}
+            onClick={() => {
+              setBookingIn(false);
+              setFinancesIn(false);
+              setTrendsIn(false);
+              setFeedbackIn(false);
+              setPackagesIn(false);
+              setFaqsIn(false);
+              setAttractionsIn(false);
+              setCalendarIn(false);
+              setAccountsIn(false);
+              setPaymentIn(false);
+              setContactsIn(false);
+              setLogsIn(false);
+              setExportIn(true);
+            }}
+          >
+            Export
           </button>
           {isAdmin && (
             <button
@@ -578,6 +632,9 @@ function AdminDashboard() {
                 setAttractionsIn(false);
                 setCalendarIn(false);
                 setAccountsIn(false);
+                setPaymentIn(false);
+                setContactsIn(false);
+                setExportIn(false);
                 setLogsIn(true);
               }}
             >
@@ -681,6 +738,8 @@ function AdminDashboard() {
           )}
 
           {contactsIn && <Contact canViewDashboard={canViewDashboard} />}
+
+          {exportIn && <ExportBookings canViewDashboard={canViewDashboard} />}
 
           {logsIn && isAdmin && (
             <ShowLog canViewDashboard={canViewDashboard} logsIn={logsIn} />
